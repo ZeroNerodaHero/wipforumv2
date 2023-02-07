@@ -1,0 +1,25 @@
+:root{
+  --backgroundColor: rgba(0, 0, 0, 0.575);
+  --sidebarWidth: 40px;
+
+  scrollbar-color: rgba(255, 0, 0, 0.4) rgba(255, 255, 255, 0);
+  scrollbar-width: thin;
+}
+:root::-webkit-scrollbar{
+  background-color: rgba(255, 0, 0, 0.4);
+  width: 3px;
+}
+:root::-webkit-scrollbar-thumb{
+  background-color: rgba(255, 255, 255, 0);
+}
+.App{
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgb(189, 189, 189);
+  overflow: hidden;
+}
+#AppMainContent{
+  margin-left: var(--sidebarWidth);
+  height: 100vh;
+}

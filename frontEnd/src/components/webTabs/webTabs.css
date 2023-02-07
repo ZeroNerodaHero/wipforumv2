@@ -1,0 +1,50 @@
+:root{
+    --tabColor: rgb(119, 128, 255);
+    --tabMarginLeft: 3px;
+}
+
+#webTabCont{
+    background-color: var(--tabColor);
+
+    position: absolute;
+    height: 100vh;
+    width: var(--sidebarWidth);
+
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+
+    z-index: 200;
+}
+#boardTabCont{
+    margin-top: 3vh;
+}
+
+.boardTab{
+    padding: 3px;
+    width: fit-content;
+}
+
+.boardTabCollapse{
+    margin-left: var(--tabMarginLeft);
+}
+.boardTabCollapse::before{
+    content: "[";
+}
+.boardTabCollapse::after{
+    content: "]";
+}
+.boardTabUnCollapse{
+    background-color: var(--tabColor);
+    padding-bottom: 3px;
+    padding-right: 5px;
+    white-space: nowrap;
+}
+.boardTabUnCollapse::before{
+    content: "[>";
+    margin-left: var(--tabMarginLeft);
+    padding-right: 20px;
+}
+.boardTabUnCollapse::after{
+    content: "]";
+}

@@ -1,0 +1,337 @@
+:root{
+    --sizeOfThumbNail: 200px;
+    --thumbPadding: 3px 7px;
+}
+
+
+.sliderStyle{
+    height: 3px;
+    width: 50px;
+}
+.sliderStyle::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 10x;
+    background: #04AA6D;
+    cursor: pointer;
+}
+  
+.sliderStyle::-moz-range-thumb {
+    width: 15px;
+    height: 10px;
+    background: #04AA6D;
+    cursor: pointer;
+}
+
+#threadViewEncap{
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+.threadViewCont{
+    position: relative;
+    overflow: auto;
+    height: 100%;
+}
+.threadCont{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    
+    padding: 7px;
+}
+.threadCont > div {
+    margin: 3px;
+}
+
+.threadThumbNail{
+    width: var(--sizeOfThumbNail);
+    height: var(--sizeOfThumbNail);
+    background-color: rgba(0, 0, 0, 0.3);
+    display: grid;
+    grid-template-rows: auto auto;
+    overflow: hidden;
+}
+.threadTitle{
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: var(--thumbPadding);
+    padding-bottom: 1px;
+}
+.threadTitleText{
+    font-weight: bold;
+}
+.threadBodyCont{
+    margin: var(--thumbPadding);    
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.threadImgCont{
+    width: 100%;
+}
+.threadImg{
+    border: 1px black solid;
+    border-bottom: 5px black solid;
+    width: 100%;
+}
+
+#activeThreadDisplay{
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.4);
+
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    padding-top: 3%;
+    z-index: 2;
+}
+
+#activeThreadCont{
+    width: 80%;
+    height: 90%;
+    overflow: auto;
+}
+#activeThreadTitle{
+    background-color: rgb(234, 255, 156);
+    position: sticky;
+    top: 0;
+    left: 0;
+
+    box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.4);
+    -webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.4);
+    -moz-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.4);
+}
+.activeThreadContentDisplayer{
+    margin-top: 3px;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(234, 255, 156);
+    padding: 3px 3px;
+}
+.activeThreadBody{
+    display: flex;
+}
+.messageInfo{
+    display: flex;
+    justify-content: space-between;
+    margin: 0px 7px 3px 7px;
+}
+.messageInfoRight{
+    display: flex;
+    text-decoration: underline;
+}
+.messageId{
+    margin-right: 7px;
+}
+.messageTime{
+
+}
+
+.imageContentDisplayer{
+    width: 20%;
+}
+.imageContentDisplayer img{
+    width: 100%;
+}
+
+.textContentDisplayer{
+    margin-left: 5px;
+}
+
+/* */
+#mainContent{
+    height: 98%;
+    margin: 1%;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+}
+#mainContentDisplayer{
+    background-color: rgba(20, 57, 138, 0.527);
+    border-top: 1px black solid;
+    height: 97%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+#menuCont{
+    background-color: rgb(101, 99, 122);
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    border-top: 1px black solid;
+
+    box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.4);
+    -webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.4);
+    -moz-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.4);
+}
+#mainContentTabs{
+    display: flex;
+    justify-content: space-between;
+    margin: 0px 3px;
+}
+#mainContentTabs_left{
+    display: flex;
+}
+#mainContentTabs_right{
+    display: flex;
+
+}
+#mainContentTabs_left > div, #mainContentTabs_right > div {
+    background-color: rgba(0, 128, 0, 0.3);
+    border: 1px black solid;
+    border-bottom-width: 0px;
+    padding: 0px 7px 0px 7px;
+}
+#mainContentTabs_left > div:hover, #mainContentTabs_right > div:hover {
+    background-color: rgba(0, 128, 0, 0.7);
+
+}
+/* */
+#GUIcont{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+#bottomRightGuiCont{
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    height: fit-content;
+    z-index: 100;
+}
+#bottomRightGuiCont div{
+    position: relative;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    margin: 3px;
+}
+#PageControlGuiCont{
+    position: absolute;
+    top: -10px;
+    background-color: red;
+    margin-bottom: 12px;
+}
+.PageGuiButton{
+    height: 1.2rem;
+    width: 1.2rem;
+    display: grid;
+}
+#pageUpButton::before{
+    position: absolute;
+    content: " ";
+    width: 100%;
+    top: -10px;
+    position: absolute;
+    border-top: 5px solid transparent;
+}
+
+#pageUpButton:hover::before{
+    border-top: 5px solid rgb(255, 118, 118);
+}
+#pageDownButton::before{
+    position: absolute;
+    content: " ";
+    width: 100%;
+    bottom: -10px;
+    position: absolute;
+    border-top: 5px solid transparent;
+}
+
+#pageDownButton:hover::before{
+    border-top: 5px solid rgb(255, 118, 118);
+}
+
+
+#addMessageButton{
+    font-size: 4rem;
+    font-weight: bolder;
+    width: 70px;
+    height: 70px;
+
+    background-color: red;
+}
+
+#addMessageButton::before{
+    content: " ";
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 0px;
+    height: 0px;
+    transition: left 500ms, top 500ms, width 2s, height 2s;
+    
+    border-top: 5px solid transparent;
+    border-left: 5px solid transparent;
+}
+#addMessageButton:hover::before{
+    left: -10px;
+    top: -10px;
+    width: 30px;
+    height: 30px;
+    border-top: 5px solid rgb(255, 118, 118);
+    border-left: 5px solid rgb(255, 118, 118);
+}
+#newPromptCont{
+    position: relative;
+    height: 100%;
+    width: 100%;
+
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+
+    display: grid;
+    align-items: center;
+    justify-items: center;
+}
+.newPrompt{
+    content: "hello";
+    position: absolute;
+    width: 50%;
+    height: 25%;
+    margin-bottom: 20%;
+}
+
+.promptTitle{
+    width: fit-content;
+    background-color: white;
+    padding: 3px 13px 3px 7px;
+}
+.promptBody{
+    text-align: center;
+    background-color: white;
+    padding: 5px;
+}
+.promptBody input{
+    width: 95%;
+}
+.promptBody textarea{
+    resize: vertical;
+    width: 95%;
+}
+#promptSubmitCont{
+    background-color: white;
+    display: flex;
+    justify-content: right;
+    
+    width: 100%;
+}
+#promptSubmit{
+    padding: 1px 3px;
+    margin-right: 3px;
+    margin-bottom: 3px;
+    border: 1px black solid;
+    width: fit-content;
+}
+#promptSubmit:hover{
+    background-color: rgba(0, 0, 0, 0.3);
+}
