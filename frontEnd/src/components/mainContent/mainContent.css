@@ -299,6 +299,9 @@
     width: 50%;
     height: 25%;
     margin-bottom: 20%;
+
+    display: grid;
+    grid-template-rows: min-content auto;
 }
 
 .promptTitle{
@@ -310,6 +313,14 @@
     text-align: center;
     background-color: white;
     padding: 5px;
+    display: grid;
+    justify-items: center;
+}
+#newThreadPrompt .promptBody{
+    grid-template-rows: max-content auto max-content;
+}
+#newMessagePrompt .promptBody{
+    grid-template-rows: auto max-content;
 }
 .promptBody input{
     width: 95%;
@@ -321,12 +332,27 @@
 #promptSubmitCont{
     background-color: white;
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
+    margin-top: 5px;
     
     width: 100%;
 }
+#promptSubmitLeftCont{
+    display: flex;
+    margin-left: 7px;
+}
+#promptSubmitLeftCont div{
+    margin: 0px 7px;
+}
+.promptOption{
+    width: 1.3rem;
+    height: 1.3rem;
+}
+.promptOption:hover{
+    background-color: rgba(0, 0, 0, 0.3);
+}
 #promptSubmit{
-    padding: 1px 3px;
+    padding: 1px 7px;
     margin-right: 3px;
     margin-bottom: 3px;
     border: 1px black solid;

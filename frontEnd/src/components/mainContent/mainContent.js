@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import apiRequest from '../apiRequest/apiRequest';
 import "./mainContent.css"
 
 function MainContent(props){
-    
+    apiRequest("http://localhost:8070/").then((data)=>{
+        console.log(data)
+    })
 
     return (
         <div id="mainContent" >
@@ -78,7 +81,22 @@ function ThreadCont(props){
 }
 function GUIcont(props){
     const [addMessageState,setAddMessageState] = useState(-1);
+    const [threadTitle,setThreadTitle] = useState("");
+    const [messageContent,setMessageContent] = useState("");
 
+    const submitCont = (
+        <div id="promptSubmitCont">
+            <div id="promptSubmitLeftCont">
+                <div>Options:</div>
+                <div className="promptOption">+</div>
+                <div className="promptOption">...</div>
+            </div>
+            <div id="promptSubmit">Enter</div>
+        </div>
+    );
+    const promptTextArea = (<textarea value={messageContent }
+                            placeholder="Your Message" 
+                            onChange={(e)=>{setMessageContent(e.target.value)}}/>)
     return (
         <div id="GUIcont">
             <div id="bottomRightGuiCont">
@@ -96,27 +114,26 @@ function GUIcont(props){
                 addMessageState == -1 ? <div></div> :
                 <div id="newPromptCont" onClick={()=>{setAddMessageState(-1)}}>
                     
-                <div id="newThreadPrompt" className='newPrompt' onClick={(e)=>{e.stopPropagation()}}>
                 {props.activeThread == -1? 
-                    <div>
+                    <div id="newThreadPrompt" className='newPrompt' onClick={(e)=>{e.stopPropagation()}}>
                         <div className='promptTitle'>New Thread</div>
                         <div className="promptBody">
-                            <input />
-                            <textarea />
+                            <input value={threadTitle} onChange={(e)=>{setThreadTitle(e.target.value)}}
+                                    placeholder="Title"/>
+                            {promptTextArea}
+                            {submitCont}
                         </div>
                     </div> 
                     :
-                    <div>
+                    <div id="newMessagePrompt" className='newPrompt' onClick={(e)=>{e.stopPropagation()}}>
                         <div className='promptTitle'>Add Message</div>
                         <div className="promptBody">
-                            <textarea />    
+                            {promptTextArea}    
+                            {submitCont}
                         </div>
                     </div>
                 }
-                <div id="promptSubmitCont">
-                    <div id="promptSubmit">Enter</div>
                 </div>
-                </div></div> 
             }
         </div>
     );
