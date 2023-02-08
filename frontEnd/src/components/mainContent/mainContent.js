@@ -3,16 +3,12 @@ import apiRequest from '../apiRequest/apiRequest';
 import "./mainContent.css"
 
 function MainContent(props){
-    apiRequest("http://localhost:8070/").then((data)=>{
-        console.log(data)
-    })
-
     return (
         <div id="mainContent" >
-            <MainContentTabs />
+            <MainContentTabs currentBoard={props.currentBoard}/>
             <div id="mainContentDisplayer">
                 <MenuBar />
-                <ThreadCont/>
+                <ThreadCont currentBoard={props.currentBoard}/>
             </div>
         </div>
     )
@@ -42,36 +38,44 @@ function MenuBar(props){
 
 function ThreadCont(props){
     const [activeThread,setActiveThread] = useState(-1);
+    const [threadList, setThreadList] = useState([])
+    useEffect(()=>{
+        apiRequest("http://localhost:8070/","",
+        {
+            option: 1001,
+            currentBoard: props.currentBoard["shortHand"]
+        },
+        "POST").then((data)=>{
+            console.log("threads",data)
+            if(data["code"]!=0){
+                setThreadList(data["threadList"]);
+            }
+        })
+    },[props.currentBoard])
     useEffect(()=>{
         console.log(activeThread);
     },[activeThread]);
 
     return (
         <div id='threadViewEncap'>
-            <GUIcont activeThread={activeThread}/>
+            <GUIcont activeThread={activeThread} currentBoard={props.currentBoard}/>
             {
                 activeThread == -1 ? <div /> :
                 <div id="activeThreadDisplay" onClick={()=>{setActiveThread(-1)}}>
-                    <ActiveThreadDisplayer setActiveThread={props.setActiveThread}/>
+                    <ActiveThreadDisplayer activeThread={activeThread} setActiveThread={setActiveThread}
+                        currentBoard={props.currentBoard}/>
                 </div>
             }
             <div className='threadViewCont'>
                 <div className='threadCont'>
                     <ThreadViewDisplay setActiveThread={setActiveThread} />
-                    <ThreadViewDisplay threadName="Hahah" setActiveThread={setActiveThread}/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} threadName="Hahah"/>
+                    {
+                        threadList.map((item)=>(<ThreadViewDisplay setActiveThread={setActiveThread}
+                            threadName={item["threadTitle"]} threadThumb={item["imageLinks"]}
+                            threadId={item["threadId"]} threadSize={item["threadSize"]}
+                            key={item["threadId"]}
+                        />))
+                    }
                 </div>
             </div>
         </div>
@@ -83,7 +87,8 @@ function GUIcont(props){
     const [addMessageState,setAddMessageState] = useState(-1);
     const [threadTitle,setThreadTitle] = useState("");
     const [messageContent,setMessageContent] = useState("");
-
+    const [newMessageContent,setNewMessageContent] = useState("");
+    useEffect(()=>{setMessageContent("")},[props.activeThread])
     const submitCont = (
         <div id="promptSubmitCont">
             <div id="promptSubmitLeftCont">
@@ -91,28 +96,39 @@ function GUIcont(props){
                 <div className="promptOption">+</div>
                 <div className="promptOption">...</div>
             </div>
-            <div id="promptSubmit">Enter</div>
+            <div id="promptSubmit" onClick={()=>{
+                apiRequest("http://localhost:8070/","",
+                {
+                    userId: -1,
+                    sessionId: -1,
+                    option: (props.activeThread != -1)+2000,
+                    threadId: (props.activeThread),
+                    threadTitle: threadTitle,
+                    newMessageContent: newMessageContent,
+                    messageContent: messageContent,
+                    currentBoard: props.currentBoard["shortHand"]
+                },
+                "POST").then((data)=>{
+                    console.log(data)
+                })
+            }}>Enter</div>
         </div>
     );
-    const promptTextArea = (<textarea value={messageContent }
-                            placeholder="Your Message" 
-                            onChange={(e)=>{setMessageContent(e.target.value)}}/>)
+    const promptTextArea = function(content,setContent)
+    {
+        return <textarea value={content} placeholder="Your Message" onChange={(e)=>{setContent(e.target.value)}}/>
+    }
     return (
         <div id="GUIcont">
             <div id="bottomRightGuiCont">
                 {
-                /*
-                <div id='PageControlGuiCont'>
-                    <div className="PageGuiButton" id='pageUpButton'>&#9650;</div>
-                    <div className="PageGuiButton" id='pageDownButton'>&#9660;</div>
-                </div>
-                */
+                /*<div id='PageControlGuiCont'><div className="PageGuiButton" id='pageUpButton'>&#9650;</div><div className="PageGuiButton" id='pageDownButton'>&#9660;</div></div>*/
                 }
                 <div id="addMessageButton" onClick={()=>{setAddMessageState(1)}}>+</div>
             </div>
             {
                 addMessageState == -1 ? <div></div> :
-                <div id="newPromptCont" onClick={()=>{setAddMessageState(-1)}}>
+                <div id="newPromptCont" onClick={()=>{setAddMessageState(-1);}}>
                     
                 {props.activeThread == -1? 
                     <div id="newThreadPrompt" className='newPrompt' onClick={(e)=>{e.stopPropagation()}}>
@@ -120,7 +136,7 @@ function GUIcont(props){
                         <div className="promptBody">
                             <input value={threadTitle} onChange={(e)=>{setThreadTitle(e.target.value)}}
                                     placeholder="Title"/>
-                            {promptTextArea}
+                            {promptTextArea(newMessageContent,setNewMessageContent)}
                             {submitCont}
                         </div>
                     </div> 
@@ -128,7 +144,7 @@ function GUIcont(props){
                     <div id="newMessagePrompt" className='newPrompt' onClick={(e)=>{e.stopPropagation()}}>
                         <div className='promptTitle'>Add Message</div>
                         <div className="promptBody">
-                            {promptTextArea}    
+                            {promptTextArea(messageContent,setMessageContent)}    
                             {submitCont}
                         </div>
                     </div>
@@ -139,41 +155,66 @@ function GUIcont(props){
     );
 }
 function ActiveThreadDisplayer(props){
-    const [activeThreadItems,setActiveThreadItems] = useState({title:"LOADING", 
-        messages:[
-        { id:'1',username:"test",time:"Thurs 01-01-2009 6:00",
-            images:["https://media.discordapp.net/attachments/1059546802975682652/1069102672059318272/1674758387885233.jpg",
+    /*activeThreadCont has a problem !!!!! */
+    const [activeThreadMessages,setActiveThreadMessages] = useState([
+        { messageId:'1',messageOwner:"test",postTime:"Thurs 01-01-2009 6:00",
+            imageLinks:["https://media.discordapp.net/attachments/1059546802975682652/1069102672059318272/1674758387885233.jpg",
                 "https://media.discordapp.net/attachments/1059546802975682652/1068679406568087672/baby-star-nosed-moles.webp"],
-        content:"LOADING CONTENT" },
-        { id:'2',username:"test",time:"Thurs 01-01-2009 6:00",images:[],content:"LOADING CONTENT".repeat(100) },
-        { id:'3',username:"test",time:"Thurs 01-01-2009 6:00",images:[],content:"LOADING CONTENT".repeat(100) },
-        { id:'4',username:"test",time:"Thurs 01-01-2009 6:00",images:[],content:"LOADING CONTENT".repeat(100) },
-        { id:'5',username:"test",time:"Thurs 01-01-2009 6:00",images:[],content:"LOADING CONTENT".repeat(100) },
-        { id:'6',username:"test",time:"Thurs 01-01-2009 6:00",images:[],content:"LOADING CONTENT" },
-        { id:'7',username:"test",time:"Thurs 01-01-2009 6:00",images:[],content:"LOADING CONTENT" },
-        { id:'8',username:"test",time:"Thurs 01-01-2009 6:00",images:[],content:"LOADING CONTENT" }
+            messageContent:"LOADING CONTENT" },
+            { messageId:'1',messageOwner:"test",postTime:"Thurs 01-01-2009 6:00",
+            imageLinks:["https://media.discordapp.net/attachments/1059546802975682652/1069102672059318272/1674758387885233.jpg",
+                "https://media.discordapp.net/attachments/1059546802975682652/1068679406568087672/baby-star-nosed-moles.webp"],
+            messageContent:"LOADING CONTENT".repeat(1000) },{ messageId:'1',messageOwner:"test",postTime:"Thurs 01-01-2009 6:00",
+            imageLinks:["https://media.discordapp.net/attachments/1059546802975682652/1069102672059318272/1674758387885233.jpg",
+                "https://media.discordapp.net/attachments/1059546802975682652/1068679406568087672/baby-star-nosed-moles.webp"],
+            messageContent:"LOADING CONTENT" }
         ]
-    })
+    )
+    const [activeThreadCont,setActiveThreadCont] = useState(<div></div>)
+
+    useEffect(()=>{
+        apiRequest("http://localhost:8070/","",
+        {
+            option: 1002,
+            activeThread: props.activeThread,
+            currentBoard: props.currentBoard
+        },
+        "POST").then((data)=>{
+            console.log("msg",data)
+            if(data["code"]==1){
+                console.log(data["messageList"])
+                console.log("SIZE",data["messageList"].length )
+                if(data["messageList"].length > 0){
+                    setActiveThreadMessages(data["messageList"])
+                }
+            }
+            console.log("FIN",activeThreadMessages)
+        })
+    },[props.activeThread])
+    
     const displayActiveContent = function(message) {
         return (
-            <div className="activeThreadContentDisplayer" key={message["id"]}>
+            <div className="activeThreadContentDisplayer" key={message["messageId"]}>
                 <div className='messageInfo'>
-                    <div>{message["username"]}</div>
+                    <div>{message["messageOwner"]}</div>
                     <div className='messageInfoRight'>
-                        <div className='messageId'>Id:{message["id"]}</div>
-                        <div className='messageTime'>{message["time"]}</div>
+                        <div className='messageId'>Id:{message["messageId"]}</div>
+                        <div className='messageTime'>{message["postTime"]}</div>
                     </div>
                 </div>
                 <div className='activeThreadBody'>
-                    { message["images"].length == 0 ? <div /> :
+                    { message["imageLinks"].length == 0 ? <div /> :
+                    
                     <div className='imageContentDisplayer'>{
-                        message["images"].map((imageLnk)=>(
+                        <img src={message["imageLinks"]} key={message["imageLinks"]}/>
+                        /*
+                        message["imageLinks"].map((imageLnk)=>(
                             <img src={imageLnk} key={imageLnk}/>
-                        ))
-                    }</div>
+                        ))*/
+                        }</div>
                     }
                     <div className='textContentDisplayer'>{
-                        message["content"]
+                        message["messageContent"]
                 }</div>
                 </div>
             </div>
@@ -182,8 +223,9 @@ function ActiveThreadDisplayer(props){
 
     return (
         <div id="activeThreadCont" onClick={(e)=>{e.stopPropagation()}}>
-            <div id="activeThreadTitle">{activeThreadItems["title"]}</div>
-            {activeThreadItems["messages"].map((message)=>(displayActiveContent(message))) }
+            <div id="activeThreadTitle">{"test"}</div>
+            { console.log("test",activeThreadMessages)}
+            { activeThreadMessages.map((message)=>(displayActiveContent(message)))}
         </div>
     )
 }
@@ -193,7 +235,6 @@ function ThreadViewDisplay(props){
     
     useEffect(()=>{
         if(props.threadName !== undefined){
-            console.log(props.threadName)
             setThreadName(props.threadName)
         }
         if(props.threadThumb !== undefined){
@@ -202,7 +243,7 @@ function ThreadViewDisplay(props){
     },[props.threadName,props.threadThumb])
 
     return (
-        <div className="threadThumbNail" onClick={()=>props.setActiveThread(1)}>
+        <div className="threadThumbNail" onClick={()=>props.setActiveThread(props.threadId)}>
             <div className="threadTitle">
                 <div className='threadTitleText'>{threadName}</div>
             </div>
@@ -225,7 +266,7 @@ function MainContentTabs(props){
     return (
         <div id="mainContentTabs">
             <div id="mainContentTabs_left">
-                <div>test</div>
+                <div>/{props.currentBoard["shortHand"]}/-{props.currentBoard["longHand"]}</div>
             </div>
             <div id="mainContentTabs_right">
                 <div>test</div>
