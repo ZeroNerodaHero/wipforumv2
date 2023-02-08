@@ -1,55 +1,59 @@
-USE comm;
+USE funpills;
 CREATE TABLE userList(
-    userId int,
+    userId BIGINT,
     sessionId int,
     sessionExpire timeStamp,
-    first_name varchar(60),
-    last_name varchar(60),
-    
-    password varchar(60),
+    userName varchar(60),
     email varchar(160),
-    phoneNum varchar(32),
-    
-    accountPerm int,
-    
-    currentRequestId int,
-    status int DEFAULT 0
+    password varchar(60),
+    accountPerm TINYINT DEFAULT 0,
+    creationDate timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-INSERT INTO userList(userId,first_name,last_name,password,email,phoneNum,accountPerm)
-    VALUES(123456,"TEST","TEST","TEST","TEST@TEST.TEST","123-567-9012",0);
-INSERT INTO userList(userId,first_name,last_name,password,email,phoneNum,accountPerm)
-    VALUES(1234562,"WALKER","WALKER","WALKER","WALKER@WALKER.WALKER","123-167-9012",1);
-INSERT INTO userList(userId,first_name,last_name,password,email,phoneNum,accountPerm)
-    VALUES(1212342,"WALKER2","WALKER2","WALKER2","WALKER2@WALKER.WALKER","113-167-9012",1);
-CREATE TABLE requestHistory(
-    requestId int,
-    requesterId int,
-    walkerId int,
-    time timestamp,
-    location_x double,
-    location_y double,
-    end_location_x double DEFAULT -1,
-    end_location_y double DEFAULT -1,
-    feature varchar(800),
-    meet_up varchar(800),
-    emergency bool,
-    additional_info varchar(800),
-    endTime timestamp DEFAULT CURRENT_TIMESTAMP
-);
+CREATE TABLE messageList(
+    threadReference int,
+    messageContent varchar(2000),
+    messageOwner BIGINT,
 
-CREATE TABLE activeRequest(
-    requestId int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    status int DEFAULT 0,
-    statusNotes varchar(800),
-    walkerId int DEFAULT 0,
-    time timeStamp DEFAULT CURRENT_TIMESTAMP,
-    name varchar(120),
-    phoneNum varchar(32),
-    location_x double,
-    location_y double,
-    requesterId int,
-    feature varchar(800),
-    emergency bool,
-    meet_up varchar(800),
-    additional_info varchar(800) 
-);
+    messageId int NOT NULL AUTO_INCREMENT,
+    postTime timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    primary key (messageId)
+)
+CREATE TABLE threadList(
+    threadTitle varchar(100),
+    boardReference varchar(10),
+    threadOP BIGINT,
+
+    imageLinks varchar(1000),
+    threadDeco json,
+
+    threadId int NOT NULL AUTO_INCREMENT,
+    permLevel TINYINT DEFAULT 0,
+    threadPriority TINYINT DEFAULT 0,
+    creationTime timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    primary key (threadId)
+)
+CREATE TABLE boardList(
+    boardCode int,
+    shortHand varchar(10),
+    longHand varchar(100),
+
+    boardBday timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    boardOwner BIGINT DEFAULT 0,
+    
+    boardPermPost TINYINT DEFAULT 0,
+    boardPermView TINYINT DEFAULT 0,
+
+    p2p bool DEFAULT false,
+    isPrivate bool DEFAULT false,
+    threadCap int DEFAULT 100
+)
+INSERT INTO userList(userId,userName,email,password,accountPerm) 
+    VALUES(0,"eve","eve","eve",99)
+INSERT INTO boardList(boardCode,shortHand,longHand,boardPermPost,threadCap)
+    VALUES(0,"h","home",98,3000)
+INSERT INTO boardList(boardCode,shortHand,longHand)
+    VALUES(1,"m","meta")
+INSERT INTO threadList(threadTitle,boardReference,permLevel,threadPriority,threadOP)
+    VALUES("Get fun pills","h",98,100,0);
+INSERT INTO messageList(threadReference,messageContent,messageOwner)
+    VALUES(1,"This is hello world from me eve",0)
