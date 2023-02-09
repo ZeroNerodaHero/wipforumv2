@@ -23,8 +23,8 @@ CREATE TABLE threadList(
     threadTitle varchar(100),
     boardReference varchar(10),
     threadOP BIGINT,
+    firstPostLink int,
 
-    imageLinks varchar(1000),
     threadDeco json,
 
     threadId int NOT NULL AUTO_INCREMENT,
@@ -60,7 +60,7 @@ INSERT INTO boardList(boardCode,shortHand,longHand,boardPermPost,threadCap,board
     VALUES(0,"h","home",98,3000,99);
 INSERT INTO boardList(boardCode,shortHand,longHand,boardPriority)
     VALUES(1,"m","meta",98);
-INSERT INTO threadList(threadTitle,boardReference,permLevel,threadPriority,threadOP,imageLinks)
-    VALUES("Get fun pills","h",98,100,0,"https://media.discordapp.net/attachments/700130094844477561/948468498726809600/1646150889277.png");
+INSERT INTO threadList(threadTitle,boardReference,permLevel,threadPriority,threadOP,firstPostLink)
+    VALUES("Get fun pills","h",98,100,0,1);
 INSERT INTO messageList(threadReference,messageContent,messageOwner,imageLinks)
     VALUES(1,"This is hello world from me, eve!!! :33 <- double chin fat cat",0,"https://media.discordapp.net/attachments/700130094844477561/948468498726809600/1646150889277.png");

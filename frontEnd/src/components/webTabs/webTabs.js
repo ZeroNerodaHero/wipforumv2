@@ -14,7 +14,6 @@ function WebTab(props){
             option: 1000
         },
         "POST").then((data)=>{
-            console.log("tabs",data)
             if(data["code"] == 1){
                 setBoardList(data["boardList"]);
             }

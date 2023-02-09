@@ -51,7 +51,7 @@
     height: var(--sizeOfThumbNail);
     background-color: rgba(0, 0, 0, 0.3);
     display: grid;
-    grid-template-rows: auto auto;
+    grid-template-rows: max-content auto;
     overflow: hidden;
 }
 .threadTitle{
