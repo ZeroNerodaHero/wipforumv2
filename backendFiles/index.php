@@ -42,9 +42,14 @@
                 ORDER BY threadPriority DESC, updateTime DESC";
         $res = $conn->query($que);
         while($data = $res->fetch_assoc()){
-            $que = "SELECT imageLinks,messageContent FROM messageList WHERE messageId=". $data["firstPostLink"];
-            $resRow = $conn->query($que);
-            $data = array_merge($data, $resRow->fetch_assoc());
+            if (!empty($data["firstPostLink"])) {
+                $que = "SELECT imageLinks,messageContent FROM messageList WHERE messageId=" . $data["firstPostLink"];
+                $resRow = $conn->query($que);
+                $data = array_merge($data, $resRow->fetch_assoc());
+            } else{
+                $data["imageLinks"] = "";
+                $data["messageContent"] = "ERROR LOADING";
+            }
             $ret["threadList"][] = $data;
         }
         $retStr = json_encode($ret);
@@ -62,34 +67,34 @@
     }
     /* option 2000**** */ 
     else if($option == 2000){
-        $ret = addThread($hData["currentBoard"],$hData["threadTitle"],
-            $hData["messageContent"],$hData["userId"]);
-        $ret["code"] = 1;
-        //$ret["fileStr"] = uploadImg();
-        /*
-        $ret["hasFile"] = isset($_FILES["messageImage"]) ;
-        if(!empty($ret["hasFile"])){
-            $ret["fileName"] = $_FILES["messageImage"]["name"];
-            $ret["tmp_fileName"] = $_FILES["messageImage"]["tmp_name"];
-            $ret["finishImage"] = uploadImg("messageImage");
-            $ret["hasError"] = $_FILES["messageImage"]["error"];
+        if(!empty($hData["currentBoard"]) && !empty($hData["threadTitle"]) && 
+            !empty($hData["messageContent"]) && !empty($hData["userId"]) && !empty($_FILES["messageImage"]["name"])
+            && strlen($hData["messageContent"]) < 2000){
+            $ret = addThread($hData["currentBoard"],$hData["threadTitle"],
+                $hData["messageContent"],$hData["userId"]);
+            $ret["code"] = 1;
+            $retStr = json_encode($ret);
+        } else{
+            $retStr = generateError("Missing items");
         }
-        */
-        $retStr = json_encode($ret);
     }
     else if($option == 2001){
-        $retStr = '{"code":1}';
-        addMessage($hData["threadId"],$hData["messageContent"],$hData["userId"]);
+        if (!empty($hData["threadId"]) && !empty($hData["messageContent"])) {
+            $retStr = '{"code":1}';
+            addMessage($hData["threadId"], $hData["messageContent"], $hData["userId"]);
+        } else{
+            $retStr= generateError("Missing items");
+        }
     }
     echo $retStr;
 
     function addMessage($threadReference,$messageContent,$messageOwner){
         global $conn;
-        $imageLink = uploadImg("messageImage");
+        $imageLink = !empty($_FILES["messageImage"]) ? uploadImg("messageImage") : "";
         $messageContent = addslashes($messageContent);
         $que = "INSERT INTO messageList(threadReference,messageContent,messageOwner,imageLinks)
-                VALUES($threadReference,'$messageContent',$messageOwner".
-                    (empty($imageLink) ? '':",'$imageLink'").")";
+                VALUES($threadReference,'$messageContent',$messageOwner,".
+                    (empty($imageLink) ? 'null':"'$imageLink'").")";
         $conn->query($que);
         return $conn->insert_id;
     }
@@ -109,10 +114,7 @@
     }
 
     //returns either the link or null
-    function uploadImg($fileName){
-        error_reporting(E_ALL); // or E_STRICT
-    ini_set("display_errors",1);
-    ini_set("memory_limit","1024M");
+    function uploadImg($fileName){ 
         global $post_image_dir;
         $file_loc = $post_image_dir . basename($_FILES[$fileName]["name"]);
         $imageFileType = strtolower(pathinfo($file_loc,PATHINFO_EXTENSION));
