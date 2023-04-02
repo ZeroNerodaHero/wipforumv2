@@ -1,12 +1,13 @@
 USE funpills;
 CREATE TABLE userList(
     userId BIGINT,
-    sessionId int,
-    sessionExpire timeStamp,
-    userName varchar(60),
-    email varchar(160),
+    userName varchar(60) UNIQUE,
     password varchar(60),
     accountPerm TINYINT DEFAULT 0,
+    userExp int DEFAULT 0,
+    status varchar(256),
+    authKey int,
+    loginDate timeStamp ON UPDATE CURRENT_TIMESTAMP,
     creationDate timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE messageList(
@@ -54,8 +55,8 @@ CREATE TABLE boardList(
     isPrivate bool DEFAULT false,
     threadCap int DEFAULT 100
 );
-INSERT INTO userList(userId,userName,email,password,accountPerm) 
-    VALUES(0,"eve","eve","eve",99);
+INSERT INTO userList(userId,userName,password,accountPerm) 
+    VALUES(0,"eve","eve",99);
 INSERT INTO boardList(boardCode,shortHand,longHand,boardPermPost,threadCap,boardPriority)
     VALUES(0,"h","home",98,3000,99);
 INSERT INTO boardList(boardCode,shortHand,longHand,boardPriority)

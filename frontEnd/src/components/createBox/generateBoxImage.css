@@ -1,4 +1,11 @@
 #loadingGridElement{
-    height: 100px;
-    width: 100px;
+    height: 96px;
+    width: 96px;
+    margin: 4px;
+
+    display: grid;
+    grid-template-columns: repeat(8,12.5%)
+}
+#loadingGridElement > div{
+    width: 100%;
 }
