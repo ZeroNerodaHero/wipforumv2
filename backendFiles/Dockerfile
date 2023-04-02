@@ -28,7 +28,6 @@ COPY  admin.php /var/www/localhost/htdocs/admin/index.php
 
 RUN mkdir /var/www/localhost/htdocs/imgs
 RUN mkdir /var/www/localhost/htdocs/imgs/postImgs
-COPY .htaccess /var/www/localhost/htdocs/imgs/postImgs
 RUN chmod -R 755 /var/www/localhost/htdocs/imgs && chown -R apache imgs/
 
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
