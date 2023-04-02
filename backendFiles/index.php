@@ -24,29 +24,10 @@ $goodEnding = '{"code":1}';
 if($option == 0){
     die();
 }
-else if($option == 1){
+if($option == 1){
     if(!empty($hData["username"]) && !empty($hData["password"])){
         if(createUserAccount($hData["username"], $hData["password"]) == 1 ){
             $retStr = $goodEnding;
-        }
-    } 
-}
-else if($option == 2){
-    if(!empty($hData["username"]) && !empty($hData["password"])){
-        $ret = hasUserAccount($hData["username"], $hData["password"]);
-        if( $ret != null ){
-            $retStr = '{"code":1,"userId":"'.$ret[0].'","authKey":"'.$ret[1].
-                '","username":"'.$hData["username"].'"}';
-        } else{
-            $retStr = '{"code":0,"msg":"Account not found. Please dm me if you need help."}';
-        }
-    } 
-}
-else if($option == 3){
-    if(!empty($hData["userId"]) && !empty($hData["authKey"])){
-        $getUserName = userIsAuthed($hData["userId"], $hData["authKey"]);
-        if( $getUserName != null ){
-            $retStr = '{"code":1,"username":"'.$getUserName.'"}';
         }
     } 
 }
@@ -93,31 +74,24 @@ else if($option == 1002){
     $retStr = json_encode($ret);
 }
 /* option 2000**** */ 
-else if($option >= 2000 && $option <= 2999){
-    $imgPerm = false;
-    if(userIsAuthed($hData["userId"],$hData["sessionId"]) != null){
-        $imgPerm = true;
+else if($option == 2000){
+    if(!empty($hData["currentBoard"]) && !empty($hData["threadTitle"]) && 
+        !empty($hData["messageContent"]) && !empty($hData["userId"]) && !empty($_FILES["messageImage"]["name"])
+        && strlen($hData["messageContent"]) < 2000){
+        $ret = addThread($hData["currentBoard"],$hData["threadTitle"],
+            $hData["messageContent"],$hData["userId"]);
+        $ret["code"] = 1;
+        $retStr = json_encode($ret);
+    } else{
+        $retStr = generateError("Missing items");
     }
-    if($option == 2000){
-        if($imgPerm && !empty($hData["currentBoard"]) && !empty($hData["threadTitle"]) && 
-            !empty($hData["messageContent"]) && !empty($hData["userId"]) && 
-            !empty($_FILES["messageImage"]["name"])
-            && strlen($hData["messageContent"]) < 2000){
-            $ret = addThread($hData["currentBoard"],$hData["threadTitle"],
-                $hData["messageContent"],$hData["userId"]);
-            $ret["code"] = 1;
-            $retStr = json_encode($ret);
-        } else{
-            $retStr = generateError("Missing items");
-        }
-    }
-    else if($option == 2001){
-        if (!empty($hData["threadId"]) && !empty($hData["messageContent"])) {
-            $retStr = '{"code":1}';
-            addMessage($hData["threadId"], $hData["messageContent"], $hData["userId"],$imgPerm);
-        } else{
-            $retStr= generateError("Missing items");
-        }
+}
+else if($option == 2001){
+    if (!empty($hData["threadId"]) && !empty($hData["messageContent"])) {
+        $retStr = '{"code":1}';
+        addMessage($hData["threadId"], $hData["messageContent"], $hData["userId"]);
+    } else{
+        $retStr= generateError("Missing items");
     }
 }
 else if($option == 3000){
@@ -125,25 +99,6 @@ else if($option == 3000){
 }
 
 echo $retStr;
-function userIsAuthed($userId,$authKey){
-    global $conn;
-    $que = "SELECT userName FROM userList WHERE userId=$userId and authKey=$authKey";
-    $res = $conn->query($que);  
-    return ($res->num_rows == 0 ? null : $res->fetch_assoc()["userName"]);
-}
-function hasUserAccount($username, $password){
-    global $conn;
-    $que = "SELECT userId FROM userList WHERE userName='$username' and password='$password'";
-    $res = $conn->query($que);
-    if($res->num_rows == 0) return null;
-    $userId = ($res->fetch_assoc())["userId"];
-    $authKey = rand();
-    $que = "UPDATE userList
-            SET authKey = $authKey
-            WHERE userId=$userId";
-    $conn->query($que);  
-    return [$userId,$authKey];
-}
 function createUserAccount($username,$password){
     global $conn;
     $que = "SELECT userName FROM userList WHERE userName='$username'";
@@ -155,19 +110,9 @@ function createUserAccount($username,$password){
     $conn->query($que);
     return 1;
 }
-function addMessage($threadReference,$messageContent,$messageOwner,$imgPerm=true){
+function addMessage($threadReference,$messageContent,$messageOwner){
     global $conn;
-    $que = "UPDATE threadList 
-    SET threadSize=threadSize+1
-    WHERE threadId=" . $threadReference;
-    $conn->query($que);
-
-    $imageLink = (!empty($_FILES["messageImage"]) && $imgPerm) ? 
-        uploadImg("messageImage") : "";
-    if ($imageLink == "wrong type"){
-        echo '{"code":0,"msg":"wrong type"}';
-        die();
-    }
+    $imageLink = !empty($_FILES["messageImage"]) ? uploadImg("messageImage") : "";
     $messageContent = addslashes($messageContent);
     $que = "INSERT INTO messageList(threadReference,messageContent,messageOwner,imageLinks)
             VALUES($threadReference,'$messageContent',$messageOwner,".
