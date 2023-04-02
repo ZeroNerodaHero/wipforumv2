@@ -1,50 +1,29 @@
 :root{
-    --tabColor: rgb(119, 128, 255);
-    --tabMarginLeft: 3px;
+    --boardBackgroundColor: rgba(151, 255, 151, 0.8);
+    --shadeColor: rgba(0, 0, 0, 0.275);
 }
 
-#webTabCont{
-    background-color: var(--tabColor);
+#boardTab{
+    background-color: var(--boardBackgroundColor);
+    padding: 5px 7px;
 
-    position: absolute;
-    height: 100vh;
-    width: var(--sidebarWidth);
-
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-
-    z-index: 200;
-}
-#boardTabCont{
-    margin-top: 3vh;
+    white-space: nowrap;
+    padding-bottom: 10px;
 }
 
-.boardTab{
-    padding: 3px;
-    width: fit-content;
-}
-
-.boardTabCollapse{
-    margin-left: var(--tabMarginLeft);
-}
 .boardTabCollapse::before{
     content: "[";
 }
 .boardTabCollapse::after{
     content: "]";
 }
-.boardTabUnCollapse{
-    background-color: var(--tabColor);
-    padding-bottom: 3px;
-    padding-right: 5px;
-    white-space: nowrap;
+#boardTabCont{
+    padding-left: 10px;
 }
-.boardTabUnCollapse::before{
-    content: "[>";
-    margin-left: var(--tabMarginLeft);
-    padding-right: 20px;
+.boardTabItem{
+    padding: 2px 7px;
 }
-.boardTabUnCollapse::after{
-    content: "]";
+.boardTabItem:hover{
+    background-color: var(--shadeColor);
+    text-decoration: underline;
 }

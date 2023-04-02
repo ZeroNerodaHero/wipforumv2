@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import apiRequest from '../apiRequest/apiRequest';
 import "./mainContent.css"
+import UserProfile from '../userProfile.js/userProfile';
+import WebTab from '../webTabs/webTabs';
 
 function MainContent(props){
+    const [currentBoard,setCurrentBoard] = useState({shortHand:"h",longHand:"home"})
     return (
         <div id="mainContent" >
-            <MainContentTabs currentBoard={props.currentBoard}/>
+            <MainContentTabs currentBoard={currentBoard} setCurrentBoard={setCurrentBoard}/>
             <div id="mainContentDisplayer">
                 <MenuBar />
-                <ThreadCont currentBoard={props.currentBoard}/>
+                <ThreadCont currentBoard={currentBoard}/>
             </div>
         </div>
     )
@@ -52,6 +55,7 @@ function ThreadCont(props){
         "POST").then((data)=>{
             if(data["code"]!=0){
                 setThreadList(data["threadList"]);
+                setActiveThread(-1);
             }
         })
     },[props.currentBoard,forceUpdateCnt])
@@ -73,7 +77,6 @@ function ThreadCont(props){
             }
             <div className='threadViewCont'>
                 <div className='threadCont'>
-                    <ThreadViewDisplay setActiveThread={setActiveThread} />
                     {
                         threadList.map((item)=>(<ThreadViewDisplay setActiveThread={setActiveThread}
                             threadName={item["threadTitle"]} threadThumb={item["imageLinks"]}
@@ -125,7 +128,7 @@ function GUIcont(props){
                 }
 
                 console.log(postObject)
-                if(imageUpload.length > 0){
+                if(imageUpload != -1 && imageUpload.length > 0){
                     console.log("HAS IMG")
                     hasImg = true;
                     var tmpData = new FormData();
@@ -150,6 +153,7 @@ function GUIcont(props){
                             props.refreshActive();        
                             console.log("ok",props.activeThread)
                         }
+                        setImageUpload(-1)
                     }
                 })
             }}>Enter</div>
@@ -230,14 +234,11 @@ function ActiveThreadDisplayer(props){
                     </div>
                 </div>
                 <div className='activeThreadBody'>
-                    { message["imageLinks"].length == 0 ? <div /> :
-                    
+                    {console.log(message["imageLinks"])}
+                    { 
+                    message["imageLinks"] == undefined ? <div /> :
                     <div className='imageContentDisplayer'>{
                         <img src={message["imageLinks"]} key={message["imageLinks"]}/>
-                        /*
-                        message["imageLinks"].map((imageLnk)=>(
-                            <img src={imageLnk} key={imageLnk}/>
-                        ))*/
                         }</div>
                     }
                     <div className='textContentDisplayer'>{
@@ -249,9 +250,11 @@ function ActiveThreadDisplayer(props){
     };
 
     return (
-        <div id="activeThreadCont" onClick={(e)=>{e.stopPropagation()}}>
+        <div id="activeThreadCont" >
+            <div id="activeThreadConstraint" onClick={(e)=>{e.stopPropagation()}}>
             <div id="activeThreadTitle">{"test"}</div>
             { activeThreadMessages.map((message)=>(displayActiveContent(message)))}
+            </div>
         </div>
     )
 }
@@ -285,17 +288,30 @@ function ThreadViewDisplay(props){
     )
 }
 
+/*
+webtabs
+*/
 function MainContentTabs(props){
-    const [leftItems,setLeftItems] = useState([{name:"left_tab"}])
-    const [rightItems,setRightItems] = useState([{name:"right_tab"}])
-
+    const [expandLeft,setExpandLeft] = useState(0);
+    useEffect(()=>{console.log("update")},[expandLeft])
     return (
         <div id="mainContentTabs">
             <div id="mainContentTabs_left">
-                <div>/{props.currentBoard["shortHand"]}/-{props.currentBoard["longHand"]}</div>
+                <div id="showBoards" onMouseEnter={()=>{setExpandLeft(1)}} onMouseLeave={()=>{setExpandLeft(0)}}
+                    onClick={()=>{console.log("ok")}}>
+                    <div>
+                        /{props.currentBoard["shortHand"]}/-{props.currentBoard["longHand"]}
+                    </div>
+                    {
+                    expandLeft  == 0 ? <div></div> :
+                    <div id="boardExpandedCont"><WebTab setCurrentBoard={props.setCurrentBoard }/></div>
+                }  
+                </div>
+                 
             </div>
             <div id="mainContentTabs_right">
-                <div>test</div>
+                <UserProfile />
+                
             </div>
         </div>
     )

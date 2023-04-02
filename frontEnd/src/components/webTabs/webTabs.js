@@ -2,11 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import apiRequest from '../apiRequest/apiRequest';
 import "./webTabs.css"
 
-import UserProfile from '../userProfile/userProfile';
-
 
 function WebTab(props){
-    const [userName,setUserName] = useState("Test")
     const [boardList,setBoardList] = useState([]);
     useEffect(()=>{
         apiRequest("http://localhost:8070/","",
@@ -20,35 +17,25 @@ function WebTab(props){
         })
     },[])
     return (
-        <div id="webTabCont">
+        <div id="boardTab">
+            <div id="boardTabHeader">Boards:</div>
+            <div id="boardPage"></div>
             <div id="boardTabCont">
                 {boardList.map((item)=>(<BoardTab key={item["shortHand"]} 
                     shortHand={item["shortHand"]} longHand={item["longHand"]} 
                     setCurrentBoard={props.setCurrentBoard}
                 />))}
             </div>
-            <div>
-                <UserProfile></UserProfile>
-            </div>
+            <div id="addNewBoard">Search</div>
         </div>
     )
 }
 
 function BoardTab(props){
-    const [boardDisplay, setBoardDisplay] = useState(0)
-    const updateBoardDisplay = ()=>{setBoardDisplay(boardDisplay ^ 1)}
     return (
-        <div className='boardTab' onMouseEnter={updateBoardDisplay} onMouseLeave={updateBoardDisplay} 
+        <div className='boardTabItem'
             onClick={()=>{props.setCurrentBoard({shortHand:props.shortHand,longHand:props.longHand})}}>
-            {boardDisplay==0 ? 
-                <div className='boardTabCollapse'>
-                    {props.shortHand}
-                </div>
-                : 
-                <div className='boardTabUnCollapse'>
-                    {props.longHand}
-                </div>
-            }
+            /{props.shortHand}/-{props.longHand}
         </div>
     )
 }

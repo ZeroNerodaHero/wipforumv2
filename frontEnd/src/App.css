@@ -20,6 +20,8 @@
   overflow: hidden;
 }
 #AppMainContent{
+  /*
   margin-left: var(--sidebarWidth);
+  */
   height: 100vh;
 }

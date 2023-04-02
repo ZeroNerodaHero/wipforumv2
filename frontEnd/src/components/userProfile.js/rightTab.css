@@ -1,0 +1,84 @@
+:root{
+    --userBackgroundColor: rgba(151, 255, 151, 0.8);
+}
+/* underlay stuff */
+#resetRightTabUnderlay{
+    background-color: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    top:0;
+    left:0;
+    z-index: 200;
+}
+
+#userProfileCont{
+    position: relative;
+}
+#userProfileExpanded{
+    position: absolute;
+    right: 0;
+    z-index: 1000;   
+    width: max-content;
+    background-color: var(--userBackgroundColor);
+}
+#userProfileInfoCont{
+    display: grid;
+    grid-template-columns: 100px max-content;
+}
+#userProfilePic{
+    height: auto;
+    width: 100%;
+}
+#userProfileImgInfo{
+    height: 100%;
+    width: 100%;
+}
+#userProfileName{
+    display: flex;
+}
+#userProfileName > div{
+    margin: 0px 7px;
+}
+#userProfileTextInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: space-around;
+}
+#userProfileTextInfo > div {
+    width: fit-content;
+    margin: 3px;
+}
+#userProfileButtonCont{
+    text-align: end;
+}
+
+/* login */
+#userLoginCont{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 13px 7px;
+}
+#userLoginHeader{
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding-bottom: 3px;
+}
+#userLoginCont > input {
+    display: block;
+}
+#userLoginButtonCont{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 7px;
+}
+#userLoginButtonCont > div {
+    padding: 3px 5px;
+}
+#userLoginButtonCont > div:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
