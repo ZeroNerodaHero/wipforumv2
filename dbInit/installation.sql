@@ -65,3 +65,8 @@ INSERT INTO threadList(threadTitle,boardReference,permLevel,threadPriority,threa
     VALUES("Get fun pills","h",98,100,0,1);
 INSERT INTO messageList(threadReference,messageContent,messageOwner,imageLinks)
     VALUES(1,"This is hello world from me, eve!!! :33 <- double chin fat cat",0,"https://media.discordapp.net/attachments/700130094844477561/948468498726809600/1646150889277.png");
+INSERT INTO threadList(threadTitle,boardReference,permLevel,threadPriority,threadOP,firstPostLink)
+    VALUES("Welcome to Meta.","m",98,100,0,2);
+INSERT INTO messageList(threadReference,messageContent,messageOwner,imageLinks)
+    VALUES(2,"We talk about shit this site goes through. I have debugged this that now i just talk to myself. i am such a schizo lmao lmao i am seeing demons in the walls wtf. why is that thing moving also why is there so much random noise here holy shit my mic and my earbuds ar fucikfidsnfa afdsafa",
+        0,"https://cdn.discordapp.com/attachments/482613781818769408/1075656517879078942/IMG_8995.jpg");
