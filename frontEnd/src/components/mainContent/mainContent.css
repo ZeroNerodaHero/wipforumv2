@@ -131,7 +131,8 @@
     padding: 3px 3px;
 }
 .activeThreadBody{
-    display: flex;
+    display: grid;
+    grid-template-columns: 20% auto;
 }
 .messageInfo{
     display: flex;
@@ -159,7 +160,7 @@
 }
 
 .imageContentDisplayer{
-    width: 20%;
+    width: 100%;
 }
 .imageContentDisplayer img{
     width: 100%;

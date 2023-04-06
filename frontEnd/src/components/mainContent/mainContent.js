@@ -101,6 +101,7 @@ function ThreadCont(props){
             <div className='threadViewCont'>
                 <div className='threadCont'>
                     {
+                        threadList === undefined ? <div/> :
                         threadList.map((item)=>(
                         <ThreadViewDisplay setActiveThread={setActiveThread}
                             threadName={item["threadTitle"]} threadThumb={item["imageLinks"]}
@@ -193,7 +194,7 @@ function GUIcont(props){
                         postObject = tmpData;
                         postObject.append("messageImage",imageUpload[0])
                     }
-                    apiRequest("http://localhost:8070/","",postObject,"POST",hasImg).
+                    apiRequest("http://localhost:8080/","",postObject,"POST",hasImg).
                     then((data)=>{
                         console.log(data)
                         if(data["code"] == 1){
@@ -289,7 +290,7 @@ function ActiveThreadDisplayer(props){
         ]
     )
     useEffect(()=>{
-        apiRequest("http://localhost:8070/","",
+        apiRequest("http://localhost:8080/","",
         {
             option: 1002,
             activeThread: props.activeThread,
@@ -324,9 +325,14 @@ function ActiveThreadDisplayer(props){
                 <div className='activeThreadBody'>
                     { 
                     message["imageLinks"] == undefined ? <div /> :
-                    <div className='imageContentDisplayer'>{
-                        <img src={message["imageLinks"]} key={message["imageLinks"]}/>
-                        }</div>
+                        <div className='imageContentDisplayer'>
+                            <img src={message["imageLinks"]} onClick={(e)=>{
+                                var gridEncap = e.target.parentNode.parentNode
+                                gridEncap.style.display = (gridEncap.style.display === "" ?
+                                    "block":"") 
+                                e.target.scrollIntoView()
+                            }}/>
+                        </div>
                     }
                     <div className='textContentDisplayer'>{
                         message["messageContent"]

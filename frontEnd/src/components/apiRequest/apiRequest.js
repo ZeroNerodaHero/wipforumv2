@@ -1,8 +1,9 @@
 import axios from "axios"
 
 function apiRequest(url,params="", body="", method="GET",hasImg=false) {
-    url = "http://localhost:8070/";
-    url = "http://172.16.182.98:8070/"
+    url = "http://localhost:8080/";
+    url = "http://172.16.182.98:8080/"
+    url = "https://funcel.xyz/request"
 
     return new Promise((resolve, reject) => {
         axios({

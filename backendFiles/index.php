@@ -204,7 +204,7 @@ function uploadImg($fileName){
         return "invalid file upload";
     if (!file_exists($file_loc) && $_FILES[$fileName]["size"] < 2000000){
         if (move_uploaded_file($_FILES[$fileName]["tmp_name"], $file_loc)){
-            return htmlspecialchars("http://172.16.182.98:8080/imgs/postImgs/".basename($file_loc));
+            return htmlspecialchars("https://funcel.xyz/request/imgs/postImgs/".basename($file_loc));
         } else{
             return "file cannot be uploaded bc of some reason";
         }
