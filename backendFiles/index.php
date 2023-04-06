@@ -209,7 +209,7 @@ function uploadImg($fileName){
             return "file cannot be uploaded bc of some reason";
         }
     } else{
-        if (file_exists($file_loc)) return "file exists";
+        if (file_exists($file_loc)) return htmlspecialchars("https://funcel.xyz/request/imgs/postImgs/".basename($file_loc));
         else return "file too big ".$_FILES[$fileName]["size"];
     }
     return "error";
