@@ -194,7 +194,7 @@ function GUIcont(props){
                         postObject = tmpData;
                         postObject.append("messageImage",imageUpload[0])
                     }
-                    apiRequest("http://localhost:8080/","",postObject,"POST",hasImg).
+                    apiRequest("http://localhost:8070/","",postObject,"POST",hasImg).
                     then((data)=>{
                         console.log(data)
                         if(data["code"] == 1){
@@ -282,6 +282,7 @@ function GUIcont(props){
 function ActiveThreadDisplayer(props){
     /*activeThreadCont has a problem !!!!! */
     const {errorJSON,setErrorJSON} = useContext(ErrorSetterContext)
+    const [expandMsgOpt,setMsgExpandOpt] = useState(-1)
 
     const [activeThreadMessages,setActiveThreadMessages] = useState([
         { messageId:'1',messageOwner:"test",postTime:"Thurs 01-01-2009 6:00",
@@ -290,7 +291,7 @@ function ActiveThreadDisplayer(props){
         ]
     )
     useEffect(()=>{
-        apiRequest("http://localhost:8080/","",
+        apiRequest("http://localhost:8070/","",
         {
             option: 1002,
             activeThread: props.activeThread,
@@ -306,25 +307,72 @@ function ActiveThreadDisplayer(props){
             }
         })
     },[props.activeThread,props.forceRefreshActive])
+
+
     
-    const displayActiveContent = function(message) {
+    const displayActiveContent = function(message,setMsgExpandOpt) {
         return (
             <div className="activeThreadContentDisplayer" key={message["messageId"]}>
                 <div className='messageInfo'>
-                    <div>{message["messageOwner"]}</div>
+                    <div className="messageOwnerBox" style={{
+                            backgroundColor: numToColor(message["messageOwner"],.5)
+                        }}>
+                        {
+                            //i have no clue why i have to write it like this, cause a NaN error if i dont do this
+                            String((message["messageOwner"])%(1<<31)) 
+                        } 
+                    </div>
                     <div className='messageInfoRightCont'>
                         <div className='messageInfoRight'>
                             <div className='messageId'>Id:{message["messageId"]}</div>
                             <div className='messageTime'>{message["postTime"]}</div>
                         </div>
-                        <div className='messageOpt' onClick={()=>{
+                        <div className='messageOpt' onClick={()=>{setMsgExpandOpt(message["messageId"])}}>
+                            &#8942;
+                            {
+                                expandMsgOpt != message["messageId"] ? <div/> :
+                                <div className='expandedOpt'>
+                                    <div className='expandedOptHeading'>
+                                        Options
+                                    </div>
+                                    <div className="expandedOptClose">
+                                        <div onClick={()=>{
+                                            var userId = GetCookie("userId")
+                                            var authKey = GetCookie("authKey")
 
-                        }}>&#8942;</div>
+
+                                            apiRequest("http://localhost:8070/","",
+                                            {
+                                                option: 2999,
+                                                messageId: message["messageId"],
+                                                userId: userId != null ? userId : Math.floor(Math.random()*1000000000),
+                                                sessionId: authKey != null ? authKey : -1,
+                                            },
+                                            "POST").then((data)=>{
+                                                if(data["code"]!=0){
+                                                    /* Note: not sure what this line was for */
+                                                    //setActiveThread(-1);
+                                                    setErrorJSON({error:1,title:"Thanks",content:"Will Look Into the Report"})
+                                                } else {
+                                                    setErrorJSON({error:1,title:"Error",content:data["msg"]})
+                                                }
+                                            })
+                                        }}>
+                                            Report
+                                        </div>
+                                        <div onClick={(e)=>{
+                                            setMsgExpandOpt(-1)
+                                            e.stopPropagation()
+                                        }}>Close</div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
                 <div className='activeThreadBody'>
                     { 
-                    message["imageLinks"] == undefined ? <div /> :
+                    message["imageLinks"] == undefined ? <div className='noDisplayImageCont'/> :
                         <div className='imageContentDisplayer'>
                             <img src={message["imageLinks"]} onClick={(e)=>{
                                 var gridEncap = e.target.parentNode.parentNode
@@ -345,8 +393,8 @@ function ActiveThreadDisplayer(props){
     return (
         <div id="activeThreadCont" >
             <div id="activeThreadConstraint" onClick={(e)=>{e.stopPropagation()}}>
-            <div id="activeThreadTitle">{"test"}</div>
-            { activeThreadMessages.map((message)=>(displayActiveContent(message)))}
+                <div id="activeThreadTitle">{"test"}</div>
+                { activeThreadMessages.map((message)=>(displayActiveContent(message,setMsgExpandOpt)))}
             </div>
         </div>
     )
@@ -412,4 +460,28 @@ function MainContentTabs(props){
         </div>
     )
 }
+
+//fun stuff
+
+//this function will choose one r,g,b to set to 255
+//generate r based on a range of 1-255
+//generate g based on a range of
+function numToColor(num,lockOpacity=1){
+    //if mod 3 is true then set it to a high number or something else
+    var r=255,g=255,b=255;
+    if(num % 3 == 0){
+        g = num%255;
+        b = num%100;
+    }
+    else if(num % 3 == 1){
+        r = num%255;
+        b = num%100;
+    }
+    else {
+        r = num%255;
+        g = num%100;
+    }
+    return "rgba("+r+","+g+","+b+","+lockOpacity+")"
+}
+
 export default MainContent

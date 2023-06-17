@@ -67,11 +67,13 @@
 }
 .threadTitleText{
     font-weight: bold;
+    color: #e6e7ea;
 }
 .threadBodyCont{
     margin: var(--thumbPadding);    
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
+    color: #e6e7ea;
 }
 .threadImgCont{
     width: 100%;
@@ -86,12 +88,12 @@
 .threadMiscInfo{
     position: absolute;
     bottom: 0;
-    right: 0;
+    left: 0;
     font-size: 0.9rem;
     background-color: rgba(159, 255, 159, 0.4);
 
     border-top: 1px black solid;
-    border-left: 1px black solid;
+    border-right: 1px black solid;
     padding: 0px 3px;
 }
 
@@ -122,6 +124,7 @@
     box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.4);
     -webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.4);
     -moz-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.4);
+    z-index: 3;
 }
 .activeThreadContentDisplayer{
     margin-top: 3px;
@@ -146,12 +149,47 @@
     display: flex;
     text-decoration: underline;
 }
+.messageOwnerBox{
+    border: 1px black solid;
+    padding: 0px 4px;
+}
+
 .messageOpt{
     margin-left: 3px;
+    position: relative;
 }
 .messageOption{
     text-decoration: none;
 }
+.expandedOpt{
+    border: 1px black solid;
+    padding: 3px 5px;
+
+    position: absolute;
+    right: 1rem;
+    background: white;
+    top: 0;
+    z-index: 2;
+}
+.expandedOptHeading{
+    text-align: left;
+    margin-right: 21px;
+}
+.expandedOptClose{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.expandedOptClose > div{
+    border: 1px black solid;
+    width: fit-content;
+    margin-bottom: 2px;
+    padding: 0px 5px;
+}
+.expandedOptClose > div:hover{
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
 .messageId{
     margin-right: 7px;
 }
@@ -164,6 +202,9 @@
 }
 .imageContentDisplayer img{
     width: 100%;
+}
+.noDisplayImageCont{
+    display: none;
 }
 
 .textContentDisplayer{
@@ -474,3 +515,4 @@
     font-size: .9rem;
     font-style: italic;
 }
+
