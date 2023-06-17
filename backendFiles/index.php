@@ -1,4 +1,3 @@
-
 <?php 
 header('Access-Control-Allow-Origin: *');    
 header('Access-Control-Allow-Headers:  *');
@@ -95,12 +94,13 @@ else if($option == 1002){
 }
 /* option 2000**** */ 
 else if($option >= 2000 && $option <= 2999){
-    $imgPerm = false;
-    if(userIsAuthed($hData["userId"],$hData["sessionId"]) != null){
-        $imgPerm = true;
+    $loggedIn = false;
+    if(!empty($hData["userId"]) && !empty($hData["sessionId"]) 
+        && userIsAuthed($hData["userId"],$hData["sessionId"]) != null){
+        $loggedIn = true;
     }
     if($option == 2000){
-        if($imgPerm && !empty($hData["currentBoard"]) && !empty($hData["threadTitle"]) && 
+        if($loggedIn && !empty($hData["currentBoard"]) && !empty($hData["threadTitle"]) && 
             !empty($hData["messageContent"]) && !empty($hData["userId"]) && 
             !empty($_FILES["messageImage"]["name"])
             && strlen($hData["messageContent"]) < 2000){
@@ -115,9 +115,17 @@ else if($option >= 2000 && $option <= 2999){
     else if($option == 2001){
         if (!empty($hData["threadId"]) && !empty($hData["messageContent"])) {
             $retStr = '{"code":1}';
-            addMessage($hData["threadId"], $hData["messageContent"], $hData["userId"],$imgPerm);
+            addMessage($hData["threadId"], $hData["messageContent"], $hData["userId"],$loggedIn);
         } else{
             $retStr= generateError("Missing items");
+        }
+    }
+    else if($option == 2999){
+        if($loggedIn && !empty($hData["messageId"])){
+            reportMessage($hData["messageId"]);
+            $retStr=json_encode(Array("code"=>1));
+        } else{
+            $retStr=generateError("Please Login To Report This Post");
         }
     }
 }
@@ -193,7 +201,7 @@ function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner){
 
 //returns either the link or null
 function uploadImg($fileName){ 
-    global $post_image_dir;
+    global $post_image_dir,$host_computer_loc;
     $file_loc = $post_image_dir . basename($_FILES[$fileName]["name"]);
     $imageFileType = strtolower(pathinfo($file_loc,PATHINFO_EXTENSION));
     if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
@@ -204,15 +212,23 @@ function uploadImg($fileName){
         return "invalid file upload";
     if (!file_exists($file_loc) && $_FILES[$fileName]["size"] < 2000000){
         if (move_uploaded_file($_FILES[$fileName]["tmp_name"], $file_loc)){
-            return htmlspecialchars("https://funcel.xyz/request/imgs/postImgs/".basename($file_loc));
+            return htmlspecialchars($host_computer_loc.basename($file_loc));
         } else{
             return "file cannot be uploaded bc of some reason";
         }
     } else{
-        if (file_exists($file_loc)) return htmlspecialchars("https://funcel.xyz/request/imgs/postImgs/".basename($file_loc));
+        if (file_exists($file_loc)) return htmlspecialchars($host_computer_loc.basename($file_loc));
         else return "file too big ".$_FILES[$fileName]["size"];
     }
     return "error";
+}
+
+function reportMessage($messageId,$value=1){
+    global $conn;
+    $que = "UPDATE messageList
+            SET isReported = $value
+            WHERE messageId=".$messageId;
+    $conn->query($que);
 }
 /*
 code 0-999: user info

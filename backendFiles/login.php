@@ -19,4 +19,8 @@
     function generateError($msg,$errorCode=0){
         return '{"code":'.$errorCode.',"msg":"'.$msg.'"}';
     }
+
+    $host_computer_loc = "https://funcel.xyz/request/imgs/postImgs/";
+    $host_computer_loc = "http://172.17.0.1:8070/imgs/postImgs/"; 
+
 ?>
