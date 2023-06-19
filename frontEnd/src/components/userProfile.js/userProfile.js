@@ -2,14 +2,22 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import apiRequest from '../apiRequest/apiRequest';
 import "./rightTab.css"
 import UserSquare from '../createBox/generateBoxImage';
+import ModeratePrompt from './moderatePrompt/moderate';
 import SetCookie, {ClearCookies, GetCookie} from "../cookieReader/cookieReader"
 import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
 
 function UserProfile(props){
     const [profileState, setProfileState] = useState(0)
     const [tabState, setTabState] = useState(0)
+
     const [profileName,setProfileName] = useState("ERROR")
-    const [expandedProfile, setExpandedProfile] = useState(<LoginTab setTabState={setTabState} setProfileName={setProfileName}/>)
+    const [accountPerm,setAccountPerm] = useState(-1)
+    function updateProfileTab(new_profileName,new_accountPerm){
+        setProfileName(new_profileName);
+        setAccountPerm(new_accountPerm)
+    }
+
+    const [expandedProfile, setExpandedProfile] = useState(<LoginTab setTabState={setTabState} updateProfileTab={updateProfileTab}/>)
     const changeState = ()=>{setProfileState(profileState^1)}
 
     useEffect(()=>{
@@ -25,7 +33,8 @@ function UserProfile(props){
             },
             "POST").then((data)=>{
                 if(data["code"]!=0){
-                    setProfileName(data["username"])
+                    setProfileName(data["userName"])
+                    setAccountPerm(data["accountPerm"])
                     setTabState(3)
                 }
             })
@@ -34,13 +43,13 @@ function UserProfile(props){
 
     useEffect(()=>{
         if(tabState == 1){
-            setExpandedProfile(<LoginTab setTabState={setTabState} setProfileName={setProfileName}/>)
+            setExpandedProfile(<LoginTab setTabState={setTabState} updateProfileTab={updateProfileTab}/>)
         } 
         else if(tabState == 2){
             setExpandedProfile(<CreateAccount setTabState={setTabState}/>)
         } 
         else if(tabState == 3){
-            setExpandedProfile(<UserInfo setTabState={setTabState} profileName={profileName}/>)
+            setExpandedProfile(<UserInfo setTabState={setTabState} profileName={profileName} accountPerm={accountPerm}/>)
         }
     },[tabState])
 
@@ -86,7 +95,7 @@ function LoginTab(props){
                                 console.log(data)
                                 SetCookie("userId",data["userId"],7);
                                 SetCookie("authKey",data["authKey"],7);
-                                props.setProfileName(data["username"])
+                                props.updateProfileTab(data["userName"],data["accountPerm"])
                                 props.setTabState(3)
                             } else{
                                 setErrorJSON({error:1,title:"Failed to Login",content:data["msg"]})
@@ -139,8 +148,14 @@ function CreateAccount(props){
     )
 }
 function UserInfo(props){
+    const [showModerate,setModerate] = useState(false);
+    function toggleModerate(){setModerate(false)}
+
     return (
         <div id="userProfileExpanded">
+            {showModerate == false ? <div/>:
+                <ModeratePrompt toggleModerate={toggleModerate}/>
+            }
             <div id="userProfileInfoCont">
                 <UserSquare userId={GetCookie("userId")}/>
                 <div id='userProfileTextInfo'>
@@ -148,6 +163,11 @@ function UserInfo(props){
                         <div><b>Hello, </b> {props.profileName}</div>
                     </div>
                     <div id="userProfileButtonCont">
+                        {props.accountPerm < 80 ? <div/>:
+                            <div className="profileButton" onClick={()=>{
+                                setModerate(true)
+                            }}>MODERATE</div>
+                        }
                         <div className="profileButton">SETTINGS</div>
                         <div className="profileButton" onClick={()=>{
                             ClearCookies();

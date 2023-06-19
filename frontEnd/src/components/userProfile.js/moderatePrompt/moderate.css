@@ -1,0 +1,82 @@
+#moderatePromptCont{
+    position: fixed;
+    z-index: 1100;
+    left: 0;
+    top:0;
+    
+    display: grid;
+    align-items: center;
+    justify-content: center;
+
+
+    background-color: rgba(0, 0, 0, 0.1);
+
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
+
+}
+#moderatePrompt{
+    border: 1px black solid;
+    background-color: white;
+
+    width: 90vw;
+    height: 90vh;
+    height: 90dvh;
+
+    display: grid;
+}
+#moderatePromptConstraint{
+    height: inherit;
+    display: grid;
+    grid-auto-rows: 25% 50% 25%;
+}
+
+#siteStats{
+    display: flex;
+    padding: 3px;
+}
+#moderatePosts{
+    padding: 3px;
+}
+#moderateUsers{
+    padding: 3px;
+    padding-bottom: 10px;
+}
+/* Stats*/
+.statBox{
+    border: 1px black solid;
+    width: 100%;
+    height: 100%;
+    margin: 0px 3px;
+}
+.statsTableCont{
+    width: 100%;
+    height: 92%;
+    border: 1px black solid;
+    overflow: auto;
+}
+.statsTable{
+    display: flex;
+    flex-direction: column;
+
+
+}
+
+
+.moderateBox{
+    margin-bottom: 3px;
+}
+.moderatePaddingBox{
+    padding: 3px;
+    height: 100%;
+    display: grid;
+    grid-template-rows: max-content auto;
+    align-items: center;
+
+    border: 1px black solid
+}
+.moderateHeader{
+    font-size: 1.1rem;
+    font-weight: bold;
+}

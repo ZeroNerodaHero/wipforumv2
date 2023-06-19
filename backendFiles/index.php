@@ -35,8 +35,8 @@ else if($option == 2){
     if(!empty($hData["username"]) && !empty($hData["password"])){
         $ret = hasUserAccount($hData["username"], $hData["password"]);
         if( $ret != null ){
-            $retStr = '{"code":1,"userId":"'.$ret[0].'","authKey":"'.$ret[1].
-                '","username":"'.$hData["username"].'"}';
+            $ret["code"] = 1;
+            $retStr = json_encode($ret);
         } else{
             $retStr = '{"code":0,"msg":"Account not found. Please dm me if you need help."}';
         }
@@ -44,9 +44,10 @@ else if($option == 2){
 }
 else if($option == 3){
     if(!empty($hData["userId"]) && !empty($hData["authKey"])){
-        $getUserName = userIsAuthed($hData["userId"], $hData["authKey"]);
-        if( $getUserName != null ){
-            $retStr = '{"code":1,"username":"'.$getUserName.'"}';
+        $getUser = userIsAuthed($hData["userId"], $hData["authKey"]);
+        if( $getUser != null ){
+            $getUser["code"] = 1;
+            $retStr = json_encode($getUser);
         }
     } 
 }
@@ -132,14 +133,44 @@ else if($option >= 2000 && $option <= 2999){
 else if($option == 3000){
     
 }
+else if($option >= 9000 && $option <= 9999){
+    if(!empty($hData["userId"]) && !empty($hData["authKey"]) && userIsAuthed($hData["userId"],$hData["authKey"],80) != null){
+        if($option == 9000){
+            //this is for generate messageStats
+        }
+        else if($option == 9001){
+            //this is for generating boardStats
+        }
+        else if($option == 9002){
+            //this is for generating flagged posts
+            $report = getReportedMessage();
+            $retStr = json_encode(Array(
+                "code"=>1,
+                "reportList"=>$report
+            ));
+        }
+        else if($option == 9003){
+            //this is for generating user list
+        }
+    } else{
+        $retStr=generateError("Error. You are not supposed to see this code. Get out.");
+    }
+}
 
 echo $retStr;
-function userIsAuthed($userId,$authKey){
+
+//this function doubles as a long. and a perm checker
+function userIsAuthed($userId,$authKey,$permLevel=0){
     global $conn;
-    $que = "SELECT userName FROM userList WHERE userId=$userId and authKey=$authKey";
+    $que = "SELECT * FROM userList WHERE userId=$userId and authKey=$authKey and accountPerm >= $permLevel";
     $res = $conn->query($que);  
-    return ($res->num_rows == 0 ? null : $res->fetch_assoc()["userName"]);
+    if($res->num_rows == 0) return null;
+    $ret = $res->fetch_assoc();
+
+    unset($ret["password"]);
+    return $ret;
 }
+
 function hasUserAccount($username, $password){
     global $conn;
     $que = "SELECT userId FROM userList WHERE userName='$username' and password='$password'";
@@ -151,7 +182,8 @@ function hasUserAccount($username, $password){
             SET authKey = $authKey
             WHERE userId=$userId";
     $conn->query($que);  
-    return [$userId,$authKey];
+
+    return userIsAuthed($userId,$authKey);
 }
 function createUserAccount($username,$password){
     global $conn;
@@ -229,6 +261,12 @@ function reportMessage($messageId,$value=1){
             SET isReported = $value
             WHERE messageId=".$messageId;
     $conn->query($que);
+}
+function getReportedMessage(){
+    global $conn;
+    $que = "SELECT * FROM messageList WHERE isReported=1";
+    $res = $conn->query($que);
+    return $res->fetch_all(MYSQLI_ASSOC);
 }
 /*
 code 0-999: user info
