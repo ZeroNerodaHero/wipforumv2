@@ -152,6 +152,27 @@ else if($option >= 9000 && $option <= 9999){
         else if($option == 9003){
             //this is for generating user list
         }
+        else if($option == 9997){
+        }
+        else if($option == 9799){
+            //lock board
+        }
+        else if($option == 9898){
+            //unban user
+        }
+        else if($option == 9899){
+            //ban user
+        }
+        else if($option == 9998){
+            //delete thread
+        }
+        else if($option == 9999){
+            //delete message
+            if(!empty($hData["messageId"])){
+                deletePost($hData["messageId"]);
+            }
+            $retStr=json_encode(Array("code"=>1,"msg"=>"Deleted Message"));
+        }
     } else{
         $retStr=generateError("Error. You are not supposed to see this code. Get out.");
     }
@@ -268,12 +289,34 @@ function getReportedMessage(){
     $res = $conn->query($que);
     return $res->fetch_all(MYSQLI_ASSOC);
 }
-/*
-code 0-999: user info
-code 1000-1999: threadInfo
-code 2000-2999: adding threads/messages
-2000->add new thread
-2001->add new message
-code 
-*/
+
+function deletePost($messageId){
+    global $conn;
+    $que = "DELETE FROM messageList WHERE messageId=$messageId";
+    $conn->query($que);
+    $que = "SELECT threadId,threadSize FROM threadList WHERE firstPostLink=$messageId";
+    $res = $conn->query($que);
+
+    if($res->num_rows > 0){
+        if($res->fetch_assoc()["threadSize"] == 1) {
+            $que = "DELETE FROM threadList WHERE firstPostLink=$messageId";
+            $conn->query($que);
+        } else{
+            //find oldest and make that the first
+            $que = "SELECT messageId FROM messageList 
+                    WHERE threadReference=$messageId ORDER BY messageId LIMIT 1";
+            $res = $conn->query($que);
+            if($res->num_rows == 0) return false;
+            $newMessageId = $res->fetch_assoc()["messageId"];
+
+            $que = "UPDATE threadList 
+                    SET firstPostLink=$newMessageId
+                    WHERE firstPostLink=$messageId";
+            $conn->query($que);
+
+        }
+    }
+    return true;
+}
+
 ?>

@@ -161,6 +161,15 @@
 .messageOption{
     text-decoration: none;
 }
+.expandedOptCloseController{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 1;
+    top:0;
+    left:0;
+}
 .expandedOpt{
     border: 1px black solid;
     padding: 3px 5px;
@@ -169,7 +178,7 @@
     right: 1rem;
     background: white;
     top: 0;
-    z-index: 2;
+    z-index: 3;
 }
 .expandedOptHeading{
     text-align: left;

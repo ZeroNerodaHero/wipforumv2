@@ -42,6 +42,8 @@ function BoardStats(props){
 }
 function ModeratePosts(props){
     const [reportList,setReportList] = useState([]);
+    const [modForceReset,setModForceReset] = useState(0); 
+    function updateModReset(){setModForceReset(modForceReset^1)}
     useEffect(()=>{
         var userId = GetCookie("userId")
         var authKey = GetCookie("authKey")
@@ -56,11 +58,12 @@ function ModeratePosts(props){
                 /* Note: not sure what this line was for */
                 //setActiveThread(-1);
                 console.log(data)
+                setReportList(data["reportList"])
             } else{
                 console.log("failed ",data)
             }
         })
-    },[])
+    },[modForceReset])
 
     return (
         <div id="moderatePosts" className='moderateBox'>
@@ -68,6 +71,52 @@ function ModeratePosts(props){
                 <div className='moderateHeader'>Moderate Posts</div>
                 <div className="statsTableCont">
                     <div className='statsTable'>
+                        {reportList.map((item)=>(
+                            <div key={item["messageId"]} className="statsTableItem">
+                                <div className='statTime'>{item["postTime"]}</div>
+                                <div className='statsTableContent' style={{display:item["imageLinks"] == null ? "block":"grid"}}>
+                                    <div className='statsItemLeft'>
+                                        <div>{item["messageContent"]}</div>
+                                    </div>
+                                    { 
+                                        item["imageLinks"] == null ? <div style={{display:"none"}}/> :
+                                        <div className='statsItemRight'>
+
+                                            <div className='statsTableImgConstraint'>
+                                                <img src={item["imageLinks"]} className="statsTableImg"/>
+                                            </div>
+
+                                        </div>
+                                    }
+                                </div>
+                                <div className='statOptionButtonConstraint'>
+                                    <div className='statOptionButtonCont'>
+                                        <div className='statOptionButton' onClick={()=>{
+                                            var userId = GetCookie("userId")
+                                            var authKey = GetCookie("authKey")
+                                            apiRequest("http://localhost:8070/","",
+                                            {
+                                                option: 9999,
+                                                userId: userId,
+                                                authKey: authKey,
+                                                messageId: item["messageId"]
+                                            },
+                                            "POST").then((data)=>{
+                                                if(data["code"]!=0){
+                                                    updateModReset();
+                                                } else{
+                                                }
+                                            })
+                                        }}>
+                                            Delete
+                                        </div>
+                                        <div className='statOptionButton'>
+                                            Ban
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

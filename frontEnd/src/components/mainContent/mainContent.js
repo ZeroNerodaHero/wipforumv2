@@ -327,43 +327,48 @@ function ActiveThreadDisplayer(props){
                             <div className='messageId'>Id:{message["messageId"]}</div>
                             <div className='messageTime'>{message["postTime"]}</div>
                         </div>
-                        <div className='messageOpt' onClick={()=>{setMsgExpandOpt(message["messageId"])}}>
+                        <div className='messageOpt' onClick={()=>{
+                            setMsgExpandOpt(message["messageId"])
+                        }}>
                             &#8942;
                             {
                                 expandMsgOpt != message["messageId"] ? <div/> :
-                                <div className='expandedOpt'>
-                                    <div className='expandedOptHeading'>
-                                        Options
-                                    </div>
-                                    <div className="expandedOptClose">
-                                        <div onClick={()=>{
-                                            var userId = GetCookie("userId")
-                                            var authKey = GetCookie("authKey")
-
-
-                                            apiRequest("http://localhost:8070/","",
-                                            {
-                                                option: 2999,
-                                                messageId: message["messageId"],
-                                                userId: userId != null ? userId : Math.floor(Math.random()*1000000000),
-                                                sessionId: authKey != null ? authKey : -1,
-                                            },
-                                            "POST").then((data)=>{
-                                                if(data["code"]!=0){
-                                                    /* Note: not sure what this line was for */
-                                                    //setActiveThread(-1);
-                                                    setErrorJSON({error:1,title:"Thanks",content:"Will Look Into the Report"})
-                                                } else {
-                                                    setErrorJSON({error:1,title:"Error",content:data["msg"]})
-                                                }
-                                            })
-                                        }}>
-                                            Report
+                                <div>
+                                    <div className='expandedOptCloseController' onClick={(e)=>{setMsgExpandOpt(-1);e.stopPropagation();}}/>
+                                    <div className='expandedOpt'>
+                                        <div className='expandedOptHeading'>
+                                            Options
                                         </div>
-                                        <div onClick={(e)=>{
-                                            setMsgExpandOpt(-1)
-                                            e.stopPropagation()
-                                        }}>Close</div>
+                                        <div className="expandedOptClose">
+                                            <div onClick={()=>{
+                                                var userId = GetCookie("userId")
+                                                var authKey = GetCookie("authKey")
+
+
+                                                apiRequest("http://localhost:8070/","",
+                                                {
+                                                    option: 2999,
+                                                    messageId: message["messageId"],
+                                                    userId: userId != null ? userId : Math.floor(Math.random()*1000000000),
+                                                    sessionId: authKey != null ? authKey : -1,
+                                                },
+                                                "POST").then((data)=>{
+                                                    if(data["code"]!=0){
+                                                        /* Note: not sure what this line was for */
+                                                        //setActiveThread(-1);
+                                                        setErrorJSON({error:1,title:"Thanks",content:"Will Look Into the Report"})
+                                                    } else {
+                                                        setErrorJSON({error:1,title:"Error",content:data["msg"]})
+                                                    }
+                                                })
+                                            }}>
+                                                Report
+                                            </div>
+                                            <div onClick={(e)=>{
+                                                setMsgExpandOpt(-1)
+                                                e.stopPropagation()
+                                            }}>Close</div>
+                                        </div>
                                     </div>
                                 </div>
                             }

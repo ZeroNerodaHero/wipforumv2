@@ -59,11 +59,41 @@
 .statsTable{
     display: flex;
     flex-direction: column;
-
+}
+.statsTableItem{
+    border-bottom: 1px black solid;
+    margin: 3px 11px;
+}
+.statsTableContent{
+    display: grid;
+    grid-template-columns: auto 40%;
+}
+.statsTableImgConstraint{
+    width: 100%;
+}
+.statsTableImg{
+    width: 100%;
+}
+.statTime{
+    text-align: right;
+}
+.statOptionButtonConstraint{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 3px;
+}
+.statOptionButtonCont{
+    display: flex;
+}
+.statOptionButton{
+    border: 1px black solid;
+    margin: 0px 3px;
+    padding: 1px 3px;
 
 }
-
-
+.statOptionButton:hover{
+    background-color: rgb(0, 0, 0,.1);
+}
 .moderateBox{
     margin-bottom: 3px;
 }
