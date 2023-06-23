@@ -7,7 +7,7 @@ RUN apk update && \
         php-mysqli \
         mysql-client \
         curl
-VOLUME ["/etc/mysql", "/var/lib/mysql"]
+
 
 EXPOSE 80/tcp
 EXPOSE 80/udp
@@ -25,10 +25,10 @@ COPY  login.php /var/www/localhost/htdocs
 RUN mkdir /var/www/localhost/htdocs/admin
 COPY  admin.php /var/www/localhost/htdocs/admin/index.php
 
-
-RUN mkdir /var/www/localhost/htdocs/imgs
-RUN mkdir /var/www/localhost/htdocs/imgs/postImgs
+#RUN mkdir /var/www/localhost/htdocs/imgs
+RUN mkdir -p /var/www/localhost/htdocs/imgs/postImgs
 RUN chmod -R 755 /var/www/localhost/htdocs/imgs && chown -R apache imgs/
 
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+VOLUME ["/var/www/localhost/htdocs/imgs"]
 

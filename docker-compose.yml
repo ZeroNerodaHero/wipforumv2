@@ -1,13 +1,11 @@
 version: "3"
 services:
-    frontend:
-        build: reactFrontEnd/.
-        ports:
-        - "8080:3000"
     backend:
         build: backendFiles/.
         ports:
-        - "8070:80"
+            - "8070:80"
+        volumes:
+            - ./imageStorage:/var/www/localhost/htdocs/imgs
     db:
         image: mariadb:10.6
         restart: always
