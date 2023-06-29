@@ -255,12 +255,12 @@ function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner){
 //returns either the link or null
 function uploadImg($fileName){ 
     global $post_image_dir,$host_computer_loc;
-    $file_loc = $post_image_dir . basename($_FILES[$fileName]["name"]);
-    $imageFileType = strtolower(pathinfo($file_loc,PATHINFO_EXTENSION));
+    $imageFileType = strtolower(pathinfo(basename($_FILES[$fileName]["name"]),PATHINFO_EXTENSION));
     if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
         && $imageFileType != "gif" ){
             return "wrong type";
     }
+    $file_loc = $post_image_dir . rand((1<<29),(1<<31)) . "." .$imageFileType;
     if (!is_uploaded_file($_FILES[$fileName]["tmp_name"]))
         return "invalid file upload";
     if (!file_exists($file_loc) && $_FILES[$fileName]["size"] < 2000000){
