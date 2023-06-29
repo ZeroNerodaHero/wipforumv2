@@ -76,9 +76,7 @@ function ThreadCont(props){
             }
         })
     },[props.currentBoard,forceUpdateCnt])
-    useEffect(()=>{
-        console.log("UPDATE ACTIVE",activeThread);
-    },[activeThread]);
+
     useEffect(()=>{
         setThreadList(
             allThreads.filter((element)=>{
@@ -196,7 +194,7 @@ function GUIcont(props){
                     }
                     apiRequest("http://localhost:8070/","",postObject,"POST",hasImg).
                     then((data)=>{
-                        console.log(data)
+                        //console.log(data)
                         if(data["code"] == 1){
                             setAddMessageState(-1)
                             props.forceUpdate();
@@ -205,8 +203,7 @@ function GUIcont(props){
                                 props.setActiveThread(data["newThreadId"]);        
                             } else{
                                 setMessageContent("")
-                                props.refreshActive();        
-                                console.log("ok",props.activeThread)
+                                props.refreshActive();      
                             }
                             setImageUpload(-1)
                             setImageTemp(0)

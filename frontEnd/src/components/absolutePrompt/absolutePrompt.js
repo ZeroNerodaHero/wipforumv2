@@ -4,7 +4,7 @@ import "./absolutePrompt.css"
 function AbsolutePrompt(props){
     const [showPrompt,setShowPrompt] = useState(0)
     useEffect(()=>{
-        console.log(props.prompt)
+        //console.log(props.prompt)
         if(props.prompt.error !== 0){
             setShowPrompt(1)
         }
