@@ -57,6 +57,7 @@
 }
 .threadThumbNail:hover{
     transform: scale(1.02);
+    border: 2px black solid;
 }
 .threadTitle{
     background-color: rgba(0, 0, 0, 0.3);
@@ -149,6 +150,9 @@
     display: flex;
     text-decoration: underline;
 }
+.messageOwnerBoxCont{
+    padding-right: 11px;
+}
 .messageOwnerBox{
     border: 1px black solid;
     padding: 0px 4px;
@@ -223,8 +227,8 @@
 
 /* */
 #mainContent{
-    height: 98%;
-    margin: 1%;
+    height: 100%;
+    margin-top: 1%;
     overflow: hidden;
 
     display: flex;
@@ -239,6 +243,8 @@
     position: relative;
 }
 #menuCont{
+    color: white;
+
     background-color: rgb(101, 99, 122);
     position: sticky;
     top: 0;
@@ -257,18 +263,25 @@
 #threadSearchInput{
     background-color: transparent;
     border: 0px black solid;
-    border-bottom: 1px black solid;
+    border-bottom: 1px rgb(255, 255, 255) solid;
     padding: 0px 3px;
+
+    width: 100%;
+    color: white;
 }
+
 #menuCont > div{
     margin-right: 3px;
     display: flex;
     align-items: center
 }
+#menuLeftCont{
+    justify-content: flex-end;
+}
 #mainContentTabs{
     display: flex;
     justify-content: space-between;
-    margin: 0px 3px;
+    margin: 0px 5px;
 }
 #mainContentTabs_left{
     display: flex;
@@ -298,8 +311,8 @@
     align-items: flex-end;
     flex-direction: column;
     position: absolute;
-    bottom: 5px;
-    right: 5px;
+    bottom: 15px;
+    right: 15px;
     height: fit-content;
     z-index: 100;
 }
@@ -350,8 +363,8 @@
 #addMessageButton{
     font-size: 4rem;
     font-weight: bolder;
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
 
     background-color: red;
 }
@@ -525,3 +538,9 @@
     font-style: italic;
 }
 
+
+@media screen and (max-width: 768px){
+    #threadSearchInput{
+        width: 60%;
+    }
+}

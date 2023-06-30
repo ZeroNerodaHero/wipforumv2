@@ -26,23 +26,38 @@ function MainContent(props){
     )
 }
 function MenuBar(props){
-    const [threadSizeValue,setThreadSizeValue] = useState(2)
+    const [threadSizeValue,setThreadSizeValue] = useState(-1);
+
+    var userSettings = JSON.parse(localStorage.getItem("userSettings"))
+    if(userSettings == null) userSettings = {}
+    useEffect(()=>{
+        if(userSettings["threadSize"] != undefined){
+            setThreadSizeValue(userSettings["threadSize"])
+        } else{
+            setThreadSizeValue(2);
+        }
+    },[])
+
     
     useEffect(()=>{
-        document.getElementById("root").style.setProperty("--sizeOfThumbNail",(93/threadSizeValue)+"vw")
+        if(threadSizeValue != -1){
+            userSettings["threadSize"] = threadSizeValue;
+            localStorage.setItem("userSettings",JSON.stringify(userSettings))
+            document.getElementById("root").style.setProperty("--sizeOfThumbNail",(93/threadSizeValue)+"vw")
+        }
     },[threadSizeValue])
 
 
     return (
     <div id='menuCont'>
         <div>
-            Thread Size:
+            Thread&nbsp;Size:
             <input type="range" min="1" max="7" step="1" 
                 value={threadSizeValue}
                 onChange={(e)=>{setThreadSizeValue(e.target.value)}}
                 className="sliderStyle"/>
         </div>
-        <div>
+        <div id="menuLeftCont">
             Search:
             <input id="threadSearchInput" value={props.threadSearch} 
                 onChange={(e)=>{props.setThreadSearch(e.target.value)}}/>
@@ -311,18 +326,23 @@ function ActiveThreadDisplayer(props){
         return (
             <div className="activeThreadContentDisplayer" key={message["messageId"]}>
                 <div className='messageInfo'>
-                    <div className="messageOwnerBox" style={{
+                    <div className="messageOwnerBoxCont">
+                        <div className="messageOwnerBox" style={{
                             backgroundColor: numToColor(message["messageOwner"],.5)
                         }}>
-                        {
-                            //i have no clue why i have to write it like this, cause a NaN error if i dont do this
-                            String((message["messageOwner"])%(1<<31)) 
-                        } 
+                            {
+                                //i have no clue why i have to write it like this, cause a NaN error if i dont do this
+                                String((message["messageOwner"])%(1<<31)) 
+                            } 
+                        </div>
                     </div>
                     <div className='messageInfoRightCont'>
                         <div className='messageInfoRight'>
                             <div className='messageId'>Id:{message["messageId"]}</div>
-                            <div className='messageTime'>{message["postTime"]}</div>
+                            <div className='messageTime'>{ 
+                                //muthafucking longest jscript i ever wrote
+                                ((new Date(message["postTime"])).toLocaleString("en-US")).replace(/:\d+/,"").replace(/,/,"")
+                            }</div>
                         </div>
                         <div className='messageOpt' onClick={()=>{
                             setMsgExpandOpt(message["messageId"])
@@ -372,7 +392,7 @@ function ActiveThreadDisplayer(props){
                         </div>
                     </div>
                 </div>
-                <div className='activeThreadBody'>
+                <div className='activeThreadBody' style={{display:(message["imageLinks"] != undefined ? "grid" : "block")}}>
                     { 
                     message["imageLinks"] == undefined ? <div className='noDisplayImageCont'/> :
                         <div className='imageContentDisplayer'>
