@@ -11,7 +11,6 @@ if(empty($_POST)){
 } 
 if(empty($hData)){
     echo "ERROR: WHAT R U DOING HERE? GET OUT >:3 -> ";
-    updateUserIp("userId",1);
     die();
 }
 
