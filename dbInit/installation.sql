@@ -8,13 +8,16 @@ CREATE TABLE userList(
     status varchar(256),
     authKey int,
     loginDate timeStamp ON UPDATE CURRENT_TIMESTAMP,
-    creationDate timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+    creationDate timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    last_hashedLoginIp varchar(64),
 );
 CREATE TABLE messageList(
     threadReference int,
     imageLinks varchar(1000),
     messageContent varchar(2000),
     messageOwner BIGINT,
+    hashed_ip varchar(64),
 
     messageId int NOT NULL AUTO_INCREMENT,
     postTime timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -55,6 +58,12 @@ CREATE TABLE boardList(
     p2p bool DEFAULT false,
     isPrivate bool DEFAULT false,
     threadCap int DEFAULT 100
+);
+CREATE TABLE bannedIps(
+    hashed_ip varchar(64),
+    reason varchar(400),
+    startTime timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expireTime timeStamp
 );
 INSERT INTO userList(userId,userName,password,accountPerm) 
     VALUES(1,"eve","eve",99);
