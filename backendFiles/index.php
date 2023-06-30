@@ -10,7 +10,8 @@ if(empty($_POST)){
     $hData = json_decode(file_get_contents("php://input"),true);
 } 
 if(empty($hData)){
-    echo "ERROR: WHAT R U DOING HERE? GET OUT >:3";
+    echo "ERROR: WHAT R U DOING HERE? GET OUT >:3 -> ";
+    updateUserIp("userId",1);
     die();
 }
 
@@ -184,8 +185,9 @@ echo $retStr;
 function userIsAuthed($userId,$authKey,$permLevel=0){
     global $conn;
     $que = "SELECT * FROM userList WHERE userId=$userId and authKey=$authKey and accountPerm >= $permLevel";
-    $res = $conn->query($que);  
+    $res = $conn->query($que); 
     if($res->num_rows == 0) return null;
+    updateUserIp("userId",$userId); 
     $ret = $res->fetch_assoc();
 
     unset($ret["password"]);
@@ -203,6 +205,7 @@ function hasUserAccount($username, $password){
             SET authKey = $authKey
             WHERE userId=$userId";
     $conn->query($que);  
+    updateUserIp("userId",$userId);
 
     return userIsAuthed($userId,$authKey);
 }
@@ -231,9 +234,9 @@ function addMessage($threadReference,$messageContent,$messageOwner,$imgPerm=true
         die();
     }
     $messageContent = addslashes($messageContent);
-    $que = "INSERT INTO messageList(threadReference,messageContent,messageOwner,imageLinks)
+    $que = "INSERT INTO messageList(threadReference,messageContent,messageOwner,imageLinks, hashed_ip)
             VALUES($threadReference,'$messageContent',$messageOwner,".
-                (empty($imageLink) ? 'null':"'$imageLink'").")";
+                (empty($imageLink) ? 'null':"'$imageLink'").",'".getIpAddrHash()."')";
     $conn->query($que);
     return $conn->insert_id;
 }
@@ -317,6 +320,39 @@ function deletePost($messageId){
         }
     }
     return true;
+}
+
+function getIpAddrHash(){
+    $ipAddrHash = hash('sha256',getUserIP());
+    return $ipAddrHash;
+}
+
+function getUserIP(){
+    $client  = @$_SERVER['HTTP_CLIENT_IP'];
+    $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
+    $remote  = $_SERVER['REMOTE_ADDR'];
+
+    if(filter_var($client, FILTER_VALIDATE_IP))
+    {
+        $ip = $client;
+    }
+    elseif(filter_var($forward, FILTER_VALIDATE_IP))
+    {
+        $ip = $forward;
+    }
+    else
+    {
+        $ip = $remote;
+    }
+
+    return $ip;
+}
+function updateUserIp($param,$param_value){
+    global $conn;
+    $que = "UPDATE userList
+            SET last_hashedLoginIp='".getIpAddrHash()."'
+            WHERE $param='$param_value'";
+    $conn->query($que);
 }
 
 ?>
