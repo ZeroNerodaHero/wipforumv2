@@ -392,15 +392,17 @@ function ActiveThreadDisplayer(props){
                         </div>
                     </div>
                 </div>
-                <div className='activeThreadBody' style={{display:(message["imageLinks"] != undefined ? "grid" : "block")}}>
+                <div className='activeThreadBody' style={{display:(message["imageLinks"] === null ? "block" : "grid")}}>
                     { 
-                    message["imageLinks"] == undefined ? <div className='noDisplayImageCont'/> :
+                    message["imageLinks"] === null ? <div className='noDisplayImageCont'/> :
                         <div className='imageContentDisplayer'>
                             <img src={message["imageLinks"]} onClick={(e)=>{
                                 var gridEncap = e.target.parentNode.parentNode
-                                gridEncap.style.display = (gridEncap.style.display === "" ?
-                                    "block":"") 
-                                e.target.scrollIntoView()
+                                gridEncap.style.display = (gridEncap.style.display === "grid" ?
+                                    "block":"grid") 
+                                //block nearest makes it so that it scrolls to the closest element that is scrollable
+                                //initally was scrolling the APP causing wierd error
+                                e.target.scrollIntoView({behavior: "smooth",block:"nearest"})
                             }}/>
                         </div>
                     }
