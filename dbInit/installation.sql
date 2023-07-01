@@ -19,6 +19,8 @@ CREATE TABLE messageList(
     messageOwner BIGINT,
     hashed_ip varchar(64),
 
+    userReference BIGINT,
+
     messageId int NOT NULL AUTO_INCREMENT,
     postTime timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     isReported bit(1) NOT NULL DEFAULT 0,
