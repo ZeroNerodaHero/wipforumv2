@@ -6,11 +6,29 @@ import WebTab from '../webTabs/webTabs';
 import SetCookie, {ClearCookies, GetCookie} from "../cookieReader/cookieReader"
 import AbsolutePrompt from '../absolutePrompt/absolutePrompt';
 import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
+import { func } from 'prop-types';
 
 function MainContent(props){
     const [currentBoard,setCurrentBoard] = useState({shortHand:"h",longHand:"home"})
     const [threadSearch,setThreadSearch] = useState("")
     const [errorJSON,setErrorJSON] = useState({error:0})
+    const [checkStorage,setCheckStorage] = useState(false);
+
+    useEffect(()=>{
+        if(getLocalStorageItem("userSettings","currentBoard") != undefined){
+            setCurrentBoard(getLocalStorageItem("userSettings","currentBoard") )
+        } else{
+            setCurrentBoard({shortHand:"h",longHand:"home"});
+        }
+        setCheckStorage(true);
+    },[])
+    useEffect(()=>{
+        if(checkStorage !== false){
+            var userSettings = getLocalStorageItem("userSettings");
+            userSettings["currentBoard"] = currentBoard;
+            localStorage.setItem("userSettings",JSON.stringify(userSettings))
+        }
+    },[currentBoard])
 
     return (
         <div id="mainContent" >
@@ -28,19 +46,17 @@ function MainContent(props){
 function MenuBar(props){
     const [threadSizeValue,setThreadSizeValue] = useState(-1);
 
-    var userSettings = JSON.parse(localStorage.getItem("userSettings"))
-    if(userSettings == null) userSettings = {}
     useEffect(()=>{
-        if(userSettings["threadSize"] != undefined){
-            setThreadSizeValue(userSettings["threadSize"])
+        if(getLocalStorageItem("userSettings","threadSize") != undefined){
+            setThreadSizeValue(getLocalStorageItem("userSettings","threadSize") )
         } else{
             setThreadSizeValue(2);
         }
     },[])
 
-    
     useEffect(()=>{
         if(threadSizeValue != -1){
+            var userSettings = getLocalStorageItem("userSettings");
             userSettings["threadSize"] = threadSizeValue;
             localStorage.setItem("userSettings",JSON.stringify(userSettings))
             document.getElementById("root").style.setProperty("--sizeOfThumbNail",(93/threadSizeValue)+"vw")
@@ -324,7 +340,7 @@ function ActiveThreadDisplayer(props){
     
     const displayActiveContent = function(message,setMsgExpandOpt) {
         return (
-            <div className="activeThreadContentDisplayer" key={message["messageId"]}>
+            <div className="activeThreadContentDisplayer" key={message["messageId"]} >
                 <div className='messageInfo'>
                     <div className="messageOwnerBoxCont">
                         <div className="messageOwnerBox" style={{
@@ -402,7 +418,9 @@ function ActiveThreadDisplayer(props){
                                     "block":"grid") 
                                 //block nearest makes it so that it scrolls to the closest element that is scrollable
                                 //initally was scrolling the APP causing wierd error
-                                e.target.scrollIntoView({behavior: "smooth",block:"nearest"})
+                                //awkward behavior when photo is really 
+                                //e.target.scrollIntoView({behavior: "smooth",block:"nearest",container:document.getElementById("activeThreadConstraint")})
+                                //scrollToChild(e.target,document.getElementById("activeThreadCont"))
                             }}/>
                         </div>
                     }
@@ -507,5 +525,30 @@ function numToColor(num,lockOpacity=1){
     }
     return "rgba("+r+","+g+","+b+","+lockOpacity+")"
 }
+
+function scrollToChild(ele, parentEle,offset=-0){
+    const parentRect = parentEle.getBoundingClientRect();
+    const eleRect = ele.getBoundingClientRect();
+    console.log(parentRect)
+    console.log(eleRect)
+    const scrollTop = eleRect.top - parentRect.top + parentEle.scrollTop+offset;
+
+    parentEle.scrollTo({
+        top: 0,
+        behavior: 'instant'
+    })
+    parentEle.scrollTo({
+        top: scrollTop,
+        behavior: 'smooth'
+    })
+}
+
+function getLocalStorageItem(item,key=null){
+    var storageItem = JSON.parse(localStorage.getItem("userSettings"))
+    if(storageItem == null) storageItem = {}
+    if(key == null) return storageItem;
+    return storageItem[key];
+}
+
 
 export default MainContent

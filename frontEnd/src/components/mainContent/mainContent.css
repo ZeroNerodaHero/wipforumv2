@@ -110,7 +110,12 @@
     padding-top: 3%;
     z-index: 2;
 }
-
+/*
+scroll must be set to activeThreadCont and not constraint
+constraint. if constraint is set to height 100%, it creates
+the problem that clicks will not register as close bc touches
+empty space too
+*/
 #activeThreadCont{
     width: 80%;
     height: 90%;
@@ -228,7 +233,7 @@
 /* */
 #mainContent{
     height: 100%;
-    margin-top: 1%;
+    margin-top: 7px;
     overflow: hidden;
 
     display: flex;

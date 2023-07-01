@@ -116,7 +116,7 @@ else if($option >= 2000 && $option <= 2999){
     else if($option == 2001){
         if (!empty($hData["threadId"]) && !empty($hData["messageContent"])) {
             $retStr = '{"code":1}';
-            addMessage($hData["threadId"], $hData["messageContent"], $hData["userId"],$loggedIn);
+            addMessage($hData["threadId"], $hData["messageContent"], $hData["userId"],$loggedIn,($loggedIn ? $hData["userId"] : -1));
         } else{
             $retStr= generateError("Missing items");
         }
@@ -219,12 +219,16 @@ function createUserAccount($username,$password){
     $conn->query($que);
     return 1;
 }
-function addMessage($threadReference,$messageContent,$messageOwner,$imgPerm=true){
+function addMessage($threadReference,$messageContent,$messageOwner,$imgPerm=true,$userReference=-1){
     global $conn;
     $que = "UPDATE threadList 
     SET threadSize=threadSize+1
     WHERE threadId=" . $threadReference;
     $conn->query($que);
+
+    //this is used to randomize the user id in everys tring. purpose of 191? prime does something? no? dunno
+    srand($messageOwner % ($threadReference * 191));
+    $messageOwner = rand();
 
     $imageLink = (!empty($_FILES["messageImage"]) && $imgPerm) ? 
         uploadImg("messageImage") : "";
@@ -233,10 +237,11 @@ function addMessage($threadReference,$messageContent,$messageOwner,$imgPerm=true
         die();
     }
     $messageContent = addslashes($messageContent);
-    $que = "INSERT INTO messageList(threadReference,messageContent,messageOwner,imageLinks, hashed_ip)
-            VALUES($threadReference,'$messageContent',$messageOwner,".
+    $que = "INSERT INTO messageList(threadReference,messageContent,messageOwner,userReference,imageLinks, hashed_ip)
+            VALUES($threadReference,'$messageContent',$messageOwner,$userReference,".
                 (empty($imageLink) ? 'null':"'$imageLink'").",'".getIpAddrHash()."')";
     $conn->query($que);
+    
     return $conn->insert_id;
 }
 function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner){
@@ -246,7 +251,7 @@ function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner){
             VALUES('$currentBoard','$threadTitle',$messageOwner)";
     $conn->query($que);
     $threadId = $conn->insert_id;
-    $msgLink = addMessage($threadId, $newMessageContent, $messageOwner);
+    $msgLink = addMessage($threadId, $newMessageContent, $messageOwner, true, $messageOwner);
     $que = "UPDATE threadList
             SET firstPostLink=".$msgLink."
             WHERE threadId=".$threadId;
