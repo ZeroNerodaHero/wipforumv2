@@ -86,6 +86,7 @@ function MenuBar(props){
 function ThreadCont(props){
     const [activeThread,setActiveThread] = useState(-1);
     const [activeThreadTitle,setActiveThreadTitle] = useState("test");
+
     const [threadList, setThreadList] = useState([])
     const [allThreads,setAllThreads] = useState([])
 
@@ -93,6 +94,7 @@ function ThreadCont(props){
     const forceUpdate = function(){setForceUpdateCnt(forceUpdateCnt ^ 1)}
     const [forceRefreshActive,setForceRefreshActive] = useState(0)
     const refreshActive = function(){setForceRefreshActive(forceRefreshActive ^ 1)}
+    
     useEffect(()=>{
         apiRequest("http://localhost:8070/","",
         {
@@ -459,7 +461,7 @@ function ThreadViewDisplay(props){
     return (
         <div className="threadThumbNail" onClick={()=>{
                 props.setActiveThread(props.threadId)
-                props.setActiveThread(props.threadName)
+                props.setActiveThreadTitle(props.threadName)
             }}>
             <div className="threadTitle">
                 <div className='threadTitleText'>{threadName}</div>
