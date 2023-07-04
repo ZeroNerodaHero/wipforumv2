@@ -85,6 +85,7 @@ function MenuBar(props){
 
 function ThreadCont(props){
     const [activeThread,setActiveThread] = useState(-1);
+    const [activeThreadTitle,setActiveThreadTitle] = useState("test");
     const [threadList, setThreadList] = useState([])
     const [allThreads,setAllThreads] = useState([])
 
@@ -123,6 +124,7 @@ function ThreadCont(props){
                 activeThread == -1 ? <div /> :
                 <div id="activeThreadDisplay" onClick={()=>{setActiveThread(-1)}}>
                     <ActiveThreadDisplayer activeThread={activeThread}
+                        threadTitle={activeThreadTitle}
                         forceRefreshActive={forceRefreshActive}
                         currentBoard={props.currentBoard}/>
                 </div>
@@ -132,10 +134,10 @@ function ThreadCont(props){
                     {
                         threadList === undefined ? <div/> :
                         threadList.map((item)=>(
-                        <ThreadViewDisplay setActiveThread={setActiveThread}
+                        <ThreadViewDisplay setActiveThread={setActiveThread} setActiveThreadTitle={setActiveThreadTitle}
                             threadName={item["threadTitle"]} threadThumb={item["imageLinks"]}
                             threadId={item["threadId"]} threadSize={item["threadSize"]}
-                            update_time={(new Date(item["updateTime"]+" UTC")).toLocaleTimeString("en-US").replace(/:\d+ /," ").replace(/,/,"")}
+                            update_time={(new Date(convertTimeToJS(item["updateTime"]))).toLocaleTimeString("en-US").replace(/:\d+ /," ").replace(/,/,"")}
                             messageContent={item["messageContent"]}
                             key={item["threadId"]}
                         />))
@@ -357,7 +359,7 @@ function ActiveThreadDisplayer(props){
                             <div className='messageId'>Id:{message["messageId"]}</div>
                             <div className='messageTime'>{ 
                                 //muthafucking longest jscript i ever wrote
-                                ((new Date(message["postTime"]+" UTC")).toLocaleString("en-US")).replace(/:\d+ /," ").replace(/,/,"")
+                                ((new Date(convertTimeToJS(message["postTime"]))).toLocaleString("en-US")).replace(/:\d+ /," ").replace(/,/,"")
                             }</div>
                         </div>
                         <div className='messageOpt' onClick={()=>{
@@ -425,8 +427,8 @@ function ActiveThreadDisplayer(props){
                         </div>
                     }
                     <div className='textContentDisplayer'>{
-                        message["messageContent"]
-                }</div>
+                        convertMessageIntoFormat(message["messageContent"])
+                    }</div> 
                 </div>
             </div>
         )
@@ -435,7 +437,7 @@ function ActiveThreadDisplayer(props){
     return (
         <div id="activeThreadCont" >
             <div id="activeThreadConstraint" onClick={(e)=>{e.stopPropagation()}}>
-                <div id="activeThreadTitle">{"test"}</div>
+                <div id="activeThreadTitle">{props.threadTitle}</div>
                 { activeThreadMessages.map((message)=>(displayActiveContent(message,setMsgExpandOpt)))}
             </div>
         </div>
@@ -455,7 +457,10 @@ function ThreadViewDisplay(props){
     },[props.threadName,props.threadThumb])
 
     return (
-        <div className="threadThumbNail" onClick={()=>props.setActiveThread(props.threadId)}>
+        <div className="threadThumbNail" onClick={()=>{
+                props.setActiveThread(props.threadId)
+                props.setActiveThread(props.threadName)
+            }}>
             <div className="threadTitle">
                 <div className='threadTitleText'>{threadName}</div>
             </div>
@@ -464,7 +469,7 @@ function ThreadViewDisplay(props){
                     <img src={threadThumb} className="threadImg"/>
                 </div>
                 <div className='threadPreviewCont'>
-                    {props.messageContent}
+                    { convertMessageIntoFormat(props.messageContent) }
                 </div>
             </div>
             <div className='threadMiscInfo'>
@@ -550,5 +555,28 @@ function getLocalStorageItem(item,key=null){
     return storageItem[key];
 }
 
+function convertMessageIntoFormat(message){
+    var newLineList = [];
+    for(var str of message.split(/\n+/)){
+        newLineList.push([str,{newLine:1,changeColor:(str[0] === "~"? true : false)}])
+    }
+    //console.log(newLineList)
+    var newEle = (
+        <div>
+            {newLineList.map((item,index)=>(
+                <div className='textContentParagraphSplit' key={index}>
+                    <div className={(item[1]["changeColor"] == true? "textContentColorChange":"")}>
+                        {item[0]}
+                    </div>
+                </div>
+            ))}
+        </div>
+    )
+    return newEle
+}
+function convertTimeToJS(time){
+    time = time.replace(/ /,"T")
+    return time+"Z";
+}
 
 export default MainContent

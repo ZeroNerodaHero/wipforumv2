@@ -92,7 +92,6 @@ function LoginTab(props){
                         },
                         "POST").then((data)=>{
                             if(data["code"]!=0){
-                                console.log(data)
                                 SetCookie("userId",data["userId"],7);
                                 SetCookie("authKey",data["authKey"],7);
                                 props.updateProfileTab(data["userName"],data["accountPerm"])
