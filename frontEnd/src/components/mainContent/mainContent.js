@@ -135,7 +135,7 @@ function ThreadCont(props){
                         <ThreadViewDisplay setActiveThread={setActiveThread}
                             threadName={item["threadTitle"]} threadThumb={item["imageLinks"]}
                             threadId={item["threadId"]} threadSize={item["threadSize"]}
-                            update_time={(new Date(item["updateTime"])).toLocaleTimeString()}
+                            update_time={(new Date(item["updateTime"]+" UTC")).toLocaleTimeString("en-US").replace(/:\d+ /," ").replace(/,/,"")}
                             messageContent={item["messageContent"]}
                             key={item["threadId"]}
                         />))
@@ -357,7 +357,7 @@ function ActiveThreadDisplayer(props){
                             <div className='messageId'>Id:{message["messageId"]}</div>
                             <div className='messageTime'>{ 
                                 //muthafucking longest jscript i ever wrote
-                                ((new Date(message["postTime"])).toLocaleString("en-US")).replace(/:\d+/,"").replace(/,/,"")
+                                ((new Date(message["postTime"]+" UTC")).toLocaleString("en-US")).replace(/:\d+ /," ").replace(/,/,"")
                             }</div>
                         </div>
                         <div className='messageOpt' onClick={()=>{
@@ -444,7 +444,7 @@ function ActiveThreadDisplayer(props){
 function ThreadViewDisplay(props){
     const [threadThumb,setThreadThumb] = useState("https://media.discordapp.net/attachments/700130094844477561/961128316306350120/1610023331992.png")
     const [threadName,setThreadName] = useState("ERROR")
-    
+
     useEffect(()=>{
         if(props.threadName !== undefined){
             setThreadName(props.threadName)

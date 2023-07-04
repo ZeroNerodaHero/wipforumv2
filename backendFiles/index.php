@@ -227,7 +227,8 @@ function addMessage($threadReference,$messageContent,$messageOwner,$imgPerm=true
     $conn->query($que);
 
     //this is used to randomize the user id in everys tring. purpose of 191? prime does something? no? dunno
-    srand($messageOwner % ($threadReference * 191));
+    //i have no idea what this randomization will cause but...
+    srand($messageOwner % ($threadReference*$threadReference* 7919));
     $messageOwner = rand();
 
     $imageLink = (!empty($_FILES["messageImage"]) && $imgPerm) ? 
