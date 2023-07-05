@@ -41,6 +41,8 @@
     align-content: flex-start;
     
     padding: 7px;
+    padding-top: 14px;
+    padding-bottom: 21px;
 }
 .threadCont > div {
     margin: 3px;
@@ -227,7 +229,7 @@ empty space too
 
 .textContentDisplayer{
     margin-left: 5px;
-    word-break: break-all;
+    word-break: break-word;
 }
 .textContentParagraphSplit{
     margin-bottom: 2px;
@@ -248,7 +250,7 @@ empty space too
 #mainContentDisplayer{
     background-color: rgba(20, 57, 138, 0.527);
     border-top: 1px black solid;
-    height: 97%;
+    height: 98%;
     display: flex;
     flex-direction: column;
     position: relative;

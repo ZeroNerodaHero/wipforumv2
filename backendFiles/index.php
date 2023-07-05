@@ -96,17 +96,20 @@ else if($option == 1002){
 /* option 2000**** */ 
 else if($option >= 2000 && $option <= 2999){
     $loggedIn = false;
+    $userId = rand();
     if(!empty($hData["userId"]) && !empty($hData["sessionId"]) 
         && userIsAuthed($hData["userId"],$hData["sessionId"]) != null){
         $loggedIn = true;
+        $userId = $hData["userId"];
     }
     if($option == 2000){
-        if($loggedIn && !empty($hData["currentBoard"]) && !empty($hData["threadTitle"]) && 
-            !empty($hData["messageContent"]) && !empty($hData["userId"]) && 
-            !empty($_FILES["messageImage"]["name"])
+        if(!empty($hData["currentBoard"]) && !empty($hData["threadTitle"]) && 
+            !empty($hData["messageContent"]) 
+            && !empty($_FILES["messageImage"]["name"]) && verifyImg($_FILES["messageImage"]["name"]) != -1
+            && strlen($hData["threadTitle"]) < 100
             && strlen($hData["messageContent"]) < 2000){
             $ret = addThread($hData["currentBoard"],$hData["threadTitle"],
-                $hData["messageContent"],$hData["userId"]);
+                $hData["messageContent"],$userId,$loggedIn);
             $ret["code"] = 1;
             $retStr = json_encode($ret);
         } else{
@@ -116,7 +119,7 @@ else if($option >= 2000 && $option <= 2999){
     else if($option == 2001){
         if (!empty($hData["threadId"]) && !empty($hData["messageContent"])) {
             $retStr = '{"code":1}';
-            addMessage($hData["threadId"], $hData["messageContent"], $hData["userId"],$loggedIn,($loggedIn ? $hData["userId"] : -1));
+            addMessage($hData["threadId"], $hData["messageContent"], $userId, ($loggedIn ? $hData["userId"] : -1));
         } else{
             $retStr= generateError("Missing items");
         }
@@ -219,24 +222,25 @@ function createUserAccount($username,$password){
     $conn->query($que);
     return 1;
 }
-function addMessage($threadReference,$messageContent,$messageOwner,$imgPerm=true,$userReference=-1){
+function addMessage($threadReference,$messageContent,$messageOwner,$userReference=-1){
     global $conn;
-    $que = "UPDATE threadList 
-    SET threadSize=threadSize+1
-    WHERE threadId=" . $threadReference;
-    $conn->query($que);
 
     //this is used to randomize the user id in everys tring. purpose of 191? prime does something? no? dunno
     //i have no idea what this randomization will cause but...
     srand($messageOwner % ($threadReference*$threadReference* 7919));
     $messageOwner = rand();
 
-    $imageLink = (!empty($_FILES["messageImage"]) && $imgPerm) ? 
-        uploadImg("messageImage") : "";
+    $imageLink = (!empty($_FILES["messageImage"])) ? uploadImg("messageImage") : "";
     if ($imageLink == "wrong type"){
-        echo '{"code":0,"msg":"wrong type"}';
+        echo '{"code":0,"msg":"Uploaded media is the wrong type"}';
         die();
     }
+
+    $que = "UPDATE threadList 
+    SET threadSize=threadSize+1
+    WHERE threadId=" . $threadReference;
+    $conn->query($que);
+
     $messageContent = addslashes($messageContent);
     $que = "INSERT INTO messageList(threadReference,messageContent,messageOwner,userReference,imageLinks, hashed_ip)
             VALUES($threadReference,'$messageContent',$messageOwner,$userReference,".
@@ -245,14 +249,14 @@ function addMessage($threadReference,$messageContent,$messageOwner,$imgPerm=true
     
     return $conn->insert_id;
 }
-function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner){
+function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner,$loggedIn){
     global $conn;
     $threadTitle = addslashes($threadTitle);
     $que = "INSERT INTO threadList(boardReference,threadTitle,threadOP)
             VALUES('$currentBoard','$threadTitle',$messageOwner)";
     $conn->query($que);
     $threadId = $conn->insert_id;
-    $msgLink = addMessage($threadId, $newMessageContent, $messageOwner, true, $messageOwner);
+    $msgLink = addMessage($threadId, $newMessageContent, $messageOwner, ($loggedIn ? $messageOwner : -1));
     $que = "UPDATE threadList
             SET firstPostLink=".$msgLink."
             WHERE threadId=".$threadId;
@@ -264,10 +268,10 @@ function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner){
 function uploadImg($fileName){ 
     global $post_image_dir,$host_computer_loc;
     $imageFileType = strtolower(pathinfo(basename($_FILES[$fileName]["name"]),PATHINFO_EXTENSION));
-    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-        && $imageFileType != "gif" ){
-            return "wrong type";
+    if(verifyImg($_FILES[$fileName]["name"]) == -1){
+        return "wrong type";
     }
+
     $file_loc = $post_image_dir . rand((1<<29),(1<<31)) . "." .$imageFileType;
     if (!is_uploaded_file($_FILES[$fileName]["tmp_name"]))
         return "invalid file upload";
@@ -281,7 +285,14 @@ function uploadImg($fileName){
         if (file_exists($file_loc)) return htmlspecialchars($host_computer_loc.basename($file_loc));
         else return "file too big ".$_FILES[$fileName]["size"];
     }
-    return "error";
+}
+function verifyImg($fileName){
+    $imageFileType = strtolower(pathinfo(basename($fileName),PATHINFO_EXTENSION));
+    if($imageFileType == "jpg" || $imageFileType == "png" || $imageFileType == "jpeg"
+        || $imageFileType == "gif" ){
+            return 1;
+    }
+    return -1;
 }
 
 function reportMessage($messageId,$value=1){
