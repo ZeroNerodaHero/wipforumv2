@@ -97,7 +97,7 @@ function LoginTab(props){
                                 props.updateProfileTab(data["userName"],data["accountPerm"])
                                 props.setTabState(3)
                             } else{
-                                setErrorJSON({error:1,title:"Failed to Login",content:data["msg"]})
+                                setErrorJSON({show:1,type:1,title:"Failed to Login",content:data["msg"]})
                             }
                         })
                     }}>Login</div>
@@ -133,11 +133,11 @@ function CreateAccount(props){
                                 if(data["code"]!=0){
                                     props.setTabState(1)
                                 } else{
-                                    setErrorJSON({error:1,title:"Failed to Create Account",content:"Server is broken or something"})
+                                    setErrorJSON({show:1,type:1,title:"Failed to Create Account",content:"Server is broken or something"})
                                 }
                             })
                         } else {
-                            setErrorJSON({error:1,title:"Incorrect Retype",
+                            setErrorJSON({show:1,type:1,title:"Incorrect Retype",
                                 content:"You did not type ur password the same. Dummy."})
                         }
                     }}>Create Account</div>

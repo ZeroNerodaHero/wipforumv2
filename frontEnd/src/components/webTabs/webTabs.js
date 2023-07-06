@@ -26,7 +26,6 @@ function WebTab(props){
                     setCurrentBoard={props.setCurrentBoard}
                 />))}
             </div>
-            <div id="addNewBoard">Search</div>
         </div>
     )
 }

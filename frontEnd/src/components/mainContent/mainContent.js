@@ -11,7 +11,7 @@ import { func } from 'prop-types';
 function MainContent(props){
     const [currentBoard,setCurrentBoard] = useState({shortHand:"h",longHand:"home"})
     const [threadSearch,setThreadSearch] = useState("")
-    const [errorJSON,setErrorJSON] = useState({error:0})
+    const [errorJSON,setErrorJSON] = useState({show:0})
     const [checkStorage,setCheckStorage] = useState(false);
 
     useEffect(()=>{
@@ -19,6 +19,9 @@ function MainContent(props){
             setCurrentBoard(getLocalStorageItem("userSettings","currentBoard") )
         } else{
             setCurrentBoard({shortHand:"h",longHand:"home"});
+        }
+        if(getLocalStorageItem("userSettings","showHelp") == undefined ){
+            setErrorJSON({show:1,type:2});
         }
         setCheckStorage(true);
     },[])
@@ -243,7 +246,7 @@ function GUIcont(props){
                             setImageUpload(-1)
                             setImageTemp(0)
                         } else{
-                            setErrorJSON({error:1,title:"Failed to Post",content:data["msg"]})
+                            setErrorJSON({show:1,type:1,title:"Failed to Post",content:data["msg"]})
                         }
                     })
                 }}>Post</div>
@@ -335,7 +338,7 @@ function ActiveThreadDisplayer(props){
                     setActiveThreadMessages(data["messageList"])
                 }
             } else{
-                setErrorJSON({error:1,title:"Failed to Load",content:"Not sure what happened"})
+                setErrorJSON({show:1,type:1,title:"Failed to Load",content:"Not sure what happened"})
             }
         })
     },[props.activeThread,props.forceRefreshActive])
@@ -393,9 +396,9 @@ function ActiveThreadDisplayer(props){
                                                     if(data["code"]!=0){
                                                         /* Note: not sure what this line was for */
                                                         //setActiveThread(-1);
-                                                        setErrorJSON({error:1,title:"Thanks",content:"Will Look Into the Report"})
+                                                        setErrorJSON({show:1,type:1,title:"Thanks",content:"Will Look Into the Report"})
                                                     } else {
-                                                        setErrorJSON({error:1,title:"Error",content:data["msg"]})
+                                                        setErrorJSON({show:1,type:1,title:"Error",content:data["msg"]})
                                                     }
                                                 })
                                             }}>
