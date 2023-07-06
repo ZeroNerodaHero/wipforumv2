@@ -12,6 +12,7 @@
     left: 0;
 
     height: 100vh;
+    height: 100dvh;
     width: 100vw;
     background-color: rgba(0, 0, 0, 0.3);
 
@@ -25,7 +26,7 @@
 }
 .errorPromptBoxCont{
     background-color: rgb(255, 68, 68);
-    margin-bottom: 40%;
+    margin-bottom: 30%;
     width: 60%;
 }
 .absoluteTitle{

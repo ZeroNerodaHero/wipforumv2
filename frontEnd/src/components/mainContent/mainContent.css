@@ -240,7 +240,7 @@ empty space too
 
 /* */
 #mainContent{
-    height: 100%;
+    height: calc(100% - 7px);
     margin-top: 7px;
     overflow: hidden;
 
