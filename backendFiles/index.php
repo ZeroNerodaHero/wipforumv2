@@ -271,7 +271,7 @@ function uploadImg($fileName){
     if(verifyImg($_FILES[$fileName]["name"]) == -1){
         return "wrong type";
     }
-
+    srand(time());
     $file_loc = $post_image_dir . rand((1<<29),(1<<31)) . "." .$imageFileType;
     if (!is_uploaded_file($_FILES[$fileName]["tmp_name"]))
         return "invalid file upload";
