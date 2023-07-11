@@ -15,7 +15,7 @@ CREATE TABLE userList(
 CREATE TABLE messageList(
     threadReference int,
     imageLinks varchar(1000),
-    messageContent varchar(2000),
+    messageContent varchar(3000),
     messageOwner BIGINT,
     hashed_ip varchar(64),
 
@@ -27,7 +27,7 @@ CREATE TABLE messageList(
     primary key (messageId)
 );
 CREATE TABLE threadList(
-    threadTitle varchar(100),
+    threadTitle varchar(200),
     boardReference varchar(10),
     threadOP BIGINT,
     firstPostLink int,
@@ -45,9 +45,10 @@ CREATE TABLE threadList(
     primary key (threadId)
 );
 CREATE TABLE boardList(
-    boardCode int,
+    boardCode int NOT NULL AUTO_INCREMENT,
     shortHand varchar(10),
     longHand varchar(100),
+    boardDesc varchar(100),
 
     boardBday timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     boardOwner BIGINT DEFAULT 0,
@@ -70,9 +71,9 @@ CREATE TABLE bannedIps(
 INSERT INTO userList(userId,userName,password,accountPerm) 
     VALUES(1,"eve","eve",99);
 INSERT INTO boardList(boardCode,shortHand,longHand,boardPermPost,threadCap,boardPriority)
-    VALUES(0,"h","home",98,3000,99);
+    VALUES("h","home",98,3000,99);
 INSERT INTO boardList(boardCode,shortHand,longHand,boardPriority)
-    VALUES(1,"m","meta",98);
+    VALUES("m","meta",98);
 INSERT INTO threadList(threadTitle,boardReference,permLevel,threadPriority,threadOP,firstPostLink)
     VALUES("G","h",98,100,0,1);
 INSERT INTO messageList(threadReference,messageContent,messageOwner,imageLinks)
