@@ -309,6 +309,7 @@ empty space too
     border: 1px black solid;
     border-bottom-width: 0px;
     padding: 0px 7px 0px 7px;
+    margin-right: 3px;
 }
 #mainContentTabs_left > div:hover, #mainContentTabs_right > div:hover {
     background-color: rgba(0, 128, 0, 0.7);

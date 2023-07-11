@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import "./absolutePrompt.css"
+import getLocalStorageItem from '../cookieReader/localStorageReader';
 
 function AbsolutePrompt(props){
     const [showPrompt,setShowPrompt] = useState(0)
@@ -17,7 +18,8 @@ function AbsolutePrompt(props){
                 )
             } else if(props.prompt.type == 2){
                 setPromptEle(
-                    <SiteGuide setShowPrompt={setShowPrompt}/>
+                    <SiteGuide setShowPrompt={setShowPrompt}  
+                        deliberate={props.prompt.deliberate !== undefined ? props.prompt.deliberate : false}/>
                 )
             }
         }
@@ -35,6 +37,22 @@ function AbsolutePrompt(props){
 }
 
 function SiteGuide(props){
+    const [showHelp,setShowHelp] = useState(true)
+    const [shouldShow,setShouldShow] = useState(true)
+    useEffect(()=>{
+        var tmp = getLocalStorageItem("userSettings","showHelp")
+        if(tmp != undefined) setShowHelp(tmp)
+    },[])
+    useEffect(()=>{
+        var userSettings = JSON.parse(localStorage.getItem("userSettings"))
+        userSettings["showHelp"] = showHelp;
+        localStorage.setItem("userSettings",JSON.stringify(userSettings))
+
+        if(showHelp === false){
+            props.setShowPrompt(0)
+        } 
+    },[showHelp])
+
     return (
         <div className='guidePromptCont' onClick={(e)=>{e.stopPropagation()}}>
             <div className="absoluteTitle">Guide</div>
@@ -58,12 +76,8 @@ function SiteGuide(props){
                     Do Not Show Again 
                 </div>
                 <div>
-                    <input type="checkbox" onClick={()=>{
-                        var userSettings = JSON.parse(localStorage.getItem("userSettings"))
-                        userSettings["showHelp"] = false;
-                        localStorage.setItem("userSettings",JSON.stringify(userSettings))
-                        props.setShowPrompt(0)
-                    }}/>
+                    <input type="checkbox" onClick={()=>{setShowHelp(showHelp === false ? true: false)}} 
+                        defaultChecked={showHelp===false}/>
                 </div>
             </div>
         </div>

@@ -102,26 +102,24 @@ else if($option >= 2000 && $option <= 2999){
         $loggedIn = true;
         $userId = $hData["userId"];
     }
-    if($option == 2000){
-        if(!empty($hData["currentBoard"]) && !empty($hData["threadTitle"]) && 
-            !empty($hData["messageContent"]) 
-            && !empty($_FILES["messageImage"]["name"]) && verifyImg($_FILES["messageImage"]["name"]) != -1
-            && strlen($hData["threadTitle"]) < 100
-            && strlen($hData["messageContent"]) < 2000){
-            $ret = addThread($hData["currentBoard"],$hData["threadTitle"],
-                $hData["messageContent"],$userId,$loggedIn);
-            $ret["code"] = 1;
-            $retStr = json_encode($ret);
+    if($option == 2000 || $option == 2001){
+        if(!empty($hData["messageContent"]) && strlen($hData["messageContent"]) < 1500){
+            if($option == 2000 && !empty($hData["currentBoard"]) && !empty($hData["threadTitle"]) && 
+                !empty($_FILES["messageImage"]["name"]) && verifyImg($_FILES["messageImage"]["name"]) != -1
+                && strlen($hData["threadTitle"]) < 80
+            ){
+                $ret = addThread($hData["currentBoard"],$hData["threadTitle"],
+                    $hData["messageContent"],$userId,$loggedIn);
+                $ret["code"] = 1;
+                $retStr = json_encode($ret);
+            } else if($option == 2001 && !empty($hData["threadId"])){
+                $retStr = '{"code":1}';
+                addMessage($hData["threadId"], $hData["messageContent"], $userId, ($loggedIn ? $hData["userId"] : -1));
+            } else {
+                $retStr = generateError("Missing items or title too long");
+            }
         } else{
-            $retStr = generateError("Missing items");
-        }
-    }
-    else if($option == 2001){
-        if (!empty($hData["threadId"]) && !empty($hData["messageContent"])) {
-            $retStr = '{"code":1}';
-            addMessage($hData["threadId"], $hData["messageContent"], $userId, ($loggedIn ? $hData["userId"] : -1));
-        } else{
-            $retStr= generateError("Missing items");
+            $retStr = generateError("Missing message or message too long");
         }
     }
     else if($option == 2999){
@@ -236,6 +234,7 @@ function addMessage($threadReference,$messageContent,$messageOwner,$userReferenc
         die();
     }
 
+    $messageContent = yeetBadWords($messageContent);
     $que = "UPDATE threadList 
     SET threadSize=threadSize+1
     WHERE threadId=" . $threadReference;
@@ -251,6 +250,7 @@ function addMessage($threadReference,$messageContent,$messageOwner,$userReferenc
 }
 function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner,$loggedIn){
     global $conn;
+    $threadTitle = yeetBadWords($threadTitle);
     $threadTitle = addslashes($threadTitle);
     $que = "INSERT INTO threadList(boardReference,threadTitle,threadOP)
             VALUES('$currentBoard','$threadTitle',$messageOwner)";
@@ -369,6 +369,14 @@ function updateUserIp($param,$param_value){
             SET last_hashedLoginIp='".getIpAddrHash()."'
             WHERE $param='$param_value'";
     $conn->query($que);
+}
+
+function yeetBadWords($str){
+    global $badWordList;
+    foreach($badWordList as $word){
+        $str = str_replace($word,"(nice)",$str);
+    }
+    return $str;
 }
 
 ?>

@@ -4,6 +4,7 @@ import "./mainContent.css"
 import UserProfile from '../userProfile.js/userProfile';
 import WebTab from '../webTabs/webTabs';
 import SetCookie, {ClearCookies, GetCookie} from "../cookieReader/cookieReader"
+import getLocalStorageItem from "../cookieReader/localStorageReader"
 import AbsolutePrompt from '../absolutePrompt/absolutePrompt';
 import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
 import { func } from 'prop-types';
@@ -20,7 +21,8 @@ function MainContent(props){
         } else{
             setCurrentBoard({shortHand:"h",longHand:"home"});
         }
-        if(getLocalStorageItem("userSettings","showHelp") == undefined ){
+        const showHelpOnLoad = getLocalStorageItem("userSettings","showHelp");
+        if(showHelpOnLoad === undefined || showHelpOnLoad === true ){
             setErrorJSON({show:1,type:2});
         }
         setCheckStorage(true);
@@ -123,7 +125,7 @@ function ThreadCont(props){
 
     return (
         <div id='threadViewEncap'>
-            <GUIcont activeThread={activeThread} setActiveThread={setActiveThread}
+            <GUIcont activeThread={activeThread} setActiveThread={setActiveThread} setActiveThreadTitle={setActiveThreadTitle}
                 currentBoard={props.currentBoard} forceUpdate={forceUpdate} refreshActive={refreshActive}/>
             {
                 activeThread == -1 ? <div /> :
@@ -238,7 +240,9 @@ function GUIcont(props){
                             props.forceUpdate();
                             if(props.activeThread == -1){
                                 setThreadTitle(""); setNewMessageContent("");
-                                props.setActiveThread(data["newThreadId"]);        
+                                props.setActiveThread(data["newThreadId"]);
+                                //can set title like this but maybe not so good       
+                                props.setActiveThreadTitle(threadTitle) 
                             } else{
                                 setMessageContent("")
                                 props.refreshActive();      
@@ -489,6 +493,7 @@ webtabs
 */
 function MainContentTabs(props){
     const [expandLeft,setExpandLeft] = useState(0);
+    const {errorJSON,setErrorJSON} = useContext(ErrorSetterContext)
     
     return (
         <div id="mainContentTabs">
@@ -503,7 +508,11 @@ function MainContentTabs(props){
                     <div id="boardExpandedCont"><WebTab setCurrentBoard={props.setCurrentBoard }/></div>
                 }  
                 </div>
-                 
+                <div onClick={()=>{setErrorJSON({show:1,type:2,deliberate:true})}}>
+                    <div>
+                        Help
+                    </div>
+                </div>
             </div>
             <div id="mainContentTabs_right">
                 <UserProfile />
@@ -553,12 +562,7 @@ function scrollToChild(ele, parentEle,offset=-0){
     })
 }
 
-function getLocalStorageItem(item,key=null){
-    var storageItem = JSON.parse(localStorage.getItem("userSettings"))
-    if(storageItem == null) storageItem = {}
-    if(key == null) return storageItem;
-    return storageItem[key];
-}
+
 
 function convertMessageIntoFormat(message){
     var newLineList = [];
