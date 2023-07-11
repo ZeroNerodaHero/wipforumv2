@@ -71,9 +71,9 @@ CREATE TABLE bannedIps(
 );
 INSERT INTO userList(userId,userName,password,accountPerm) 
     VALUES(1,"eve","eve",99);
-INSERT INTO boardList(boardCode,shortHand,longHand,boardPermPost,threadCap,boardPriority)
+INSERT INTO boardList(shortHand,longHand,boardPermPost,threadCap,boardPriority)
     VALUES("h","home",98,3000,99);
-INSERT INTO boardList(boardCode,shortHand,longHand,boardPriority)
+INSERT INTO boardList(shortHand,longHand,boardPriority)
     VALUES("m","meta",98);
 INSERT INTO threadList(threadTitle,boardReference,permLevel,threadPriority,threadOP,firstPostLink)
     VALUES("G","h",98,100,0,1);
