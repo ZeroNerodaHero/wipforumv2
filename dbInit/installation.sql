@@ -60,7 +60,8 @@ CREATE TABLE boardList(
 
     p2p bool DEFAULT false,
     isPrivate bool DEFAULT false,
-    threadCap int DEFAULT 100
+    threadCap int DEFAULT 100,
+    primary key (boardCode)
 );
 CREATE TABLE bannedIps(
     hashed_ip varchar(64),
