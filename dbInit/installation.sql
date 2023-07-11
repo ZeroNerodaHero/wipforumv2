@@ -10,7 +10,7 @@ CREATE TABLE userList(
     loginDate timeStamp ON UPDATE CURRENT_TIMESTAMP,
     creationDate timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    last_hashedLoginIp varchar(64),
+    last_hashedLoginIp varchar(64)
 );
 CREATE TABLE messageList(
     threadReference int,
