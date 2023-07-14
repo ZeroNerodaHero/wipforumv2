@@ -1,1 +1,2 @@
 # wipforumv2
+help
