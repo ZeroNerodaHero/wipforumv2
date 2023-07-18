@@ -70,11 +70,15 @@ else if($option == 1001){
             ORDER BY threadPriority DESC, updateTime DESC";
     $res = $conn->query($que);
     while($data = $res->fetch_assoc()){
-        if (!empty($data["firstPostLink"])) {
+        $data["errorThread"] = false;
+        if (!empty($data["firstPostLink"]) && $data["firstPostLink"] != NULL) {
             $que = "SELECT imageLinks,messageContent FROM messageList WHERE messageId=" . $data["firstPostLink"];
             $resRow = $conn->query($que);
-            $data = array_merge($data, $resRow->fetch_assoc());
+            if($resRow->num_rows > 0){  
+                $data = array_merge($data, $resRow->fetch_assoc());
+            }
         } else{
+            $data["errorThread"] = true;
             $data["imageLinks"] = "";
             $data["messageContent"] = "ERROR LOADING";
         }
@@ -311,19 +315,31 @@ function getReportedMessage(){
 
 function deletePost($messageId){
     global $conn;
+    //get the thread reference
+    //delete
+    //update size
+    $que = "SELECT threadReference FROM messageList WHERE messageId=$messageId";
+    $res = $conn->query($que);
+    $threadReference = $res->fetch_assoc()["threadReference"];
+
     $que = "DELETE FROM messageList WHERE messageId=$messageId";
     $conn->query($que);
-    $que = "SELECT threadId,threadSize FROM threadList WHERE firstPostLink=$messageId";
-    $res = $conn->query($que);
 
+    $que = "UPDATE threadList
+            SET threadSize=threadSize-1
+            WHERE threadId=$threadReference";
+    $conn->query($que);
+
+    $que = "SELECT threadSize FROM threadList WHERE firstPostLink=$messageId";
+    $res = $conn->query($que);
     if($res->num_rows > 0){
-        if($res->fetch_assoc()["threadSize"] == 1) {
+        if($res->fetch_assoc()["threadSize"] == 0) {
             $que = "DELETE FROM threadList WHERE firstPostLink=$messageId";
             $conn->query($que);
         } else{
             //find oldest and make that the first
             $que = "SELECT messageId FROM messageList 
-                    WHERE threadReference=$messageId ORDER BY messageId LIMIT 1";
+                    WHERE threadReference=$threadReference ORDER BY messageId LIMIT 1";
             $res = $conn->query($que);
             if($res->num_rows == 0) return false;
             $newMessageId = $res->fetch_assoc()["messageId"];
@@ -332,7 +348,6 @@ function deletePost($messageId){
                     SET firstPostLink=$newMessageId
                     WHERE firstPostLink=$messageId";
             $conn->query($que);
-
         }
     }
     return true;

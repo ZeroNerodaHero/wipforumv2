@@ -38,20 +38,24 @@ function AbsolutePrompt(props){
 
 function SiteGuide(props){
     const [showHelp,setShowHelp] = useState(true)
-    const [shouldShow,setShouldShow] = useState(true)
+    const [clickChange,setClickChange] = useState(true)
     useEffect(()=>{
         var tmp = getLocalStorageItem("userSettings","showHelp")
-        if(tmp != undefined) setShowHelp(tmp)
+        if(tmp !== undefined) setShowHelp(tmp)
     },[])
     useEffect(()=>{
         var userSettings = JSON.parse(localStorage.getItem("userSettings"))
         userSettings["showHelp"] = showHelp;
         localStorage.setItem("userSettings",JSON.stringify(userSettings))
 
+        
+    },[showHelp])
+    useEffect(()=>{
+        console.log("ok")
         if(showHelp === false){
             props.setShowPrompt(0)
-        } 
-    },[showHelp])
+        }
+    },[clickChange])
 
     return (
         <div className='guidePromptCont' onClick={(e)=>{e.stopPropagation()}}>
@@ -76,7 +80,7 @@ function SiteGuide(props){
                     Do Not Show Again 
                 </div>
                 <div>
-                    <input type="checkbox" onClick={()=>{setShowHelp(showHelp === false ? true: false)}} 
+                    <input type="checkbox" onClick={()=>{setShowHelp(showHelp === false ? true: false); setClickChange(clickChange ? false:true)}} 
                         defaultChecked={showHelp===false}/>
                 </div>
             </div>

@@ -566,8 +566,10 @@ function scrollToChild(ele, parentEle,offset=-0){
 
 function convertMessageIntoFormat(message){
     var newLineList = [];
-    for(var str of message.split(/\n+/)){
-        newLineList.push([str,{newLine:1,changeColor:(str[0] === "~"? true : false)}])
+    if(message !== undefined){
+        for(var str of message.split(/\n+/)){
+            newLineList.push([str,{newLine:1,changeColor:(str[0] === "~"? true : false)}])
+        }
     }
     //console.log(newLineList)
     var newEle = (
