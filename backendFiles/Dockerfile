@@ -22,8 +22,9 @@ WORKDIR /var/www/localhost/htdocs
 RUN rm /var/www/localhost/htdocs/index*
 COPY  index.php /var/www/localhost/htdocs 
 COPY  login.php /var/www/localhost/htdocs 
-RUN mkdir /var/www/localhost/htdocs/admin
-COPY  admin.php /var/www/localhost/htdocs/admin/index.php
+
+RUN mkdir /var/www/localhost/htdocs/code
+COPY code/ /var/www/localhost/htdocs/code/
 
 #RUN mkdir /var/www/localhost/htdocs/imgs
 RUN mkdir -p /var/www/localhost/htdocs/imgs/postImgs
