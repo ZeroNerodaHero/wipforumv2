@@ -64,7 +64,7 @@ CREATE TABLE boardList(
     primary key (boardCode)
 );
 CREATE TABLE bannedIps(
-    hashed_ip varchar(64),
+    hashed_ip varchar(64) UNIQUE,
     reason varchar(400),
     startTime timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     expireTime timeStamp

@@ -9,6 +9,7 @@ include_once("code/authUser.php");
 echo apiRequest();
 
 function apiRequest(){
+    global $isTest;
     $hData = $_POST;
     if(empty($_POST)){
         $hData = json_decode(file_get_contents("php://input"),true);
@@ -134,7 +135,8 @@ function apiRequest(){
     }
     else if($option >= 9000 && $option <= 9999){
         include_once("code/admin.php");
-        if(!empty($hData["userId"]) && !empty($hData["authKey"]) && userIsAuthed($hData["userId"],$hData["authKey"],80) != null){
+        if( (!empty($hData["userId"]) && !empty($hData["authKey"]) && userIsAuthed($hData["userId"],$hData["authKey"],80) != null)
+            || $isTest ){
             if($option == 9000){
                 //this is for generate messageStats
             }
@@ -158,13 +160,30 @@ function apiRequest(){
                 //lock board
             }
             else if($option == 9898){
-                //unban user
+                if(banIp(getIpAddrHash(),100,"Good person jk")){
+                    $retStr = json_encode(
+                        Array(
+                            "code"=>1,
+                            "hash_ip"=>getIpAddrHash()
+                    ));
+                }
             }
             else if($option == 9899){
-                //ban user
+                if(unBanIp(getIpAddrHash())){
+                    $retStr = json_encode(
+                        Array(
+                            "code"=>1,
+                            "hash_ip"=>getIpAddrHash()
+                    ));
+                }
             }
-            else if($option == 9998){
-                //delete thread
+            else if($option == 9900){
+                $retStr = json_encode(
+                    Array(
+                        "code"=>1,
+                        "hash_ip"=>getIpAddrHash(),
+                        "banned"=>(userIsBanned(getIpAddrHash()) ? 1:0)
+                ));
             }
             else if($option == 9999){
                 //delete message
@@ -179,4 +198,11 @@ function apiRequest(){
     }
     return $retStr;
 }
+
+/*
+function updateUserIp($param,$param_value){
+function userIsBanned($hash_ip){
+function banIp($hash_ip)
+function unBanIp($hash_ip)
+*/
 ?>
