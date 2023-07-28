@@ -41,6 +41,11 @@ function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner,$
             SET firstPostLink=".$msgLink."
             WHERE threadId=".$threadId;
     $conn->query($que);
+
+    if(countThreads($currentBoard) > 3){
+        deleteLastThread($currentBoard);
+    }
+
     return array("newThreadId"=>$threadId);
 }
 
@@ -89,6 +94,23 @@ function yeetBadWords($str){
         $str = str_replace($word,"(nice)",$str);
     }
     return $str;
+}
+
+function deleteLastThread($board){
+    $que = "SELECT * FROM threadList WHERE boardReference='$board' LIMIT 1 SORT ASC";
+}
+function deleteThread($threadId){
+    global $conn;
+    $que = "DELETE FROM threadList WHERE threadId=$threadId";
+    $conn->query($que);
+    $que = "DELETE FROM messageList WHERE threadReference=$threadId";
+    $conn->query($que);
+}
+function countThreads($board){
+    global $conn;
+    $que = "SELECT * FROM threadList WHERE boardReference='$board'";
+    $res = $conn->query($que);
+    return $res->num_rows;
 }
 
 ?>
