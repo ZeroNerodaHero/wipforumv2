@@ -23,7 +23,11 @@ CREATE TABLE messageList(
 
     messageId int NOT NULL AUTO_INCREMENT,
     postTime timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    isReported bit(1) NOT NULL DEFAULT 0,
+    /* 
+        -bit 0 -> report
+        -bit 1 -> report immunity
+    */
+    isReported bit(2) NOT NULL DEFAULT 0,
     primary key (messageId)
 );
 CREATE TABLE threadList(

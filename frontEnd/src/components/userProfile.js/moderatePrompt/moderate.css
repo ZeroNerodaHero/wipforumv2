@@ -57,8 +57,9 @@
     overflow: auto;
 }
 .statsTable{
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    margin: 3px 10px;
 }
 .statsTableItem{
     border-bottom: 1px black solid;

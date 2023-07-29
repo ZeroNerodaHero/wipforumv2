@@ -42,9 +42,9 @@ function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner,$
             WHERE threadId=".$threadId;
     $conn->query($que);
 
-    if(countThreads($currentBoard) > 3){
-        deleteLastThread($currentBoard);
-    }
+    
+    maintainBoardSize($currentBoard);
+    
 
     return array("newThreadId"=>$threadId);
 }
@@ -80,10 +80,11 @@ function verifyImg($fileName){
     return -1;
 }
 
-function reportMessage($messageId,$value=1){
+function updateMessageReport($messageId,$value=1){
     global $conn;
+    $value = (1 << ($value-1));
     $que = "UPDATE messageList
-            SET isReported = $value
+            SET isReported = (isReported | $value)
             WHERE messageId=".$messageId;
     $conn->query($que);
 }
@@ -96,8 +97,28 @@ function yeetBadWords($str){
     return $str;
 }
 
-function deleteLastThread($board){
-    $que = "SELECT * FROM threadList WHERE boardReference='$board' LIMIT 1 SORT ASC";
+function maintainBoardSize($board){
+    global $conn;
+    $que = "SELECT threadCap FROM boardList WHERE shortHand='$board'";
+    $res = $conn->query($que);
+    if(empty($res)) return;
+
+    $boardCap = $res->fetch_assoc()["threadCap"];
+    $boardCurSize = countThreads($board);
+
+    if($boardCurSize > $boardCap){
+        $que = "SELECT threadId FROM threadList 
+                WHERE boardReference='$board' AND threadPriority = 0
+                ORDER BY updateTime LIMIT ".($boardCurSize-$boardCap);
+        $res = $conn->query($que);
+
+        if(!empty($res) && $res->num_rows > 0){
+            while($row = $res->fetch_assoc()){
+                deleteThread($row["threadId"]);
+            }
+        }
+    }
+
 }
 function deleteThread($threadId){
     global $conn;
@@ -108,7 +129,7 @@ function deleteThread($threadId){
 }
 function countThreads($board){
     global $conn;
-    $que = "SELECT * FROM threadList WHERE boardReference='$board'";
+    $que = "SELECT threadId FROM threadList WHERE boardReference='$board'";
     $res = $conn->query($que);
     return $res->num_rows;
 }

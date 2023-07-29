@@ -43,10 +43,13 @@ function BoardStats(props){
 function ModeratePosts(props){
     const [reportList,setReportList] = useState([]);
     const [modForceReset,setModForceReset] = useState(0); 
+
+    const userId = GetCookie("userId")
+    const authKey = GetCookie("authKey")
     function updateModReset(){setModForceReset(modForceReset^1)}
     useEffect(()=>{
-        var userId = GetCookie("userId")
-        var authKey = GetCookie("authKey")
+        //var userId = GetCookie("userId")
+        //var authKey = GetCookie("authKey")
         apiRequest("http://localhost:8070/","",
         {
             option: 9002,
@@ -92,8 +95,27 @@ function ModeratePosts(props){
                                 <div className='statOptionButtonConstraint'>
                                     <div className='statOptionButtonCont'>
                                         <div className='statOptionButton' onClick={()=>{
-                                            var userId = GetCookie("userId")
-                                            var authKey = GetCookie("authKey")
+                                            //var userId = GetCookie("userId")
+                                            //var authKey = GetCookie("authKey")
+                                            apiRequest("http://localhost:8070/","",
+                                            {
+                                                option: 9997,
+                                                userId: userId,
+                                                authKey: authKey,
+                                                messageId: item["messageId"]
+                                            },
+                                            "POST").then((data)=>{
+                                                if(data["code"]!=0){
+                                                    updateModReset();
+                                                } else{
+                                                }
+                                            })
+                                        }}>
+                                            UnReport
+                                        </div>
+                                        <div className='statOptionButton' onClick={()=>{
+                                            //var userId = GetCookie("userId")
+                                            //var authKey = GetCookie("authKey")
                                             apiRequest("http://localhost:8070/","",
                                             {
                                                 option: 9999,

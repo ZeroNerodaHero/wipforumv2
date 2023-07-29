@@ -123,7 +123,7 @@ function apiRequest(){
         }
         else if($option == 2999){
             if($loggedIn && !empty($hData["messageId"])){
-                reportMessage($hData["messageId"]);
+                updateMessageReport($hData["messageId"]);
                 $retStr=json_encode(Array("code"=>1));
             } else{
                 $retStr=generateError("Please Login To Report This Post");
@@ -134,6 +134,8 @@ function apiRequest(){
         //what is the prupose of this?
     }
     else if($option >= 9000 && $option <= 9999){
+        //man post is included for update report status
+        include_once("code/manPost.php");
         include_once("code/admin.php");
         if( (!empty($hData["userId"]) && !empty($hData["authKey"]) && userIsAuthed($hData["userId"],$hData["authKey"],80) != null)
             || $isTest ){
@@ -153,8 +155,6 @@ function apiRequest(){
             }
             else if($option == 9003){
                 //this is for generating user list
-            }
-            else if($option == 9997){
             }
             else if($option == 9799){
                 //lock board
@@ -184,6 +184,18 @@ function apiRequest(){
                         "hash_ip"=>getIpAddrHash(),
                         "banned"=>(userIsBanned(getIpAddrHash()) ? 1:0)
                 ));
+            }
+            else if($option == 9997){
+                if(!empty($hData["messageId"])){
+                    //report immunity
+                    updateMessageReport($hData["messageId"],2);
+                    $retStr=json_encode(Array("code"=>1,"msg"=>"UnReported Message"));
+                }
+            }
+            else if($option == 9998){
+                if(!empty($hData["messageId"])){
+                    //ban user
+                }
             }
             else if($option == 9999){
                 //delete message

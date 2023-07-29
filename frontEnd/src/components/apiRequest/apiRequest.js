@@ -3,7 +3,7 @@ import axios from "axios"
 function apiRequest(url,params="", body="", method="GET",hasImg=false) {
     url = "http://172.17.0.1:8080/"
     url = "https://schizoi.cyou/request"
-    //url = "http://localhost:8070/";
+    url = "http://localhost:8070/";
 
     return new Promise((resolve, reject) => {
         axios({
