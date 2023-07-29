@@ -15,7 +15,7 @@ function getBoardList(){
 function getThreadList($currentBoard){
     global $conn;
     $ret = array("code"=>1,"threadList"=>[]);
-    $que = "SELECT threadTitle,threadId,permLevel,creationTime,updateTime,threadSize,firstPostLink FROM threadList
+    $que = "SELECT threadTitle,threadId,permLevel,creationTime,updateTime,threadSize,firstPostLink,threadPriority FROM threadList
             WHERE boardReference = '".$currentBoard."'
             ORDER BY threadPriority DESC, updateTime DESC";
     $res = $conn->query($que);
