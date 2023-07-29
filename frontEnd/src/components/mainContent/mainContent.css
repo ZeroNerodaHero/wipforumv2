@@ -73,6 +73,7 @@
     color: #e6e7ea;
 }
 .threadBodyCont{
+    position: relative;
     margin: var(--thumbPadding);    
     overflow-y: auto;
     overflow-x: hidden;
@@ -94,10 +95,22 @@
     left: 0;
     font-size: 0.9rem;
     background-color: rgba(159, 255, 159, 0.4);
-
     border-top: 1px black solid;
     border-right: 1px black solid;
     padding: 0px 3px;
+}
+.threadPermCont{
+    position: sticky;
+    top: 0;
+}
+.threadPermInfo{
+    position: absolute;
+    color: red;
+    top: 0;
+    right: 0;
+    padding-top: 3px;
+
+    display: grid;
 }
 
 #activeThreadDisplay{

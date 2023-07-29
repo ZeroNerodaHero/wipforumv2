@@ -7,7 +7,8 @@ import SetCookie, {ClearCookies, GetCookie} from "../cookieReader/cookieReader"
 import getLocalStorageItem from "../cookieReader/localStorageReader"
 import AbsolutePrompt from '../absolutePrompt/absolutePrompt';
 import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
-import { func } from 'prop-types';
+//import { func } from 'prop-types';
+import {PushPin, Lock} from "@mui/icons-material"
 
 function MainContent(props){
     const [currentBoard,setCurrentBoard] = useState({shortHand:"h",longHand:"home"})
@@ -144,6 +145,7 @@ function ThreadCont(props){
                         <ThreadViewDisplay setActiveThread={setActiveThread} setActiveThreadTitle={setActiveThreadTitle}
                             threadName={item["threadTitle"]} threadThumb={item["imageLinks"]}
                             threadId={item["threadId"]} threadSize={item["threadSize"]}
+                            threadPriority={item["threadPriority"]} threadPerm={item["permLevel"]}
                             update_time={(new Date(convertTimeToJS(item["updateTime"]))).toLocaleTimeString("en-US").replace(/:\d+ /," ").replace(/,/,"")}
                             messageContent={item["messageContent"]}
                             key={item["threadId"]}
@@ -474,12 +476,22 @@ function ThreadViewDisplay(props){
                 <div className='threadTitleText'>{threadName}</div>
             </div>
             <div className='threadBodyCont'>
+                <div className='threadPermCont'><div className='threadPermInfo'>
+                    { props.threadPriority <= 0 ? <div/> :
+                        <PushPin fontSize="small"/>
+                    }
+                    { props.threadPerm <= 0 ? <div/>:
+                        <Lock fontSize="small"/>
+                    }
+                </div></div> 
                 <div className="threadImgCont">
                     <img src={threadThumb} className="threadImg"/>
                 </div>
                 <div className='threadPreviewCont'>
                     { convertMessageIntoFormat(props.messageContent) }
                 </div>
+
+                
             </div>
             <div className='threadMiscInfo'>
                 {props.update_time} / {props.threadSize}
