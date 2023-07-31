@@ -1,5 +1,4 @@
 <?php 
-
 function getReportedMessage(){
     global $conn;
     $que = "SELECT * FROM messageList WHERE isReported=1";
@@ -67,14 +66,6 @@ function banPost($messageId,$banDuration,$reason){
     }
 }
 
-function userIsBanned($hash_ip){
-    global $conn;
-    $que = "SELECT hashed_ip FROM bannedIps WHERE hashed_ip='$hash_ip'";
-    $res = $conn->query($que);
-
-    if($res->num_rows != 0) return true;
-    return false;
-}
 function banIp($hash_ip,$endSeconds,$reason="Unknown."){
     global $conn;
     $endTime = new DateTime();

@@ -46,5 +46,21 @@ function updateUserIp($param,$param_value){
     $conn->query($que);
 }
 
+function userIsBanned($hash_ip){
+    global $conn;
+    $que = "SELECT hashed_ip FROM bannedIps WHERE hashed_ip='$hash_ip'";
+    $res = $conn->query($que);
+
+    if($res->num_rows != 0) return true;
+    return false;
+}
+
+function bannedUserInfo($hash_ip){
+    global $conn;
+    $que = "SELECT * FROM bannedIps WHERE hashed_ip='$hash_ip'";
+    $res = $conn->query($que);
+
+    if($res->num_rows != 0) return $res->fetch_assoc();
+}
 
 ?>

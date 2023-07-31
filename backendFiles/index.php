@@ -101,8 +101,20 @@ function apiRequest(){
             $loggedIn = true;
             $userId = $hData["userId"];
         }
+        
         if($option == 2000 || $option == 2001){
-            if(!empty($hData["messageContent"]) && strlen($hData["messageContent"]) < 1500){
+            $tmpUserHash = getIpAddrHash();
+            if(userIsBanned($tmpUserHash)){
+                $retObj = bannedUserInfo($tmpUserHash);
+                $retStr = json_encode(Array(
+                    "code" => 0,
+                    "msg"=>"You are banned. 
+                        Your ban start: ".$retObj["startTime"]."
+                        Your ban ends: ".$retObj["endTime"]."
+                        Reason:".$retObj["expireTime"]
+                ));
+            } 
+            else if(!empty($hData["messageContent"]) && strlen($hData["messageContent"]) < 1500){
                 if($option == 2000 && !empty($hData["currentBoard"]) && !empty($hData["threadTitle"]) && 
                     !empty($_FILES["messageImage"]["name"]) && verifyImg($_FILES["messageImage"]["name"]) != -1
                     && strlen($hData["threadTitle"]) < 80
