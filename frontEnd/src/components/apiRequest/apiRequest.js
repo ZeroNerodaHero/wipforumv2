@@ -20,7 +20,6 @@ function apiRequest(url,params="", body="", method="GET",hasImg=false) {
         }).catch(((err) => {
             return reject(err);
         }));
-
     });
 }
 

@@ -59,42 +59,80 @@
 .statsTable{
     display: grid;
     grid-template-columns: 50% 50%;
-    margin: 3px 10px;
+    margin: 3px 3px;
 }
 .statsTableItem{
-    border-bottom: 1px black solid;
-    margin: 3px 11px;
+    border: 1px black solid;
+    border-left: 2px black solid;
+    border-right: 4px black solid;
+
+    margin: 2px 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    background-color: #dbe6ff;
 }
+
 .statsTableContent{
+    margin-bottom: 3px;
+    padding: 3px 3px;
+}
+.statsItemContent{
     display: grid;
     grid-template-columns: auto 40%;
+    padding: 0px 3px;
 }
+.statsItemLeft{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 .statsTableImgConstraint{
     width: 100%;
+    display: flex;
+    justify-content: center;
 }
 .statsTableImg{
-    width: 100%;
+
+    max-width: 100%;
 }
-.statTime{
+.statsItemTime{
     text-align: right;
 }
-.statOptionButtonConstraint{
+.reportedMessageContent{
+    font-size: 0.8rem;
+}
+.reportedMessageInfo{
+    text-align: end;
+    margin-top: 7px;
+}
+.optionButtonConstraint{
     display: flex;
     justify-content: flex-end;
     margin-bottom: 3px;
 }
-.statOptionButtonCont{
+.optionButtonCont{
     display: flex;
 }
-.statOptionButton{
-    border: 1px black solid;
-    margin: 0px 3px;
-    padding: 1px 3px;
+.optionButton{
+    --marginDefault: 2px 3px;
+    --paddingDefault: 1px 3px;
 
+    border: 1px black solid;
+    margin: var(--marginDefault);
+    padding: var(--paddingDefault);
+
+    background-color: rgb(0, 0, 0);
+    font-weight: bold;
+    color: white;
+    border-radius: 3px;
 }
-.statOptionButton:hover{
-    background-color: rgb(0, 0, 0,.1);
+.optionButton:hover{
+    color: rgb(255, 0, 0);
 }
+
 .moderateBox{
     margin-bottom: 3px;
 }
@@ -110,4 +148,61 @@
 .moderateHeader{
     font-size: 1.1rem;
     font-weight: bold;
+}
+
+.banUserCont{
+    padding: 3px;
+    border: 1px black solid;
+    border-left: 2px black solid;
+    border-right: 4px black solid;
+    background-color: #ffc5c5;
+}
+.banInfoCont{
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+.banInfo{
+    display: inline;
+    padding-left: 3px;
+}
+.banInfoReason{
+    padding-left: 3px;
+}
+
+.banUserPromptCont{
+    background-color: red;
+    width: 70%;
+}
+
+.banReasonCont{
+    display: flex;
+    justify-content: flex-end;
+    margin-left: 3px;
+    margin-bottom: 5px;
+}
+.banReasonInput{
+    width: 100%;
+    border: 0px;
+    border-bottom: 1px black solid;
+    border-radius: 0px;
+    background-color: transparent;
+}
+.banReasonInput:focus, .banReasonInput:active{
+    outline: none;
+}
+.banDurationCont{
+    display: flex;
+}
+.banDurationItem{
+    border: 1px black solid;
+    padding: 1px 3px;
+    margin: 2px 0px;
+}
+
+
+
+@media screen and (max-width: 768px){
+    .statsTable{
+        grid-template-columns: auto;
+    }
 }

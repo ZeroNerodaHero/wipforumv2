@@ -167,7 +167,9 @@ function UserInfo(props){
                                 setModerate(true)
                             }}>MODERATE</div>
                         }
-                        <div className="profileButton">SETTINGS</div>
+                        {
+                        //<div className="profileButton">SETTINGS</div>
+                        }
                         <div className="profileButton" onClick={()=>{
                             ClearCookies();
                             props.setTabState(1)

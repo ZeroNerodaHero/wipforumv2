@@ -21,7 +21,11 @@ function AbsolutePrompt(props){
                     <SiteGuide setShowPrompt={setShowPrompt}  
                         deliberate={props.prompt.deliberate !== undefined ? props.prompt.deliberate : false}/>
                 )
+            } else if(props.prompt.type == 99){
+                setPromptEle(props.prompt.ele)
             }
+        } else{
+            setShowPrompt(0)
         }
     },[props.prompt])
     return (
