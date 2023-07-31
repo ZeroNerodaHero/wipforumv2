@@ -7,6 +7,13 @@ function getReportedMessage(){
     return $res->fetch_all(MYSQLI_ASSOC);
 }
 
+function getBannedUsers(){
+    global $conn;
+    $que = "SELECT * FROM bannedIps";
+    $res = $conn->query($que);
+    return $res->fetch_all(MYSQLI_ASSOC);
+}
+
 function deletePost($messageId){
     global $conn;
     //get the thread reference
@@ -44,6 +51,44 @@ function deletePost($messageId){
             $conn->query($que);
         }
     }
+    return true;
+}
+
+function banPost($messageId,$banDuration,$reason){
+    global $conn;
+
+    $que = "SELECT hashed_ip FROM messageList WHERE messageId=$messageId";
+    $res = $conn->query($que);
+    if(!empty($res) && $res->num_rows > 0){
+        $hashed_ip = $res->fetch_assoc()["hashed_ip"];
+        if(!userIsBanned($hashed_ip))
+            banIp($hashed_ip,$banDuration*60*60,$reason); 
+        deletePost($messageId);
+    }
+}
+
+function userIsBanned($hash_ip){
+    global $conn;
+    $que = "SELECT hashed_ip FROM bannedIps WHERE hashed_ip='$hash_ip'";
+    $res = $conn->query($que);
+
+    if($res->num_rows != 0) return true;
+    return false;
+}
+function banIp($hash_ip,$endSeconds,$reason="Unknown."){
+    global $conn;
+    $endTime = new DateTime();
+    $endTime->add(new DateInterval("PT".$endSeconds."S"));
+    $que = "INSERT INTO bannedIps(hashed_ip,reason,expireTime)
+            VALUES('$hash_ip','$reason','".$endTime->format('Y-m-d H:i:s')."')";
+    $conn->query(($que));
+    return true;
+}
+
+function unBanIp($hash_ip){
+    global $conn;
+    $que = "DELETE FROM bannedIps WHERE hashed_ip='$hash_ip'";
+    $conn->query($que);
     return true;
 }
 

@@ -155,6 +155,11 @@ function apiRequest(){
             }
             else if($option == 9003){
                 //this is for generating user list
+                $report = getBannedUsers();
+                $retStr = json_encode(Array(
+                    "code"=>1,
+                    "bannedUsers"=>$report
+                ));
             }
             else if($option == 9799){
                 //lock board
@@ -193,9 +198,11 @@ function apiRequest(){
                 }
             }
             else if($option == 9998){
-                if(!empty($hData["messageId"])){
-                    //ban user
+                if(!empty($hData["messageId"]) && !empty($hData["banDuration"]) && !empty($hData["reason"])){
+                    //ban post
+                    banPost($hData["messageId"],$hData["banDuration"],$hData["reason"]);
                 }
+                $retStr=json_encode(Array("code"=>1,"msg"=>"Banned User"));
             }
             else if($option == 9999){
                 //delete message

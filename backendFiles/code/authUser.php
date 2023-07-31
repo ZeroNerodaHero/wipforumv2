@@ -46,28 +46,5 @@ function updateUserIp($param,$param_value){
     $conn->query($que);
 }
 
-function userIsBanned($hash_ip){
-    global $conn;
-    $que = "SELECT * FROM bannedIps WHERE hashed_ip='$hash_ip'";
-    $res = $conn->query($que);
 
-    if($res->num_rows != 0) return true;
-    return false;
-}
-function banIp($hash_ip,$endSeconds,$reason="Unknown."){
-    global $conn;
-    $endTime = new DateTime();
-    $endTime->add(new DateInterval("PT".$endSeconds."S"));
-    $que = "INSERT INTO bannedIps(hashed_ip,reason,expireTime)
-            VALUES('$hash_ip','$reason','".$endTime->format('Y-m-d H:i:s')."')";
-    $conn->query(($que));
-    return true;
-}
-
-function unBanIp($hash_ip){
-    global $conn;
-    $que = "DELETE FROM bannedIps WHERE hashed_ip='$hash_ip'";
-    $conn->query($que);
-    return true;
-}
 ?>
