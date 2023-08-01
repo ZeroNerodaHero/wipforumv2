@@ -176,21 +176,12 @@ function apiRequest(){
             else if($option == 9799){
                 //lock board
             }
-            else if($option == 9898){
-                if(banIp(getIpAddrHash(),100,"Good person jk")){
-                    $retStr = json_encode(
-                        Array(
-                            "code"=>1,
-                            "hash_ip"=>getIpAddrHash()
-                    ));
-                }
-            }
             else if($option == 9899){
-                if(unBanIp(getIpAddrHash())){
+                if(!empty($hData["hashed_ip"]) && unBanIp($hData["hashed_ip"])){
                     $retStr = json_encode(
                         Array(
                             "code"=>1,
-                            "hash_ip"=>getIpAddrHash()
+                            "hash_ip"=>$hData["hashed_ip"]
                     ));
                 }
             }
