@@ -261,7 +261,7 @@ function ModerateUsers(props){
                                                     option: 9899,
                                                     userId: userId,
                                                     authKey: authKey,
-                                                    messageId: item["hashed_ip"]
+                                                    hashed_ip: item["hashed_ip"]
                                                 },
                                                 "POST").then((data)=>{
                                                     if(data["code"]!=0){
