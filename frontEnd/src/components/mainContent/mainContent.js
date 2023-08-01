@@ -237,7 +237,8 @@ function GUIcont(props){
                     apiRequest("http://localhost:8070/","",postObject,"POST",hasImg).
                     then((data)=>{
                         //console.log(data)
-                        if(data["code"] == 1){
+                        console.log(data["code"]+ " aa ")
+                        if(data["code"] >= 1){
                             setAddMessageState(-1)
                             props.forceUpdate();
                             if(props.activeThread == -1){
@@ -252,7 +253,20 @@ function GUIcont(props){
                             setImageUpload(-1)
                             setImageTemp(0)
                         } else{
-                            setErrorJSON({show:1,type:1,title:"Failed to Post",content:data["msg"]})
+                            console.log(data["code"]+ " aa ")
+                            if(data["code"] === -1){
+                                //user is banned
+                                setErrorJSON({show:1,type:1,title:"Failed to Post: User is Banned",
+                                    content:(<div>
+                                        <div>You are <b>banned</b>.</div>
+                                        <div>Your ban started on: <b>{data["startTime"]}</b></div>
+                                        <div>Your ban will end on: <b>{data["expireTime"]}</b></div><br/>
+                                        <div>Admin's Reason: <div><b>{data["reason"]}</b></div></div>
+                                    </div>)
+                                })
+                            } else{
+                                setErrorJSON({show:1,type:1,title:"Failed to Post 2",content:data["msg"]})
+                            }
                         }
                     })
                 }}>Post</div>
@@ -349,8 +363,6 @@ function ActiveThreadDisplayer(props){
         })
     },[props.activeThread,props.forceRefreshActive])
 
-
-    
     const displayActiveContent = function(message,setMsgExpandOpt) {
         return (
             <div className="activeThreadContentDisplayer" key={message["messageId"]} >

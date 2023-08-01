@@ -68,6 +68,7 @@ function banPost($messageId,$banDuration,$reason){
 
 function banIp($hash_ip,$endSeconds,$reason="Unknown."){
     global $conn;
+    $reason = addslashes($reason);
     $endTime = new DateTime();
     $endTime->add(new DateInterval("PT".$endSeconds."S"));
     $que = "INSERT INTO bannedIps(hashed_ip,reason,expireTime)

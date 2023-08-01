@@ -107,11 +107,11 @@ function apiRequest(){
             if(userIsBanned($tmpUserHash)){
                 $retObj = bannedUserInfo($tmpUserHash);
                 $retStr = json_encode(Array(
-                    "code" => 0,
-                    "msg"=>"You are banned. 
-                        Your ban start: ".$retObj["startTime"]."
-                        Your ban ends: ".$retObj["endTime"]."
-                        Reason:".$retObj["expireTime"]
+                    "code" => -1,
+                    "msg"=>"You are banned",
+                    "startTime"=>$retObj["startTime"],
+                    "expireTime"=>$retObj["expireTime"],
+                    "reason"=>$retObj["reason"]
                 ));
             } 
             else if(!empty($hData["messageContent"]) && strlen($hData["messageContent"]) < 1500){
