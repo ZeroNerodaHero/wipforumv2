@@ -19,17 +19,13 @@ function getIpAddrHash(){
 }
 
 function getUserIP(){
-    $client  = @$_SERVER['HTTP_CLIENT_IP'];
     $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
     $remote  = $_SERVER['REMOTE_ADDR'];
 
-    if(filter_var($client, FILTER_VALIDATE_IP))
+    //make sure to do proxy_set_header X-Forwarded-For $remote_addr in nginx
+    if(!empty($forward))
     {
-        $ip = $client;
-    }
-    elseif(filter_var($forward, FILTER_VALIDATE_IP))
-    {
-        $ip = $forward;
+        $ip = explode(",",$forward)[0];
     }
     else
     {
