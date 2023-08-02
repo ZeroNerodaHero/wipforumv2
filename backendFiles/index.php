@@ -96,10 +96,14 @@ function apiRequest(){
 
         $loggedIn = false;
         $userId = rand();
-        if(!empty($hData["userId"]) && !empty($hData["sessionId"]) 
-            && userIsAuthed($hData["userId"],$hData["sessionId"]) != null){
-            $loggedIn = true;
-            $userId = $hData["userId"];
+        $permLevel = 0;
+        if(!empty($hData["userId"]) && !empty($hData["sessionId"])) {
+            $userInfo = userIsAuthed($hData["userId"],$hData["sessionId"]);
+            if( $userInfo != null){
+                $loggedIn = true;
+                $userId = $hData["userId"];
+                $permLevel = $userInfo["accountPerm"];
+            }
         }
         
         if($option == 2000 || $option == 2001){
@@ -124,8 +128,15 @@ function apiRequest(){
                     $ret["code"] = 1;
                     $retStr = json_encode($ret);
                 } else if($option == 2001 && !empty($hData["threadId"])){
-                    $retStr = '{"code":1}';
-                    addMessage($hData["threadId"], $hData["messageContent"], $userId, ($loggedIn ? $hData["userId"] : -1));
+                    if(threadIsLocked($hData["threadId"],$permLevel)){
+                        $retStr = json_encode(Array(
+                            "code"=>0,
+                            "msg"=>"Thread is locked. Only admins can post in this thread. Sorry"
+                        ));
+                    } else{
+                        $retStr = '{"code":1}';
+                        addMessage($hData["threadId"], $hData["messageContent"], $userId, ($loggedIn ? $hData["userId"] : -1));
+                    }
                 } else {
                     $retStr = generateError("Missing items or title too long");
                 }

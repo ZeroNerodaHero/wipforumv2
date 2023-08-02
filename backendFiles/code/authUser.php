@@ -44,10 +44,17 @@ function updateUserIp($param,$param_value){
 
 function userIsBanned($hash_ip){
     global $conn;
-    $que = "SELECT hashed_ip FROM bannedIps WHERE hashed_ip='$hash_ip'";
+    $que = "SELECT expireTime FROM bannedIps WHERE hashed_ip='$hash_ip'";
     $res = $conn->query($que);
 
-    if($res->num_rows != 0) return true;
+    if($res->num_rows != 0){
+        if(new DateTime($res->fetch_assoc()["expireTime"]) < new DateTime()){
+            $que = "DELETE FROM bannedIps WHERE hashed_ip='$hash_ip'";
+            $conn->query($que);
+            return false;
+        }
+        return true;
+    } 
     return false;
 }
 

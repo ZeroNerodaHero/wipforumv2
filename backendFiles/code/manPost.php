@@ -1,5 +1,14 @@
 <?php
 
+function threadIsLocked($threadId,$permLevel){
+    global $conn;
+    $que = "SELECT threadId FROM threadList 
+            WHERE threadId=$threadId AND permLevel <= $permLevel";
+    $res = $conn->query($que);
+
+    return $res->num_rows == 0;
+}
+
 function addMessage($threadReference,$messageContent,$messageOwner,$userReference=-1){
     global $conn;
 
