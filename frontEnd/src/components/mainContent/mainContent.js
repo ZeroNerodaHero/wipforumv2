@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, createContext,useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import apiRequest from '../apiRequest/apiRequest';
 import "./mainContent.css"
 import UserProfile from '../userProfile.js/userProfile';
@@ -522,15 +522,16 @@ function MainContentTabs(props){
     return (
         <div id="mainContentTabs">
             <div id="mainContentTabs_left">
-                <div id="showBoards" onMouseEnter={()=>{setExpandLeft(1)}} onMouseLeave={()=>{setExpandLeft(0)}}
-                    onClick={()=>{}}>
+                <div id="showBoards" 
+                    //onMouseEnter={()=>{setExpandLeft(1)}} onMouseLeave={()=>{setExpandLeft(0)}}
+                    onClick={()=>{
+                        setErrorJSON(
+                            {show:1,type:99,
+                            ele:<WebTab setCurrentBoard={props.setCurrentBoard }/>})
+                        }}>
                     <div>
                         /{props.currentBoard["shortHand"]}/-{props.currentBoard["longHand"]}
                     </div>
-                    {
-                    expandLeft  == 0 ? <div></div> :
-                    <div id="boardExpandedCont"><WebTab setCurrentBoard={props.setCurrentBoard }/></div>
-                }  
                 </div>
                 <div onClick={()=>{setErrorJSON({show:1,type:2,deliberate:true})}}>
                     <div>

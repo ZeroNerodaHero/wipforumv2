@@ -55,7 +55,6 @@ function SiteGuide(props){
         
     },[showHelp])
     useEffect(()=>{
-        console.log("ok")
         if(showHelp === false){
             props.setShowPrompt(0)
         }

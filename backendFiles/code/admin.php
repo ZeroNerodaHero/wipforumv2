@@ -84,4 +84,10 @@ function unBanIp($hash_ip){
     return true;
 }
 
+function loadBoardThreads(){
+    global $conn;
+    $que = "SELECT * FROM boardList";
+}
+
+
 ?>

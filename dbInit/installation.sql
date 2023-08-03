@@ -52,7 +52,8 @@ CREATE TABLE boardList(
     boardCode int NOT NULL AUTO_INCREMENT,
     shortHand varchar(10),
     longHand varchar(100),
-    boardDesc varchar(100),
+    boardDesc varchar(1000),
+    boardImg varchar(400),
 
     boardBday timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     boardOwner BIGINT DEFAULT 0,
@@ -65,6 +66,7 @@ CREATE TABLE boardList(
     p2p bool DEFAULT false,
     isPrivate bool DEFAULT false,
     threadCap int DEFAULT 100,
+
     primary key (boardCode)
 );
 CREATE TABLE bannedIps(
@@ -75,10 +77,12 @@ CREATE TABLE bannedIps(
 );
 INSERT INTO userList(userId,userName,password,accountPerm) 
     VALUES(1,"eve","eve",99);
-INSERT INTO boardList(shortHand,longHand,boardPermPost,threadCap,boardPriority)
-    VALUES("h","home",98,3000,99);
-INSERT INTO boardList(shortHand,longHand,boardPriority)
-    VALUES("m","meta",98);
+INSERT INTO boardList(shortHand,longHand,boardPermPost,threadCap,boardPriority,boardDesc)
+    VALUES("h","home",98,3000,99,
+        "This is the home board. There really is no topic.");
+INSERT INTO boardList(shortHand,longHand,boardPriority, boardDesc)
+    VALUES("m","meta",98,
+        "Meta is for users to post about the site. Please post bugs or errors here.");
 INSERT INTO threadList(threadTitle,boardReference,permLevel,threadPriority,threadOP,firstPostLink)
     VALUES("G","h",98,100,0,1);
 INSERT INTO messageList(threadReference,messageContent,messageOwner,imageLinks)

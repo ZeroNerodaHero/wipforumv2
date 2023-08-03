@@ -2,7 +2,7 @@
 function getBoardList(){
     global $conn;
     $ret = array("code"=>1,"boardList"=>[]);
-    $que = "SELECT shortHand,longHand FROM boardList
+    $que = "SELECT shortHand,longHand,boardDesc FROM boardList
             WHERE isPrivate=false
             ORDER BY boardPriority DESC";
     $res = $conn->query($que);
