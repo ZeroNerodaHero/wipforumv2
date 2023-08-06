@@ -11,10 +11,14 @@
 
     display: flex;
     width: 70%;
-    margin-bottom: 30%;
+    height: 40%;
+    margin-bottom: 10%;
+    overflow: hidden;
 }
 #boardTabLeft{
     white-space: nowrap;
+    display: grid;
+    grid-template-rows: max-content auto;
 }
 .boardTabCollapse::before{
     content: "[";
@@ -25,6 +29,9 @@
 #boardTabCont{
     padding: 0px 10px;
     border-right: 3px black solid;
+    display: grid;
+    align-content: space-between;
+    text-align: center;
 }
 #boardPreviewBodyCont{
     text-align: center;
@@ -39,6 +46,8 @@
 
 #boardTabRight{
     padding: 0px 13px;   
+    width: 100%;
+    overflow-y: auto;
 }
 #boardPreviewCont{
 }
@@ -57,4 +66,69 @@
 
 #webTabButton:hover{
     background-color: rgb(0, 81, 255);;
+}
+#boardPreviewImgCont{
+    width: 100%;
+}
+#boardPreviewImg{
+    width: 100%;
+}
+
+#latestImagePostCont{
+    display: grid;
+    grid-template-columns: 32% 32% 32%;
+    justify-content: space-between;
+}
+.latestImagePostCont{
+    width: 100%;
+}
+.latestImageCont{
+    width: 100%;
+}
+.latestImage{
+    width: 100%;
+}
+
+#latestMessagePostCont{
+    display: grid;
+    justify-content: flex-end;
+}
+.latestMessagePost{
+    display: grid;
+}
+.latestMessagePost:hover{
+    background-color: rgba(0, 0, 0, 0.2);
+}
+.latestMessageHeader{
+    white-space: nowrap;
+    margin-right: 3px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.latestMessageCont{
+    margin-left: 21px;
+}
+
+/* guide */
+.guidePromptCont{
+    display: grid;
+    grid-auto-rows: max-content auto max-content;
+    height: 100%;
+}
+.guideDoNotShowCont{
+    display: flex;
+    justify-content: flex-end;
+}
+.guideDoNotShowCont > div{
+    margin-left: 5px;
+}
+.absoluteGuideContent{
+    height: 100%;
+    overflow-y: auto;
+}
+
+@media screen and (max-width: 768px){
+    #latestImagePostCont{
+        grid-template-columns: auto;
+    }
 }

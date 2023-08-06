@@ -48,4 +48,26 @@ function getMessageList($activeThread){
     }
     return json_encode($ret);
 }
+
+function getLatestMessages($count){
+    $ret = Array();
+    $res = myQuery("SELECT messageContent,threadReference,boardReference,threadTitle 
+                    FROM 
+                        (messageList AS messageList JOIN threadList AS threadList 
+                        ON messageList.threadReference=threadList.threadId)
+                    ORDER BY messageId DESC LIMIT $count");
+
+    if(empty($res) || $res->num_rows == 0) return null;
+    $ret["messagePost"]=$res->fetch_all(MYSQLI_ASSOC);
+
+    $res = myQuery("SELECT imageLinks,threadReference,boardReference
+                    FROM 
+                        (messageList AS messageList JOIN threadList AS threadList 
+                        ON messageList.threadReference=threadList.threadId)
+                    WHERE imageLinks is not null ORDER BY messageId DESC LIMIT $count");
+    if(empty($res) || $res->num_rows == 0) return null;
+    $ret["imagePost"]=$res->fetch_all(MYSQLI_ASSOC);
+
+    return $ret;
+}
 ?>

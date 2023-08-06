@@ -11,25 +11,27 @@ import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
 import {PushPin, Lock} from "@mui/icons-material"
 
 function MainContent(props){
-    const [currentBoard,setCurrentBoard] = useState({shortHand:"h",longHand:"home"})
+    const [currentBoard,setCurrentBoard] = useState(-1)
     const [threadSearch,setThreadSearch] = useState("")
     const [errorJSON,setErrorJSON] = useState({show:0})
     const [checkStorage,setCheckStorage] = useState(false);
+
+    const [activeThreadPassthrough,setActiveThreadPassthrough] = useState(-1);
 
     useEffect(()=>{
         if(getLocalStorageItem("userSettings","currentBoard") != undefined){
             setCurrentBoard(getLocalStorageItem("userSettings","currentBoard") )
         } else{
-            setCurrentBoard({shortHand:"h",longHand:"home"});
+            setCurrentBoard("h");
         }
         const showHelpOnLoad = getLocalStorageItem("userSettings","showHelp");
         if(showHelpOnLoad === undefined || showHelpOnLoad === true ){
-            setErrorJSON({show:1,type:2});
+            //setErrorJSON({show:1,type:2});
         }
         setCheckStorage(true);
     },[])
     useEffect(()=>{
-        if(checkStorage !== false){
+        if(currentBoard != -1 && checkStorage !== false){
             var userSettings = getLocalStorageItem("userSettings");
             userSettings["currentBoard"] = currentBoard;
             localStorage.setItem("userSettings",JSON.stringify(userSettings))
@@ -39,10 +41,12 @@ function MainContent(props){
     return (
         <div id="mainContent" >
             <ErrorSetterContext.Provider value={{errorJSON,setErrorJSON}}>
-                <MainContentTabs currentBoard={currentBoard} setCurrentBoard={setCurrentBoard}/>
+                <MainContentTabs currentBoard={currentBoard} setCurrentBoard={setCurrentBoard}
+                    setActiveThreadPassthrough={setActiveThreadPassthrough}/>
                 <div id="mainContentDisplayer">
                     <MenuBar threadSearch={threadSearch} setThreadSearch={setThreadSearch}/>
-                    <ThreadCont currentBoard={currentBoard} threadSearch={threadSearch} />
+                    <ThreadCont currentBoard={currentBoard} threadSearch={threadSearch} 
+                        activeThreadPassthrough={activeThreadPassthrough} />
                 </div>
                 <AbsolutePrompt prompt={errorJSON} />
             </ErrorSetterContext.Provider>
@@ -105,7 +109,7 @@ function ThreadCont(props){
         apiRequest("http://localhost:8070/","",
         {
             option: 1001,
-            currentBoard: props.currentBoard["shortHand"]
+            currentBoard: props.currentBoard
         },
         "POST").then((data)=>{
             if(data["code"]!=0){
@@ -123,6 +127,13 @@ function ThreadCont(props){
                 return element.threadTitle.substr(0,props.threadSearch.length).toLowerCase() === props.threadSearch.toLowerCase()
         }))
     },[props.threadSearch])
+
+    useEffect(()=>{
+        if(props.activeThreadPassthrough != -1){
+            setActiveThread(props.activeThreadPassthrough["threadId"])
+            setActiveThreadTitle(props.activeThreadPassthrough["threadTitle"])
+        }
+    },[props.activeThreadPassthrough])
 
     return (
         <div id='threadViewEncap'>
@@ -217,7 +228,7 @@ function GUIcont(props){
                         sessionId: authKey != null ? authKey : -1,
                     };
                     if(props.activeThread == -1){
-                        postObject.currentBoard = props.currentBoard["shortHand"]
+                        postObject.currentBoard = props.currentBoard
                         postObject.threadTitle = threadTitle;
                         postObject.messageContent = newMessageContent
                     } else{
@@ -237,7 +248,6 @@ function GUIcont(props){
                     apiRequest("http://localhost:8070/","",postObject,"POST",hasImg).
                     then((data)=>{
                         //console.log(data)
-                        console.log(data["code"]+ " aa ")
                         if(data["code"] >= 1){
                             setAddMessageState(-1)
                             props.forceUpdate();
@@ -527,15 +537,12 @@ function MainContentTabs(props){
                     onClick={()=>{
                         setErrorJSON(
                             {show:1,type:99,
-                            ele:<WebTab setCurrentBoard={props.setCurrentBoard }/>})
+                            ele:<WebTab setCurrentBoard={props.setCurrentBoard } 
+                                setActiveThreadPassthrough={props.setActiveThreadPassthrough}/>
+                            })
                         }}>
                     <div>
-                        /{props.currentBoard["shortHand"]}/-{props.currentBoard["longHand"]}
-                    </div>
-                </div>
-                <div onClick={()=>{setErrorJSON({show:1,type:2,deliberate:true})}}>
-                    <div>
-                        Help
+                        Board: /{props.currentBoard}/
                     </div>
                 </div>
             </div>

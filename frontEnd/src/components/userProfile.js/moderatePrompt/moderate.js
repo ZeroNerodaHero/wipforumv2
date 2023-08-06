@@ -8,16 +8,31 @@ function ModeratePrompt(props){
     const [modForceReset,setModForceReset] = useState(0); 
     function updateModReset(){setModForceReset(modForceReset^1)}
 
+    const [moderateFocusOn,setModerateFocusOn] = useState(0);
+    function setFocusOnStyle(val){
+        return ""+
+            (val == 0?"25% 50% 25%":"")+
+            (val == 1?"80% 10% 10%":"")+
+            (val == 2?"10% 80% 10%":"")+
+            (val == 3?"10% 10% 80%":"");
+    }
+
     return (
         <div id="moderatePromptCont" onClick={()=>{props.toggleModerate()}}>
             <div id="moderatePrompt" onClick={(e)=>{e.stopPropagation()}}>
-                <div id="moderatePromptConstraint">
-                    <div id="siteStats">
+                <div id="moderatePromptConstraint" style={{
+                    gridAutoRows:setFocusOnStyle(moderateFocusOn)
+                }}>
+                    <div id="siteStats" onClick={()=>{setModerateFocusOn(1)}}>
                         <PostStats />
                         <BoardStats />
                     </div>
-                    <ModeratePosts updateModReset={updateModReset} modForceReset={modForceReset}/>
-                    <ModerateUsers updateModReset={updateModReset} modForceReset={modForceReset}/>
+                    <div className='moderateBox' onClick={()=>{setModerateFocusOn(2)}}>
+                        <ModeratePosts updateModReset={updateModReset} modForceReset={modForceReset}/>
+                    </div>
+                    <div id="moderateUsers" className='moderateBox' onClick={()=>{setModerateFocusOn(3)}}>
+                        <ModerateUsers updateModReset={updateModReset} modForceReset={modForceReset}/>
+                    </div>
                 </div>
             </div>
         </div>
@@ -34,14 +49,187 @@ function PostStats(props){
     );
 }
 function BoardStats(props){
+    const userId = GetCookie("userId")
+    const authKey = GetCookie("authKey")
+    const [boardList,setBoardList] = useState([])
+
+    const [threadDelete, setThreadDelete] = useState(-1)
+
+    useEffect(()=>{
+        apiRequest("http://localhost:8070/","",
+        {
+            option: 9001,
+            userId: userId,
+            authKey: authKey
+        },
+        "POST").then((data)=>{
+            if(data["code"]!=0){
+                setBoardList(data["boardList"])
+            }
+        })
+    },[])
+    useEffect(()=>{
+        if(threadDelete != -1){
+            apiRequest("http://localhost:8070/","",
+            {
+                option: 9101,
+                userId: userId,
+                authKey: authKey,
+                threadId: threadDelete
+            },
+            "POST").then((data)=>{
+                //if delete good-> new request. really bad way to write the code
+                if(data["code"]!=0){
+                    apiRequest("http://localhost:8070/","",
+                    {
+                        option: 9001,
+                        userId: userId,
+                        authKey: authKey
+                    },
+                    "POST").then((data)=>{
+                        if(data["code"]!=0){
+                            setBoardList(data["boardList"])
+                        }
+                    })
+                }
+            })
+        }
+    },[threadDelete])
+    /*
+    useEffect(()=>{
+        console.log("set",boardList)
+    },[boardList])
+    */
     return (
         <div id="boardStats" className='statBox'>
             <div className='statsPaddingBox'>
                 <div className='moderateHeader'>Board Summary</div>
+                <div>
+                    {
+                        //boardList.map((item,key)=>(<div>key</div>))
+                        boardList.map((item,key)=>(
+                            <BoardStatItem key={key} item={item} setThreadDelete={setThreadDelete}/>
+                        ))
+                    }
+                </div>
             </div>
         </div>
     );
 }
+
+function BoardStatItem(props){
+    return (
+        <div className="boardStatItemCont">
+            <div className='boardStatInfoCont'>
+                <div>/{props.item["shortHand"]}/-{props.item["longHand"]}</div>
+                <div>{props.item["boardSize"]} / {props.item["threadCap"]}</div>
+            </div>
+            {props.item["boardThreads"].map((threadItem,key)=>(
+                <ModerateThreadPostItem key={key} threadItem={threadItem} 
+                    setThreadDelete={props.setThreadDelete}/>
+            ))}
+        </div>
+    )
+}
+function ModerateThreadPostItem(props){
+    return (
+        <div className="boardStatThreadInfo">
+            <div className='boardStatThreadLeftInfo'>
+                <div>{props.threadItem["threadId"]}</div>
+            </div>
+
+            <div className='boardStatThreadRightInfo'>
+                <div>{props.threadItem["threadTitle"]}</div>
+            </div>
+            <div className='boardStatThreadModInfo'>
+                <div>
+                    <DisplayThreadMod type={0} 
+                        value={props.threadItem["threadPriority"]}
+                        threadId={props.threadItem["threadId"]}/>
+                </div>
+                <div>
+                    <DisplayThreadMod type={1}    
+                        value={props.threadItem["permLevel"]}
+                        threadId={props.threadItem["threadId"]}/>
+                </div>
+                <div className='optionButton' onClick={()=>{
+                    props.setThreadDelete(props.threadItem["threadId"])
+                }}>
+                    Delete
+                </div>
+            </div>
+
+        </div>
+    )
+}
+//will take in two props: 
+//type - 0 = threadPrority, 1 = permLevel
+//value -> actual value
+function DisplayThreadMod(props){
+    const userId = GetCookie("userId")
+    const authKey = GetCookie("authKey")
+
+    const [val,setVal] = useState(-1);
+    const [responseVar,setResponseVal] = useState(-1);
+    const [typeName,setTypeName] = useState("null")
+    const [updateCounter,setUpdateCounter] = useState(0)
+    useEffect(()=>{
+        setVal(props.value);
+        setResponseVal(props.value);
+        setTypeName(props.type == "0" ? "Priority":"Perm");
+    },[props.value])
+    useEffect(()=>{
+        setUpdateCounter(updateCounter+1);
+    },[val])
+    useEffect(()=>{
+        //one for intial, second for the props.value update
+        //third is the first legitamite one
+        if(updateCounter > 2){
+            apiRequest("http://localhost:8070/","",
+            {
+                option: 9100,
+                threadId: props.threadId,
+                threadMod: props.type,
+                value: val,
+                userId: userId,
+                authKey: authKey
+            },
+            "POST").then((data)=>{
+                //explantion: do no want the button and the number to show 
+                //different things. this way prevents that
+                if(data["code"]!=0){
+                    setResponseVal(val)
+                } else{
+                    setVal(responseVar)
+                }
+            })
+        }
+    },[updateCounter])
+
+    function buttonActive(setVal){
+        return "displayThreadPermsButton" + (val==setVal ? "Active":"");
+    }
+    
+    return (
+        <div className='displayThreadPerms'>
+            <div className='threadPermTypeName'>{typeName}</div>
+            <div onClick={()=>{setVal(0)}}
+                className={buttonActive(0)}>
+                0
+            </div>
+            <div onClick={()=>{setVal(50)}}
+                className={buttonActive(50)}>
+                50
+            </div>
+            <div onClick={()=>{setVal(99)}}
+                className={buttonActive(99)}>
+                99
+            </div>
+            <div className='displayThreadPermValue'>{responseVar}</div>
+        </div>
+    )
+}
+
 function ModeratePosts(props){
     const [reportList,setReportList] = useState([]);
     const {errorJSON,setErrorJSON} = useContext(ErrorSetterContext)
@@ -63,90 +251,91 @@ function ModeratePosts(props){
     },[props.modForceReset])
 
     return (
-        <div id="moderatePosts" className='moderateBox'>
-            <div className='moderatePaddingBox'>
-                <div className='moderateHeader'>Moderate Posts</div>
-                <div className="statsTableCont">
-                    <div className='statsTable'>
-                        {reportList.map((item)=>(
-                            <div key={item["messageId"]} className="statsTableItem">
-                                <div className='statsTableContent'>
-                                    <div className='statsItemTime'>{item["postTime"]}</div>
-                                    <div className='statsItemContent' style={{display:item["imageLinks"] == null ? "block":"grid"}}>
-                                        <div className='statsItemLeft'>
-                                            <div className="reportedMessageContent">{item["messageContent"]}</div>
+        <div id="moderatePosts" className='moderatePaddingBox'>
+            <div className='moderateHeader'>Moderate Posts</div>
+            <div className="statsTableCont">
+                <div className='statsTable'>
+                    {reportList.map((item)=>(
+                        <div key={item["messageId"]} className="statsTableItem">
+                            <div className='statsTableContent'>
+                                <div className='statsItemTime'>{item["postTime"]}</div>
+                                <div className='statsItemContent' style={{display:item["imageLinks"] == null ? "block":"grid"}}>
+                                    <div className='statsItemLeft'>
+                                        <div className="reportedMessageContent">{item["messageContent"]}</div>
 
-                                            <div className="reportedMessageInfo">
-                                                <div><b>ID:</b> {item["hashed_ip"].substr(0,16)+"..."}</div>
-                                                <div><b>Thread:</b> {item["threadReference"]} / <b>Msg:</b> {item["messageId"]}</div>
+                                        <div className="reportedMessageInfo">
+                                            <div><b>ID:</b> 
+                                                {item["hashed_ip"] ? 
+                                                    item["hashed_ip"].substr(0,16)+"...": "Error"}
                                             </div>
+                                            <div><b>Thread:</b> {item["threadReference"]} / <b>Msg:</b> {item["messageId"]}</div>
                                         </div>
-                                        { 
-                                            item["imageLinks"] == null ? <div style={{display:"none"}}/> :
-                                            <div className='statsItemRight'>
-                                                <div className='statsTableImgConstraint'>
-                                                    <img src={item["imageLinks"]} className="statsTableImg"
-                                                        style={{height:"100px"}}
-                                                        onClick={(e)=>{
-                                                            console.log(e.target.style.height)
-                                                            e.target.style.height = (e.target.style.height == "100px")?
-                                                                "":"100px";
-                                                        }}/>
-                                                </div>
-                                            </div>
-                                        }
                                     </div>
+                                    { 
+                                        item["imageLinks"] == null ? <div style={{display:"none"}}/> :
+                                        <div className='statsItemRight'>
+                                            <div className='statsTableImgConstraint'>
+                                                <img src={item["imageLinks"]} className="statsTableImg"
+                                                    style={{height:"100px"}}
+                                                    onClick={(e)=>{
+                                                        console.log(e.target.style.height)
+                                                        e.target.style.height = (e.target.style.height == "100px")?
+                                                            "":"100px";
+                                                    }}/>
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
-                                <div className='optionButtonConstraint'>
-                                    <div className='optionButtonCont'>
-                                        <div className='optionButton' onClick={()=>{
-                                            //var userId = GetCookie("userId")
-                                            //var authKey = GetCookie("authKey")
-                                            apiRequest("http://localhost:8070/","",
-                                            {
-                                                option: 9997,
-                                                userId: userId,
-                                                authKey: authKey,
-                                                messageId: item["messageId"]
-                                            },
-                                            "POST").then((data)=>{
-                                                if(data["code"]!=0){
-                                                    props.updateModReset();
-                                                } 
-                                            })
-                                        }}>
-                                            UnReport
-                                        </div>
-                                        <div className='optionButton' onClick={()=>{
-                                            //var userId = GetCookie("userId")
-                                            //var authKey = GetCookie("authKey")
-                                            apiRequest("http://localhost:8070/","",
-                                            {
-                                                option: 9999,
-                                                userId: userId,
-                                                authKey: authKey,
-                                                messageId: item["messageId"]
-                                            },
-                                            "POST").then((data)=>{
-                                                if(data["code"]!=0){
-                                                    props.updateModReset();
-                                                } 
-                                            })
-                                        }}>
-                                            Delete
-                                        </div>
-                                        <div className='optionButton' onClick={()=>{
-                                            setErrorJSON({type:99,
-                                                ele:<BanUserPrompt hashed_ip={item["hashed_ip"]} 
-                                                    messageId={item["messageId"]} updateModReset={props.updateModReset}/>})
-                                        }}>
-                                            Ban 
-                                        </div>
+                            </div>
+                            <div className='optionButtonConstraint'>
+                                <div className='optionButtonCont'>
+                                    <div className='optionButton' onClick={()=>{
+                                        //var userId = GetCookie("userId")
+                                        //var authKey = GetCookie("authKey")
+                                        apiRequest("http://localhost:8070/","",
+                                        {
+                                            option: 9997,
+                                            userId: userId,
+                                            authKey: authKey,
+                                            messageId: item["messageId"]
+                                        },
+                                        "POST").then((data)=>{
+                                            if(data["code"]!=0){
+                                                props.updateModReset();
+                                            } 
+                                        })
+                                    }}>
+                                        UnReport
+                                    </div>
+                                    <div className='optionButton' onClick={()=>{
+                                        //var userId = GetCookie("userId")
+                                        //var authKey = GetCookie("authKey")
+                                        apiRequest("http://localhost:8070/","",
+                                        {
+                                            option: 9999,
+                                            userId: userId,
+                                            authKey: authKey,
+                                            messageId: item["messageId"]
+                                        },
+                                        "POST").then((data)=>{
+                                            if(data["code"]!=0){
+                                                props.updateModReset();
+                                            } 
+                                        })
+                                    }}>
+                                        Delete
+                                    </div>
+                                    <div className='optionButton' onClick={()=>{
+                                        setErrorJSON({type:99,
+                                            ele:<BanUserPrompt hashed_ip={item["hashed_ip"]} 
+                                                messageId={item["messageId"]} updateModReset={props.updateModReset}/>})
+                                    }}>
+                                        Ban 
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
@@ -232,52 +421,50 @@ function ModerateUsers(props){
     },[props.modForceReset])
 
     return (
-        <div id="moderateUsers" className='moderateBox'>
-            <div className='moderatePaddingBox'>
-                <div className='moderateHeader'>Moderate Users</div>
-                <div className="statsTableCont">
-                    <div className='statsTable'>
-                        {
-                            banList.map((item,key)=>(
-                                <div key={key} className="banUserCont"> 
-                                    <div className="banInfoCont"><b>Start Time:</b> 
-                                        <div className="banInfo">{item["startTime"]}</div></div>
-                                    <div className="banInfoCont"><b>End Time:</b>
-                                        <div className="banInfo">{item["expireTime"]}</div></div>
-                                    <div className="banInfoCont"><b>Hashed Ip:</b> 
-                                        <div className="banInfo">{
-                                            item["hashed_ip"].substr(0,16)+"..."
-                                        }</div></div>
-                                    <div className="banInfoReasonCont"><b>Reason:</b>
-                                        <div className="banInfoReason">{item["reason"]}</div></div>
+        <div id="moderateUsersCont" className='moderatePaddingBox'>
+            <div className='moderateHeader'>Moderate Users</div>
+            <div className="statsTableCont">
+                <div className='statsTable'>
+                    {
+                        banList.map((item,key)=>(
+                            <div key={key} className="banUserCont"> 
+                                <div className="banInfoCont"><b>Start Time:</b> 
+                                    <div className="banInfo">{item["startTime"]}</div></div>
+                                <div className="banInfoCont"><b>End Time:</b>
+                                    <div className="banInfo">{item["expireTime"]}</div></div>
+                                <div className="banInfoCont"><b>Hashed Ip:</b> 
+                                    <div className="banInfo">{
+                                        item["hashed_ip"].substr(0,16)+"..."
+                                    }</div></div>
+                                <div className="banInfoReasonCont"><b>Reason:</b>
+                                    <div className="banInfoReason">{item["reason"]}</div></div>
 
-                                    <div className='optionButtonConstraint'>
-                                        <div className='optionButtonCont'>
-                                            <div className='optionButton' onClick={()=>{
-                                                //var userId = GetCookie("userId")
-                                                //var authKey = GetCookie("authKey")
-                                                apiRequest("http://localhost:8070/","",
-                                                {
-                                                    option: 9899,
-                                                    userId: userId,
-                                                    authKey: authKey,
-                                                    hashed_ip: item["hashed_ip"]
-                                                },
-                                                "POST").then((data)=>{
-                                                    if(data["code"]!=0){
-                                                        props.updateModReset();
-                                                    } else{
-                                                    }
-                                                })
-                                            }}>
-                                                Unban
-                                            </div>
+                                <div className='optionButtonConstraint'>
+                                    <div className='optionButtonCont'>
+                                        <div className='optionButton' onClick={()=>{
+                                            //var userId = GetCookie("userId")
+                                            //var authKey = GetCookie("authKey")
+                                            apiRequest("http://localhost:8070/","",
+                                            {
+                                                option: 9899,
+                                                userId: userId,
+                                                authKey: authKey,
+                                                hashed_ip: item["hashed_ip"]
+                                            },
+                                            "POST").then((data)=>{
+                                                if(data["code"]!=0){
+                                                    props.updateModReset();
+                                                } else{
+                                                }
+                                            })
+                                        }}>
+                                            Unban
                                         </div>
                                     </div>
                                 </div>
-                            ))
-                        }
-                    </div>
+                            </div>
+                        ))
+                    }
                 </div>
             </div>
         </div>

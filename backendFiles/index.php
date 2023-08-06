@@ -89,6 +89,9 @@ function apiRequest(){
                 $retStr = getMessageList($hData["activeThread"]);
             }
         }
+        else if($option == 1003){
+            $retStr = json_encode(Array("code"=>1,"latestPost"=>getLatestMessages(10)));
+        }
     }
     /* option 2000**** */ 
     else if($option >= 2000 && $option <= 2999){
@@ -166,7 +169,15 @@ function apiRequest(){
                 //this is for generate messageStats
             }
             else if($option == 9001){
-                //this is for generating boardStats
+                $ret = loadBoardThreads();
+                if($ret != null){
+                    $retStr = json_encode(Array(
+                        "code"=>1,
+                        "boardList"=>$ret
+                    ));
+                } else{
+                    $retStr = generateError("Failed To Load");
+                }
             }
             else if($option == 9002){
                 //this is for generating flagged posts
@@ -183,6 +194,28 @@ function apiRequest(){
                     "code"=>1,
                     "bannedUsers"=>$report
                 ));
+            }
+            else if($option == 9100){
+                if(isset($hData["threadId"]) && isset($hData["threadMod"]) 
+                    && isset($hData["value"])
+                    && updateMessageMod($hData["threadId"],$hData["threadMod"],$hData["value"])){
+                        $retStr = json_encode(Array(
+                            "code"=>1
+                        ));
+                } else{
+                    $retStr = generateError("Failed to update");
+                }
+            }
+            else if($option == 9101){
+                //delete thread
+                if(isset($hData["threadId"])){
+                    deleteThread($hData["threadId"]);
+                    $retStr = json_encode(Array(
+                        "code"=>1
+                    ));
+                } else{
+                    $retStr = generateError("Failed to delete thread.");
+                }
             }
             else if($option == 9799){
                 //lock board

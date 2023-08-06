@@ -19,6 +19,10 @@
     function generateError($msg,$errorCode=0){
         return '{"code":'.$errorCode.',"msg":"'.$msg.'"}';
     }
+    function myQuery($que){
+        global $conn;
+        return $conn->query($que);
+    }
 
     $host_computer_loc = "https://www.schizoi.cyou/request/imgs/postImgs/";
     $host_computer_loc = "http://172.17.0.1:8070/imgs/postImgs/"; 

@@ -35,20 +35,4 @@
     font-weight: bold;
 }
 
-/* guide */
-.guidePromptCont{
-    background-color: rgb(121, 255, 121);
-    height: 90%;
-    width: 75%;
-
-    display: grid;
-    grid-auto-rows: max-content auto max-content;
-}
-.guideDoNotShowCont{
-    display: flex;
-    justify-content: flex-end;
-}
-.guideDoNotShowCont > div{
-    margin-left: 5px;
-}
 

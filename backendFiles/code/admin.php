@@ -86,7 +86,35 @@ function unBanIp($hash_ip){
 
 function loadBoardThreads(){
     global $conn;
-    $que = "SELECT * FROM boardList";
+    $que = "SELECT shortHand,longHand,boardDesc,boardImg,threadCap 
+            FROM boardList";
+    $res = $conn->query($que);
+    if(empty($res)) return null;
+
+    $ret = Array();
+    while($row = $res->fetch_assoc()){
+        $que = "SELECT threadId,threadTitle,permLevel,threadPriority 
+                FROM threadList 
+                WHERE boardReference='".$row["shortHand"]."'
+                ORDER BY updateTime";
+        $boardRes = $conn->query($que);
+        $row["boardSize"] = $boardRes->num_rows;
+        $row["boardThreads"] = Array();
+        while($boardRow = $boardRes->fetch_assoc()){
+            array_push($row["boardThreads"],$boardRow);
+        }
+        
+        array_push($ret,$row);
+    }
+    return $ret;
+}
+
+function updateMessageMod($threadId,$threadMod,$value){
+    $updateColumn = ($threadMod == 0 ? "threadPriority":"permLevel");
+    $que = "UPDATE threadList 
+            SET $updateColumn = $value
+            WHERE threadId=$threadId";
+    return myQuery($que);
 }
 
 
