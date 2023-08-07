@@ -567,6 +567,9 @@ empty space too
 
 
 @media screen and (max-width: 768px){
+    .newPrompt{
+        width: 95%;
+    }
     #threadSearchInput{
         width: 60%;
     }

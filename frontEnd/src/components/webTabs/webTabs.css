@@ -127,6 +127,9 @@
 }
 
 @media screen and (max-width: 768px){
+    #boardTab{
+        width: 95%;
+    }
     #latestImagePostCont{
         grid-template-columns: auto;
     }
