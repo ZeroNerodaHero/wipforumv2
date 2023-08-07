@@ -3,6 +3,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers:  *');
 header('Access-Control-Allow-Methods:  *'); 
 
+include_once("SERVERCONFIG.php");
 include_once("login.php");
 include_once("code/authUser.php");
 
@@ -137,8 +138,8 @@ function apiRequest(){
                             "msg"=>"Thread is locked. Only admins can post in this thread. Sorry"
                         ));
                     } else{
-                        $retStr = '{"code":1}';
-                        addMessage($hData["threadId"], $hData["messageContent"], $userId, ($loggedIn ? $hData["userId"] : -1));
+                        $retStr = json_encode(
+                            addMessage($hData["threadId"], $hData["messageContent"], $userId, ($loggedIn ? $hData["userId"] : -1)));
                     }
                 } else {
                     $retStr = generateError("Missing items or title too long");

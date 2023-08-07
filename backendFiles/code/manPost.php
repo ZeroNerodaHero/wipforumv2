@@ -12,21 +12,20 @@ function threadIsLocked($threadId,$permLevel){
 function addMessage($threadReference,$messageContent,$messageOwner,$userReference=-1){
     global $conn;
 
+    $imageLink = "";
+    if(!empty($_FILES["messageImage"])){
+        $imageErrorType = verifyImg("messageImage");
+        if($imageErrorType== 1){
+            $imageLink = uploadImg("messageImage");
+        } else{
+            return generateImageError($imageErrorType);
+        }
+    } 
+
     //this is used to randomize the user id in everys tring. purpose of 191? prime does something? no? dunno
     //i have no idea what this randomization will cause but...
     srand($messageOwner % ($threadReference*$threadReference* 7919));
     $messageOwner = rand();
-
-    $imageErrorType = verifyImg("messageImage");
-    if ($imageErrorType == -1){
-        echo '{"code":0,"msg":"Uploaded media is the wrong type"}';
-        die();
-    }
-    if ($imageErrorType == -2){
-        echo '{"code":0,"msg":"Uploaded media is the too big"}';
-        die();
-    }
-    $imageLink = (!empty($_FILES["messageImage"])) ? uploadImg("messageImage") : "";
 
     $messageContent = yeetBadWords($messageContent);
     $que = "UPDATE threadList 
@@ -40,17 +39,20 @@ function addMessage($threadReference,$messageContent,$messageOwner,$userReferenc
                 (empty($imageLink) ? 'null':"'$imageLink'").",'".getIpAddrHash()."')";
     $conn->query($que);
     
-    return $conn->insert_id;
+    return Array("code"=>1,"newMessageId"=>$conn->insert_id);
 }
 function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner,$loggedIn){
     global $conn;
+    $imageErrorType = verifyImg("messageImage");
+    if($imageErrorType < 0) return generateImageError($imageErrorType);
+
     $threadTitle = yeetBadWords($threadTitle);
     $threadTitle = addslashes($threadTitle);
     $que = "INSERT INTO threadList(boardReference,threadTitle,threadOP)
             VALUES('$currentBoard','$threadTitle',$messageOwner)";
     $conn->query($que);
     $threadId = $conn->insert_id;
-    $msgLink = addMessage($threadId, $newMessageContent, $messageOwner, ($loggedIn ? $messageOwner : -1));
+    $msgLink = addMessage($threadId, $newMessageContent, $messageOwner, ($loggedIn ? $messageOwner : -1))["newMessageId"];
     $que = "UPDATE threadList
             SET firstPostLink=".$msgLink."
             WHERE threadId=".$threadId;
@@ -61,6 +63,16 @@ function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner,$
     
 
     return array("newThreadId"=>$threadId);
+}
+
+function generateImageError($imageErrorType){
+    if ($imageErrorType == -1){
+        return Array("code"=>0,"msg"=>"Uploaded media is the wrong type");
+    }
+    if ($imageErrorType == -2){
+        return Array("code"=>0,"msg"=>"Uploaded media is the too big");
+    }
+    return "";
 }
 
 //returns either the link or null
