@@ -242,6 +242,7 @@
 }
 .boardStatThreadInfo > div{
     width: 100%;
+    word-break: break-word;
 }
 .boardStatThreadLeftInfo{
     word-break: break-all;

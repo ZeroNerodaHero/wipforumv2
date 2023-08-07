@@ -128,7 +128,8 @@ function LatestPosts(props){
                                 /-{item["threadTitle"]}</b>
                             </div>
                             <div className='latestMessageCont'>
-                                {item["messageContent"]}
+                                <div>&#8627;</div>
+                                <div className='latestMessageContText'>{item["messageContent"]}</div>
                             </div>
                         </div>
                     ))

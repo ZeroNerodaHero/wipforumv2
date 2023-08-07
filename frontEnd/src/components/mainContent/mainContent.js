@@ -189,7 +189,6 @@ function GUIcont(props){
     const [newMessageContent,setNewMessageContent] = useState("");
     const [imageUpload,setImageUpload] = useState("");
     const [imageTemp,setImageTemp] = useState(0);
-    const [hoverHelp,setHoverHelp] = useState(0);
 
     const fileInput = useRef(null)
     const {errorJSON,setErrorJSON} = useContext(ErrorSetterContext)
@@ -224,11 +223,7 @@ function GUIcont(props){
                 </div>     
             </div>
             <div id="promptSubmitButtonCont">
-                <div 
-                    onClick={()=>{setHoverHelp(hoverHelp ^ 1)}}>
-                    <div>Help</div>
-                </div>
-                <div id="promptSubmit" onClick={()=>{
+                <div id="promptSubmit" className="noselect" onClick={()=>{
                     var hasImg = false;
 
                     var userId = GetCookie("userId")
@@ -294,27 +289,6 @@ function GUIcont(props){
                     })
                 }}>Post</div>
             </div>
-            {hoverHelp == 0 ? <div></div> :
-                <div>
-                    <div id="submitHelpBkg" onClick={()=>{setHoverHelp(0)}} />
-                    <div id='submitHelp'>
-                        <div id="submitHelpTopCont">
-                            <div id="submitHelpTitle">Help</div>
-                            <div id="submitHelpClose"
-                                onClick={()=>{setHoverHelp(0)}}>Close</div>
-                        </div>
-                        <div>
-                            <div>For a new post, you have to post an image.</div>
-                            <div>For a message, you don't have to post an image.</div>
-                            <div className="help_disclaimer">
-                                If you do not have an account, you cannot post images, 
-                                so you cannot make new threads. But you can post 
-                                text-only messages.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
         </div>
     );
     const promptTextArea = function(content,setContent)
@@ -361,6 +335,8 @@ function ActiveThreadDisplayer(props){
     /*activeThreadCont has a problem !!!!! */
     const {errorJSON,setErrorJSON} = useContext(ErrorSetterContext)
     const [expandMsgOpt,setMsgExpandOpt] = useState(-1)
+    const messageReferenceList = useRef(null)
+    //const messageIdMap = new Map();
 
     const [activeThreadMessages,setActiveThreadMessages] = useState([
         { messageId:'1',messageOwner:"test",postTime:"Thurs 01-01-2009 6:00",
@@ -385,6 +361,14 @@ function ActiveThreadDisplayer(props){
             }
         })
     },[props.activeThread,props.forceRefreshActive])
+
+    function callBackFocusPost(messageId){
+        const eleId = activeThreadMessages.findIndex((ele)=> ele["messageId"] === messageId)
+        if(eleId >= 0){
+            const tempEle = messageReferenceList.current.childNodes[eleId];
+            fadeColor(tempEle)
+        }
+    }
 
     const displayActiveContent = function(message,setMsgExpandOpt) {
         return (
@@ -472,9 +456,9 @@ function ActiveThreadDisplayer(props){
                             }}/>
                         </div>
                     }
-                    <div className='textContentDisplayer'>{
-                        convertMessageIntoFormat(message["messageContent"])
-                    }</div> 
+                    <div className='textContentDisplayer'>
+                        {convertMessageIntoFormat(message["messageContent"],true,callBackFocusPost)}
+                    </div> 
                 </div>
             </div>
         )
@@ -484,7 +468,11 @@ function ActiveThreadDisplayer(props){
         <div id="activeThreadCont" >
             <div id="activeThreadConstraint" onClick={(e)=>{e.stopPropagation()}}>
                 <div id="activeThreadTitle">{props.threadTitle}</div>
-                { activeThreadMessages.map((message)=>(displayActiveContent(message,setMsgExpandOpt)))}
+                <div ref={messageReferenceList}>
+                    { activeThreadMessages.map((message)=>{
+                        return displayActiveContent(message,setMsgExpandOpt)
+                    })}
+                </div>
             </div>
         </div>
     )
@@ -546,7 +534,6 @@ function MainContentTabs(props){
         <div id="mainContentTabs">
             <div id="mainContentTabs_left">
                 <div id="showBoards" 
-                    //onMouseEnter={()=>{setExpandLeft(1)}} onMouseLeave={()=>{setExpandLeft(0)}}
                     onClick={()=>{
                         setErrorJSON(
                             {show:1,type:99,
@@ -609,11 +596,30 @@ function scrollToChild(ele, parentEle,offset=-0){
 
 
 
-function convertMessageIntoFormat(message){
+function convertMessageIntoFormat(message,splitMore=false,callBackFunc=null){
     var newLineList = [];
     if(message !== undefined){
-        for(var str of message.split(/\n+/)){
-            newLineList.push([str,{newLine:1,changeColor:(str[0] === "~"? true : false)}])
+        for(const str of message.split(/\n+/)){
+            var merged = []
+            if(splitMore === true){
+                const normalText = str.split(/#[0-9]*/);
+                const userReference = str.match(/#[0-9]*/g);
+                if(userReference !== null){
+                    for(let i = 0, j = 0; i < normalText.length; i++,j++){
+                        merged.push(normalText[i])
+                        if(j < userReference.length){
+                            merged.push(userReference[j])
+                        }
+                    }
+                    //console.log("normal: ", normalText,"user",userReference,"final",merged)
+                } else{
+                    merged = normalText
+                }
+            } else{
+                merged.push(str)
+            }
+            
+            newLineList.push([merged,{newLine:1,changeColor:(str[0] === "~"? true : false),}])
         }
     }
     //console.log(newLineList)
@@ -622,7 +628,16 @@ function convertMessageIntoFormat(message){
             {newLineList.map((item,index)=>(
                 <div className='textContentParagraphSplit' key={index}>
                     <div className={(item[1]["changeColor"] == true? "textContentColorChange":"")}>
-                        {item[0]}
+                        {item[0].map((itemString,key)=>{
+                            const isUserReference = (itemString[0] === "#"  && splitMore);
+                            return <span key={key} onClick={()=>{
+                                if(isUserReference){
+                                    callBackFunc(itemString.substr(1))
+                                }
+                            }} className={isUserReference ? "userReferenceTextContent":""}>
+                                {itemString}
+                            </span>
+                        })}
                     </div>
                 </div>
             ))}
@@ -633,6 +648,13 @@ function convertMessageIntoFormat(message){
 function convertTimeToJS(time){
     time = time.replace(/ /,"T")
     return time+"Z";
+}
+
+function fadeColor(ele){
+    ele.style.backgroundColor = "#fcffe4";
+    setTimeout(()=>{
+        ele.style.backgroundColor = ""
+    },"1000")
 }
 
 export default MainContent

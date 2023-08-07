@@ -105,7 +105,13 @@
     overflow: hidden;
 }
 .latestMessageCont{
-    margin-left: 21px;
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: start;
+    margin-left: 3px;
+}
+.latestMessageContText{
+    margin-top: 3px;
 }
 
 /* guide */
