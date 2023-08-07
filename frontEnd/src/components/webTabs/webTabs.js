@@ -116,25 +116,23 @@ function LatestPosts(props){
             }
             {
                 latestPost["messagePost"] === undefined ? <div>Failed to load text messages</div>:
-                <div>
-                    <div id='latestMessagePostCont'>
-                    {
-                        latestPost["messagePost"].map((item,key)=>(
-                            <div key={key} className="latestMessagePost" 
-                                onClick={()=>{
-                                    latestSetPage(item["boardReference"],item["threadReference"],item["threadTitle"])
-                                }}>
-                                <div className='latestMessageHeader'>
-                                    <b>/{item["boardReference"]}
-                                    /-{item["threadTitle"]}</b>
-                                </div>
-                                <div className='latestMessageCont'>
-                                    {item["messageContent"]}
-                                </div>
+                <div id='latestMessagePostCont'>
+                {
+                    latestPost["messagePost"].map((item,key)=>(
+                        <div key={key} className="latestMessagePost" 
+                            onClick={()=>{
+                                latestSetPage(item["boardReference"],item["threadReference"],item["threadTitle"])
+                            }}>
+                            <div className='latestMessageHeader'>
+                                <b>/{item["boardReference"]}
+                                /-{item["threadTitle"]}</b>
                             </div>
-                        ))
-                    }
-                    </div>
+                            <div className='latestMessageCont'>
+                                {item["messageContent"]}
+                            </div>
+                        </div>
+                    ))
+                }
                 </div>
             }
             </div>

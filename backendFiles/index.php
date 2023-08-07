@@ -123,7 +123,7 @@ function apiRequest(){
             } 
             else if(!empty($hData["messageContent"]) && strlen($hData["messageContent"]) < 1500){
                 if($option == 2000 && !empty($hData["currentBoard"]) && !empty($hData["threadTitle"]) && 
-                    !empty($_FILES["messageImage"]["name"]) && verifyImg($_FILES["messageImage"]["name"]) != -1
+                    !empty($_FILES["messageImage"]["name"]) && verifyImg($_FILES["messageImage"]["name"]) == 1
                     && strlen($hData["threadTitle"]) < 80
                 ){
                     $ret = addThread($hData["currentBoard"],$hData["threadTitle"],

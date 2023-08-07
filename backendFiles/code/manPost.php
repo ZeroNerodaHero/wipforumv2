@@ -17,11 +17,16 @@ function addMessage($threadReference,$messageContent,$messageOwner,$userReferenc
     srand($messageOwner % ($threadReference*$threadReference* 7919));
     $messageOwner = rand();
 
-    $imageLink = (!empty($_FILES["messageImage"])) ? uploadImg("messageImage") : "";
-    if ($imageLink == "wrong type"){
+    $imageErrorType = verifyImg("messageImage");
+    if ($imageErrorType == -1){
         echo '{"code":0,"msg":"Uploaded media is the wrong type"}';
         die();
     }
+    if ($imageErrorType == -2){
+        echo '{"code":0,"msg":"Uploaded media is the too big"}';
+        die();
+    }
+    $imageLink = (!empty($_FILES["messageImage"])) ? uploadImg("messageImage") : "";
 
     $messageContent = yeetBadWords($messageContent);
     $que = "UPDATE threadList 
@@ -62,27 +67,32 @@ function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner,$
 function uploadImg($fileName){ 
     global $post_image_dir,$host_computer_loc;
     $imageFileType = strtolower(pathinfo(basename($_FILES[$fileName]["name"]),PATHINFO_EXTENSION));
-    if(verifyImg($_FILES[$fileName]["name"]) == -1){
-        return "wrong type";
-    }
     srand(time());
     $file_loc = $post_image_dir . rand((1<<29),(1<<31)) . "." .$imageFileType;
     if (!is_uploaded_file($_FILES[$fileName]["tmp_name"]))
         return "invalid file upload";
-    if (!file_exists($file_loc) && $_FILES[$fileName]["size"] < 2000000){
+    if (!file_exists($file_loc)){
         if (move_uploaded_file($_FILES[$fileName]["tmp_name"], $file_loc)){
             return htmlspecialchars($host_computer_loc.basename($file_loc));
         } else{
             return "file cannot be uploaded bc of some reason";
         }
     } else{
-        if (file_exists($file_loc)) return htmlspecialchars($host_computer_loc.basename($file_loc));
-        else return "file too big ".$_FILES[$fileName]["size"];
+        return htmlspecialchars($host_computer_loc.basename($file_loc));
     }
 }
+
+//we need to make sure it calls this to check size and also the file type is right
 function verifyImg($fileName){
+    if($_FILES[$fileName]["size"] > 2000000){
+        return -2;
+    }
+    if(verifyImgType($_FILES[$fileName]["name"]) == -1) return -1;
+    return 1;
+}
+function verifyImgType($fileName){
     $imageFileType = strtolower(pathinfo(basename($fileName),PATHINFO_EXTENSION));
-    if($imageFileType == "jpg" || $imageFileType == "png" || $imageFileType == "jpeg"
+    if($imageFileType == "jpg"|| $imageFileType == "png" || $imageFileType == "jpeg"
         || $imageFileType == "gif" ){
             return 1;
     }

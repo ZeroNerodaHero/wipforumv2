@@ -91,7 +91,6 @@
 
 #latestMessagePostCont{
     display: grid;
-    justify-content: flex-end;
 }
 .latestMessagePost{
     display: grid;
