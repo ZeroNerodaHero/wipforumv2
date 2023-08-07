@@ -275,7 +275,7 @@ function GUIcont(props){
                                     </div>)
                                 })
                             } else{
-                                setErrorJSON({show:1,type:1,title:"Failed to Post 2",content:data["msg"]})
+                                setErrorJSON({show:1,type:1,title:"Failed to Post",content:data["msg"]})
                             }
                         }
                     })
