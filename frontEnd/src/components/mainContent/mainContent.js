@@ -11,7 +11,7 @@ import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
 import {PushPin, Lock} from "@mui/icons-material"
 
 function MainContent(props){
-    const [currentBoard,setCurrentBoard] = useState(-1)
+    const [currentBoard,setCurrentBoard] = useState("h")
     const [threadSearch,setThreadSearch] = useState("")
     const [errorJSON,setErrorJSON] = useState({show:0})
     const [checkStorage,setCheckStorage] = useState(false);
@@ -26,7 +26,12 @@ function MainContent(props){
         }
         const showHelpOnLoad = getLocalStorageItem("userSettings","showHelp");
         if(showHelpOnLoad === undefined || showHelpOnLoad === true ){
-            //setErrorJSON({show:1,type:2});
+            setErrorJSON(
+                {show:1,type:99,
+                ele:<WebTab setCurrentBoard={props.setCurrentBoard } 
+                    setActiveThreadPassthrough={props.setActiveThreadPassthrough}
+                    type={-2} />
+            })
         }
         setCheckStorage(true);
     },[])
@@ -113,9 +118,13 @@ function ThreadCont(props){
         },
         "POST").then((data)=>{
             if(data["code"]!=0){
-                setThreadList(data["threadList"]);
-                setAllThreads(data["threadList"]);
-                /* Note: not sure what this line was for */
+                if(data["threadList"] != undefined && data["threadList"].length != 0){
+                    setThreadList(data["threadList"]);
+                    setAllThreads(data["threadList"]);
+                } else{
+                    console.log(data["threadList"])
+                }
+            /* Note: not sure what this line was for */
                 //setActiveThread(-1);
             }
         })
@@ -134,7 +143,11 @@ function ThreadCont(props){
             setActiveThreadTitle(props.activeThreadPassthrough["threadTitle"])
         }
     },[props.activeThreadPassthrough])
-
+    /*
+    useEffect(()=>{
+        console.log(threadList)
+    },[threadList])
+    */
     return (
         <div id='threadViewEncap'>
             <GUIcont activeThread={activeThread} setActiveThread={setActiveThread} setActiveThreadTitle={setActiveThreadTitle}
