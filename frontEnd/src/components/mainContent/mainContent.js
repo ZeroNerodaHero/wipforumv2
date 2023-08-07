@@ -87,7 +87,7 @@ function MenuBar(props){
                 value={threadSizeValue}
                 onChange={(e)=>{setThreadSizeValue(e.target.value)}}
                 className="sliderStyle"/>
-        </div>
+        </div>x 
         <div id="menuLeftCont">
             Search:
             <input id="threadSearchInput" value={props.threadSearch} 
@@ -109,6 +109,8 @@ function ThreadCont(props){
     const forceUpdate = function(){setForceUpdateCnt(forceUpdateCnt ^ 1)}
     const [forceRefreshActive,setForceRefreshActive] = useState(0)
     const refreshActive = function(){setForceRefreshActive(forceRefreshActive ^ 1)}
+
+    const [updateMessageBox,setUpdateMessageBox] = useState("");
     
     useEffect(()=>{
         apiRequest("http://localhost:8070/","",
@@ -151,14 +153,17 @@ function ThreadCont(props){
     return (
         <div id='threadViewEncap'>
             <GUIcont activeThread={activeThread} setActiveThread={setActiveThread} setActiveThreadTitle={setActiveThreadTitle}
-                currentBoard={props.currentBoard} forceUpdate={forceUpdate} refreshActive={refreshActive}/>
+                currentBoard={props.currentBoard} forceUpdate={forceUpdate} refreshActive={refreshActive}
+                updateMessageBox={updateMessageBox} />
             {
                 activeThread == -1 ? <div /> :
                 <div id="activeThreadDisplay" onClick={()=>{setActiveThread(-1)}}>
                     <ActiveThreadDisplayer activeThread={activeThread}
                         threadTitle={activeThreadTitle}
                         forceRefreshActive={forceRefreshActive}
-                        currentBoard={props.currentBoard}/>
+                        currentBoard={props.currentBoard}
+                        setUpdateMessageBox={setUpdateMessageBox}
+                        />
                 </div>
             }
             <div className='threadViewCont'>
@@ -199,6 +204,12 @@ function GUIcont(props){
             setImageTemp(URL.createObjectURL(imageUpload[0]))
         }
     },[imageUpload])
+    useEffect(()=>{
+        if(props.updateMessageBox !== ""){
+            setMessageContent(messageContent+(messageContent !== ""? "\n":"")+props.updateMessageBox+"\n");
+            setAddMessageState(1)
+        }
+    },[props.updateMessageBox])
 
     const submitCont = (
         <div id="promptSubmitCont">
@@ -367,10 +378,11 @@ function ActiveThreadDisplayer(props){
         if(eleId >= 0){
             const tempEle = messageReferenceList.current.childNodes[eleId];
             fadeColor(tempEle)
+            tempEle.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
         }
     }
 
-    const displayActiveContent = function(message,setMsgExpandOpt) {
+    const displayActiveContent = function(message,setMsgExpandOpt,setAddMessageState) {
         return (
             <div className="activeThreadContentDisplayer" key={message["messageId"]} >
                 <div className='messageInfo'>
@@ -409,7 +421,6 @@ function ActiveThreadDisplayer(props){
                                                 var userId = GetCookie("userId")
                                                 var authKey = GetCookie("authKey")
 
-
                                                 apiRequest("http://localhost:8070/","",
                                                 {
                                                     option: 2999,
@@ -429,6 +440,10 @@ function ActiveThreadDisplayer(props){
                                             }}>
                                                 Report
                                             </div>
+                                            <div onClick={(e)=>{
+                                                //e.stopPropagation()
+                                                props.setUpdateMessageBox("#"+message["messageId"])
+                                            }}>Reply</div>
                                             <div onClick={(e)=>{
                                                 setMsgExpandOpt(-1)
                                                 e.stopPropagation()
