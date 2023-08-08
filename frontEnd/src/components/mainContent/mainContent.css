@@ -437,7 +437,7 @@ empty space too
 .newPrompt{
     content: "hello";
     position: absolute;
-    width: 95%;
+    width: 65%;
     height: 50%;
     margin-bottom: 2%;
 
@@ -537,6 +537,9 @@ empty space too
 
 
 @media screen and (max-width: 768px){
+    .newPrompt{
+        width: 95%;
+    }    
     input, textarea{
         font-size: 1.1rem;
     }
