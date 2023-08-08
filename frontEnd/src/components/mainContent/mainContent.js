@@ -87,7 +87,7 @@ function MenuBar(props){
                 value={threadSizeValue}
                 onChange={(e)=>{setThreadSizeValue(e.target.value)}}
                 className="sliderStyle"/>
-        </div>x 
+        </div>
         <div id="menuLeftCont">
             Search:
             <input id="threadSearchInput" value={props.threadSearch} 
@@ -206,7 +206,9 @@ function GUIcont(props){
     },[imageUpload])
     useEffect(()=>{
         if(props.updateMessageBox !== ""){
-            setMessageContent(messageContent+(messageContent !== ""? "\n":"")+props.updateMessageBox+"\n");
+            setMessageContent(messageContent+
+                (messageContent !== "" && messageContent[messageContent.length-1] !== "\n" ? "\n":"")+
+                props.updateMessageBox+"\n");
             setAddMessageState(1)
         }
     },[props.updateMessageBox])

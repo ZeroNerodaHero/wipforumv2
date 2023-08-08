@@ -185,23 +185,35 @@ function SiteGuide(props){
         }
     },[showHelp])
 
+    const helpText = [
+        ["How do I navigate the site?",
+            "You can navigate the site by clicking the boxes. You can change your current board by clicking the board on the upper left corner"
+        ],
+        ["How do I create an account?",
+            "Click the (you) on the upper right corner."
+        ],
+        ["What is the point of an account?",
+            "Not much. It only makes your userId show the same for a given thread. Like a trip code"+
+            "I just have it as a possible feature."
+        ],
+        
+        ["Is this site an ip grabber?",
+            'No. This site does not store your ip. '+
+            'It only stores a hashed version via SHA256. '+
+            'No one can computably decrypt your hashed_ip. The hashed '+
+            'ip is used to ban users rather than user accounts or ips.'
+        ],
+    ]
+
     return (
         <div className='guidePromptCont' onClick={(e)=>{e.stopPropagation()}}>
             <div className="absoluteTitle">Guide</div>
             <div className="absoluteGuideContent">
-                Guide is WIP.
-                <br/>
                 Hello, this is probably your first time on this website so i made this for you.
-                <br/>
-                You can change the board you are on by the top left corner.
-                <br/>
-                You can login and create an account on the top right corner. Currently, creating an account only
-                makes it so that your userId is saved so that users can see that you are the owner. More features will be
-                implemented.
-                <br />
-                On the topic about IPs. This website does log ips but it hashes it with sha256 so instead of directly storing 
-                ips, a hashed version of your ip is stored. It is very hard to break your ip so stop calling this a cia 
-                honeypot.
+                Guide is WIP.
+                {helpText.map((item,key)=>(
+                    <HelpTextItem title={item[0]} body={item[1]} key={key}/>
+                ))}
             </div>
             <div className="guideDoNotShowCont">
                 <div>
@@ -212,6 +224,21 @@ function SiteGuide(props){
                         checked={!showHelp}/>
                 </div>
             </div>
+        </div>
+    )
+}
+
+function HelpTextItem(props){
+    const [expandHelp,setExpandHelp] = useState(0)
+    return (
+        <div className='helpTextItemCont'>
+            <div className='helpTextItemTitle' onClick={()=>{setExpandHelp(expandHelp^1)}}>
+                <div>{props.title}</div>
+                <div>{expandHelp == 0 ? "+":"-"}</div>
+            </div>
+            {expandHelp == 0 ? <div/> : 
+                <div className='helpTextItemBody'>{props.body}</div>
+            }
         </div>
     )
 }
