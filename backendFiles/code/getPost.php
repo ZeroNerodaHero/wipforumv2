@@ -1,24 +1,19 @@
 <?php
 function getBoardList(){
-    global $conn;
-    $ret = array("code"=>1,"boardList"=>[]);
-    $que = "SELECT shortHand,longHand,boardDesc FROM boardList
+    $ret = array("code"=>1);
+    $res=myQuery("SELECT shortHand,longHand,boardDesc FROM boardList
             WHERE isPrivate=false
-            ORDER BY boardPriority DESC";
-    $res = $conn->query($que);
-    while($data = $res->fetch_assoc()){
-        $ret["boardList"][] = $data;
-    }
+            ORDER BY boardPriority DESC");
+    $ret["boardList"] = $res->fetch_all(MYSQLI_ASSOC);
     return json_encode($ret);
 }
 
 function getThreadList($currentBoard){
     global $conn;
     $ret = array("code"=>1,"threadList"=>[]);
-    $que = "SELECT threadTitle,threadId,permLevel,creationTime,updateTime,threadSize,firstPostLink,threadPriority FROM threadList
+    $res = myQuery("SELECT threadTitle,threadId,permLevel,creationTime,updateTime,threadSize,firstPostLink,threadPriority FROM threadList
             WHERE boardReference = '".$currentBoard."'
-            ORDER BY threadPriority DESC, updateTime DESC";
-    $res = $conn->query($que);
+            ORDER BY threadPriority DESC, updateTime DESC");
     while($data = $res->fetch_assoc()){
         $data["errorThread"] = false;
         if (!empty($data["firstPostLink"]) && $data["firstPostLink"] != NULL) {
@@ -39,13 +34,9 @@ function getThreadList($currentBoard){
 function getMessageList($activeThread){
     global $conn;
     $ret = array("code"=>1,"messageList"=>[]);
-    $que = "SELECT messageId,messageOwner,messageContent,imageLinks,postTime FROM messageList
-            WHERE threadReference = '".$activeThread."'";
-            //ORDER BY threadPriority DESC, updateTime DESC";
-    $res = $conn->query($que);
-    while($data = $res->fetch_assoc()){
-        $ret["messageList"][] = $data;
-    }
+    $res = myQuery("SELECT messageId,messageOwner,messageContent,imageLinks,postTime FROM messageList
+            WHERE threadReference = '".$activeThread."'");
+    $ret["messageList"]=$res->fetch_all(MYSQLI_ASSOC);
     return json_encode($ret);
 }
 

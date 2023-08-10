@@ -31,7 +31,13 @@ function apiRequest(){
         include_once("code/manAccount.php");
         if($option == 1){
             if(!empty($hData["username"]) && !empty($hData["password"])){
-                if(createUserAccount($hData["username"], $hData["password"]) == 1 ){
+                if((preg_match("/['\"]/", $hData["username"].$hData["password"]))){
+                    $retStr = json_encode(Array(
+                        "code"=>"0",
+                        "msg"=>"Failed to create user account. Please do not put quotes into your username or password"
+                    ));
+                }
+                else if(createUserAccount($hData["username"], $hData["password"]) == 1 ){
                     $retStr = $goodEnding;
                 } else{
                     $retStr = json_encode(Array(
