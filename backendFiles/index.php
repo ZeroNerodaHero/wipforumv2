@@ -218,9 +218,32 @@ function apiRequest(){
                     $retStr = generateError("Failed to delete thread.");
                 }
             }
-            else if($option == 9799){
-                //lock board
+            //9200 is where board options start
+            else if($option >= 9200 && $option <= 9299){
+                if(!empty($hData["board"])){
+                    if($option == 9200){
+                        addBoard($hData["board"],$hData["boardLongHand"],
+                            $hData["boardDesc"],$hData["boardImg"]);
+                    }
+                    else if($option == 9201){
+                        changeBoardImg($hData["board"],$hData["boardImg"]);
+                    }
+                    else if($option == 9202){
+                        changeBoardDesc($hData["board"],$hData["boardDesc"]);
+                    }
+                    else if($option == 9203){
+                        changeBoardCap($hData["board"],$hData["newCap"]);
+                    }
+                    else if($option == 9204){
+                        changeBoardPrivacy($hData["board"]);
+                    }
+                    else if($option == 9205){
+                        //lock board
+                    }
+                    $retStr = json_encode(Array("code"=>1));
+                }
             }
+            
             else if($option == 9899){
                 if(!empty($hData["hashed_ip"]) && unBanIp($hData["hashed_ip"])){
                     $retStr = json_encode(

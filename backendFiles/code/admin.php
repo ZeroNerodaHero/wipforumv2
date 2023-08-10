@@ -76,6 +76,41 @@ function updateMessageMod($threadId,$threadMod,$value){
             WHERE threadId=$threadId";
     return myQuery($que);
 }
+function addBoard($shortHand,$longHand,$boardDesc,$boardImg){
+    myQuery("INSERT INTO boardList(shortHand,longHand,boardDesc,boardImg)
+            VALUES('$shortHand','$longHand','$boardDesc','$boardImg') ");
+}
 
+function changeBoardImg($board,$boardImg){
+    boardChangeData($board,Array("boardImg",$boardImg));
+}
+
+function changeBoardDesc($board,$desc){
+    boardChangeData($board,Array("boardDesc",$desc));
+}
+
+function changeBoardCap($board,$newCap){
+    boardChangeData($board,Array("threadCap",$newCap));
+}
+
+function changeBoardPrivacy($board){
+    boardChangeData($board,Array("isPrivate","!isPrivate"),false);
+}
+
+/**
+ * boardChangeData 
+ * Uses this to alter the board data. Takes in a board and an associative array params. 
+ * Params should be an array array with [0] = "data schema", [1]="new data"
+ *
+ * @param  mixed $board
+ * @param  mixed $params
+ * @return void
+ */
+function boardChangeData($board,$param,$quotes=true){
+    $processedStr = addSlashes($param[1]);
+    myQuery("UPDATE boardList
+            SET ".$param[0]."=".$processedStr.($quotes == true ? "'":"")."
+            WHERE shortHand='".$board."'");
+}
 
 ?>

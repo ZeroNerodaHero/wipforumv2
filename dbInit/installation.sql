@@ -50,7 +50,7 @@ CREATE TABLE threadList(
 );
 CREATE TABLE boardList(
     boardCode int NOT NULL AUTO_INCREMENT,
-    shortHand varchar(10),
+    shortHand varchar(10) UNIQUE,
     longHand varchar(100),
     boardDesc varchar(1000),
     boardImg varchar(400),
