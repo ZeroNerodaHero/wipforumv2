@@ -1,9 +1,7 @@
 <?php 
 //this function doubles as a long. and a perm checker
 function userIsAuthed($userId,$authKey,$permLevel=0){
-    global $conn;
-    $que = "SELECT * FROM userList WHERE userId=$userId and authKey=$authKey and accountPerm >= $permLevel";
-    $res = $conn->query($que); 
+    $res =myQuery("SELECT * FROM userList WHERE userId=$userId and authKey=$authKey and accountPerm >= $permLevel");
     if($res->num_rows == 0) return null;
     updateUserIp("userId",$userId); 
     $ret = $res->fetch_assoc();
@@ -35,22 +33,17 @@ function getUserIP(){
     return $ip;
 }
 function updateUserIp($param,$param_value){
-    global $conn;
-    $que = "UPDATE userList
+    myQuery("UPDATE userList
             SET last_hashedLoginIp='".getIpAddrHash()."'
-            WHERE $param='$param_value'";
-    $conn->query($que);
+            WHERE $param='$param_value'");
 }
 
 function userIsBanned($hash_ip){
-    global $conn;
-    $que = "SELECT expireTime FROM bannedIps WHERE hashed_ip='$hash_ip'";
-    $res = $conn->query($que);
+    $res = myQuery("SELECT expireTime FROM bannedIps WHERE hashed_ip='$hash_ip'");
 
     if($res->num_rows != 0){
         if(new DateTime($res->fetch_assoc()["expireTime"]) < new DateTime()){
-            $que = "DELETE FROM bannedIps WHERE hashed_ip='$hash_ip'";
-            $conn->query($que);
+            myQuery("DELETE FROM bannedIps WHERE hashed_ip='$hash_ip'");
             return false;
         }
         return true;
@@ -60,9 +53,7 @@ function userIsBanned($hash_ip){
 
 function bannedUserInfo($hash_ip){
     global $conn;
-    $que = "SELECT * FROM bannedIps WHERE hashed_ip='$hash_ip'";
-    $res = $conn->query($que);
-
+    $res = myQuery("SELECT * FROM bannedIps WHERE hashed_ip='$hash_ip'");
     if($res->num_rows != 0) return $res->fetch_assoc();
 }
 
