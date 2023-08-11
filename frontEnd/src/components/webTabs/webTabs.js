@@ -28,15 +28,16 @@ function WebTab(props){
             <div id="boardTabLeft">
                 <div className="boardTabHeader">Boards:</div>
                 <div id="boardTabCont">
-                    <div>
+                    <div id="boardTabBoardCont">
                         {boardList.map((item,key)=>(<BoardTab key={key} it={key}
                             shortHand={item["shortHand"]} longHand={item["longHand"]} 
                             setActiveBoard={setActiveBoard}
                         />))}
                     </div>
-                    <div>
+                    <div id="boardTabMiscCont">
                         <div className='boardTabItem' onClick={()=>{setActiveBoard(-1)}}>Latest</div>
                         <div className='boardTabItem' onClick={()=>{setActiveBoard(-2)}}>Help</div>
+                        <div className='boardTabItem' onClick={()=>{setActiveBoard(-3)}}>Settings</div>
                     </div>
                 </div>
             </div>
@@ -48,6 +49,9 @@ function WebTab(props){
                     :
                     activeBoard == -2 ?
                     <SiteGuide /> 
+                    :
+                    activeBoard == -3 ?
+                    <SiteSettings /> 
                     :
                     <BoardPreview activeBoardInfo={boardList[activeBoard]} 
                         setCurrentBoard={props.setCurrentBoard}/>
@@ -169,6 +173,50 @@ function BoardPreview(props){
     )
 }
 
+function SiteSettings(props){
+    const [threadSizeValue,setThreadSizeValue] = useState(-1);
+    const threadSizeAr = Array.from({length: 8}, (_, i) => i + 1)
+
+    useEffect(()=>{
+        if(getLocalStorageItem("userSettings","threadSize") != undefined){
+            setThreadSizeValue(getLocalStorageItem("userSettings","threadSize") )
+        } else{
+            setThreadSizeValue(2);
+        }
+    },[])
+
+    useEffect(()=>{
+        if(threadSizeValue != -1){
+            var userSettings = getLocalStorageItem("userSettings");
+            userSettings["threadSize"] = threadSizeValue;
+            localStorage.setItem("userSettings",JSON.stringify(userSettings))
+            document.getElementById("root").style.setProperty("--thumbPerRow",threadSizeValue)
+        }
+    },[threadSizeValue])
+
+    return (
+        <div className='promptCont'>
+            <div className="absoluteTitle">Settings</div>
+            <div className="absoluteGuideContent">
+                <div id="settingCont">
+                    <div className='settingItemCont'>
+                        <div className='settingItemHeader'>Threads Per Row: </div>
+                        <div className='settingOptionCont'>
+                            <div className='settingOptionText'>n x</div>
+                            {threadSizeAr.map((item)=>(
+                                <div className='settingOptionButtonSmol' onClick={()=>{setThreadSizeValue(item)}}
+                                    style={{backgroundColor:(threadSizeValue == item?"white":"#00000099")}}>
+                                    {item}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 function SiteGuide(props){
     const [showHelp,setShowHelp] = useState(true)
     const [clickChange,setClickChange] = useState(false)
@@ -206,7 +254,7 @@ function SiteGuide(props){
     ]
 
     return (
-        <div className='guidePromptCont' onClick={(e)=>{e.stopPropagation()}}>
+        <div className='promptCont' onClick={(e)=>{e.stopPropagation()}}>
             <div className="absoluteTitle">Guide</div>
             <div className="absoluteGuideContent">
                 Hello, this is probably your first time on this website so i made this for you.

@@ -1,27 +1,9 @@
 :root{
-    --sizeOfThumbNail: 200px;
+    --thumbPerRow: 2;
     --thumbPadding: 3px 7px;
     --mainShadeTab: rgba(0, 0, 0, 0.25);
-}
 
-.sliderStyle{
-    height: 3px;
-    width: 50px;
-}
-.sliderStyle::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 15px;
-    height: 10x;
-    background: #04AA6D;
-    cursor: pointer;
-}
-  
-.sliderStyle::-moz-range-thumb {
-    width: 15px;
-    height: 10px;
-    background: #04AA6D;
-    cursor: pointer;
+    --thumbImageBorderBottom: 5px;
 }
 
 #threadViewEncap{
@@ -35,12 +17,13 @@
     height: 100%;
 }
 .threadCont{
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(var(--thumbPerRow),1fr);
     flex-wrap: wrap;
     justify-content: center;
     align-content: flex-start;
     
-    padding: 7px;
+    padding: 9px;
     padding-top: 14px;
     padding-bottom: 21px;
 }
@@ -49,8 +32,8 @@
 }
 
 .threadThumbNail{
-    width: var(--sizeOfThumbNail);
-    height: var(--sizeOfThumbNail);
+    width: 99%;
+    aspect-ratio: 1 / 1;
     background-color: rgba(0, 0, 0, 0.3);
     display: grid;
     grid-template-rows: max-content auto;
@@ -66,7 +49,6 @@
     padding: var(--thumbPadding);
     padding-bottom: 1px;
     overflow: hidden;
-    max-height: calc(var(--sizeOfThumbNail)/2);
 }
 .threadTitleText{
     font-weight: bold;
@@ -78,16 +60,20 @@
     overflow-y: auto;
     overflow-x: hidden;
     color: #e6e7ea;
+    display: grid;
+    grid-template-rows: 0 60% auto;
 }
 .threadImgCont{
     width: 100%;
+    height: calc(-1 * var(--thumbImageBorderBottom) + 100% - 3px);
     text-align: center;
 }
 .threadImg{
     border: 1px black solid;
-    border-bottom: 5px black solid;
-    height: calc(var(--sizeOfThumbNail)*0.6);
-    width: auto;
+    border-bottom: var(--thumbImageBorderBottom) black solid;
+    max-height: 100%;
+    max-width: 100%;
+    aspect-ratio: auto;
 }
 .threadMiscInfo{
     position: absolute;
@@ -141,7 +127,7 @@ empty space too
     position: sticky;
     top: 0;
     left: 0;
-    padding: 1px 3px;
+    padding: 3px 3px 0px 7px;
     box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.4);
     -webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.4);
     -moz-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.4);
@@ -296,6 +282,8 @@ empty space too
     background-color: transparent;
     border: 0px black solid;
     border-bottom: 1px rgb(255, 255, 255) solid;
+    border-radius: 0px;
+    outline: none;
     padding: 0px 3px;
 
     width: 100%;
@@ -465,9 +453,10 @@ empty space too
 }
 .promptBody input, textarea{
     border: 0px;
-    border-bottom: 1px black solid;
+    border-bottom: 2px black solid;
     background-color: #80808027;
     font-family: sans-serif;
+    border-radius: 0px;
 }
 .promptBody input:focus, textarea:focus{
     outline: none;
@@ -510,7 +499,7 @@ empty space too
 }
 #promptSubmitButtonCont{
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     margin: 3px;
 }
 #promptSubmitButtonCont > div{

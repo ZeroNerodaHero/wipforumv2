@@ -59,34 +59,10 @@ function MainContent(props){
     )
 }
 function MenuBar(props){
-    const [threadSizeValue,setThreadSizeValue] = useState(-1);
-
-    useEffect(()=>{
-        if(getLocalStorageItem("userSettings","threadSize") != undefined){
-            setThreadSizeValue(getLocalStorageItem("userSettings","threadSize") )
-        } else{
-            setThreadSizeValue(2);
-        }
-    },[])
-
-    useEffect(()=>{
-        if(threadSizeValue != -1){
-            var userSettings = getLocalStorageItem("userSettings");
-            userSettings["threadSize"] = threadSizeValue;
-            localStorage.setItem("userSettings",JSON.stringify(userSettings))
-            document.getElementById("root").style.setProperty("--sizeOfThumbNail",(93/threadSizeValue)+"vw")
-        }
-    },[threadSizeValue])
-
-
     return (
     <div id='menuCont'>
         <div>
-            Thread&nbsp;Size:
-            <input type="range" min="1" max="7" step="1" 
-                value={threadSizeValue}
-                onChange={(e)=>{setThreadSizeValue(e.target.value)}}
-                className="sliderStyle"/>
+            
         </div>
         <div id="menuLeftCont">
             Search:
@@ -559,7 +535,7 @@ function MainContentTabs(props){
                             })
                         }}>
                     <div>
-                        Board: /{props.currentBoard}/
+                        ☰ Board: /{props.currentBoard}/
                     </div>
                 </div>
             </div>
@@ -570,6 +546,7 @@ function MainContentTabs(props){
         </div>
     )
 }
+//try to use the hambruger as a css before
 
 //fun stuff
 

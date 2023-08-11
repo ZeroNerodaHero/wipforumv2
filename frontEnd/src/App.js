@@ -2,9 +2,10 @@ import logo from './logo.svg';
 import { useState } from 'react';
 import './App.css';
 import MainContent from './components/mainContent/mainContent';
-import WebTab from './components/webTabs/webTabs';
+import preLoadSettings from './components/preLoad/preLoad';
 
 function App() {
+  preLoadSettings();
   return (
     <div className="App">
       <div id='AppMainContent'>
