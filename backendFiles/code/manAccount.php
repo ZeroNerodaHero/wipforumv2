@@ -13,7 +13,6 @@ function hasUserAccount($username, $password){
     return userIsAuthed($userId,$authKey);
 }
 function createUserAccount($username,$password){
-    global $conn;
     $res = myQuery("SELECT userName FROM userList WHERE userName='$username'");
     if($res->num_rows != 0) return 0;
 

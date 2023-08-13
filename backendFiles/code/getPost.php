@@ -9,7 +9,6 @@ function getBoardList(){
 }
 
 function getThreadList($currentBoard){
-    global $conn;
     $ret = array("code"=>1,"threadList"=>[]);
     $res = myQuery("SELECT threadTitle,threadId,permLevel,creationTime,updateTime,threadSize,firstPostLink,threadPriority FROM threadList
             WHERE boardReference = '".$currentBoard."'
@@ -17,8 +16,7 @@ function getThreadList($currentBoard){
     while($data = $res->fetch_assoc()){
         $data["errorThread"] = false;
         if (!empty($data["firstPostLink"]) && $data["firstPostLink"] != NULL) {
-            $que = "SELECT imageLinks,messageContent FROM messageList WHERE messageId=" . $data["firstPostLink"];
-            $resRow = $conn->query($que);
+            $resRow = myQuery("SELECT imageLinks,messageContent FROM messageList WHERE messageId=" . $data["firstPostLink"]);
             if($resRow->num_rows > 0){  
                 $data = array_merge($data, $resRow->fetch_assoc());
             }
@@ -32,7 +30,6 @@ function getThreadList($currentBoard){
     return json_encode($ret);
 }
 function getMessageList($activeThread){
-    global $conn;
     $ret = array("code"=>1,"messageList"=>[]);
     $res = myQuery("SELECT messageId,messageOwner,messageContent,imageLinks,postTime FROM messageList
             WHERE threadReference = '".$activeThread."'");

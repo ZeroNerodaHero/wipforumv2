@@ -1,11 +1,8 @@
 <?php
 
 function threadIsLocked($threadId,$permLevel){
-    global $conn;
-    $que = "SELECT threadId FROM threadList 
-            WHERE threadId=$threadId AND permLevel <= $permLevel";
-    $res = $conn->query($que);
-
+    $res = myQuery("SELECT threadId FROM threadList 
+            WHERE threadId=$threadId AND permLevel <= $permLevel");
     return $res->num_rows == 0;
 }
 
@@ -112,12 +109,10 @@ function verifyImgType($fileName){
 }
 
 function updateMessageReport($messageId,$value=1){
-    global $conn;
     $value = (1 << ($value-1));
-    $que = "UPDATE messageList
+    myQuery("UPDATE messageList
             SET isReported = (isReported | $value)
-            WHERE messageId=".$messageId;
-    $conn->query($que);
+            WHERE messageId=".$messageId);
 }
 
 function yeetBadWords($str){
@@ -129,19 +124,16 @@ function yeetBadWords($str){
 }
 
 function maintainBoardSize($board){
-    global $conn;
-    $que = "SELECT threadCap FROM boardList WHERE shortHand='$board'";
-    $res = $conn->query($que);
+    $res=myQuery("SELECT threadCap FROM boardList WHERE shortHand='$board'");
     if(empty($res)) return;
 
     $boardCap = $res->fetch_assoc()["threadCap"];
     $boardCurSize = countThreads($board);
 
     if($boardCurSize > $boardCap){
-        $que = "SELECT threadId FROM threadList 
+        $res =myQuery("SELECT threadId FROM threadList 
                 WHERE boardReference='$board' AND threadPriority = 0
-                ORDER BY updateTime LIMIT ".($boardCurSize-$boardCap);
-        $res = $conn->query($que);
+                ORDER BY updateTime LIMIT ".($boardCurSize-$boardCap));
 
         if(!empty($res) && $res->num_rows > 0){
             while($row = $res->fetch_assoc()){
@@ -157,66 +149,51 @@ function deleteFileLocOnLocal($fileName){
     return unlink("imgs/postImgs/".basename($fileName));
 }
 function deleteThread($threadId){
-    global $conn;
-    $que = "DELETE FROM threadList WHERE threadId=$threadId";
-    $conn->query($que);
+    myQuery("DELETE FROM threadList WHERE threadId=$threadId");
     
-    $que = "SELECT imageLinks FROM messageList WHERE threadReference=$threadId";
-    $res = $conn->query($que);
+    $res = myQuery("SELECT imageLinks FROM messageList WHERE threadReference=$threadId");
     while($row = $res->fetch_assoc()){
         deleteFileLocOnLocal($row["imageLinks"]);
     }
-
-    $que = "DELETE FROM messageList WHERE threadReference=$threadId";
-    $conn->query($que);
+    myQuery("DELETE FROM messageList WHERE threadReference=$threadId");
 }
 
 function deletePost($messageId){
-    global $conn;
     //get the thread reference
     //delete
     //update size
     $que = "SELECT threadReference,imageLinks FROM messageList WHERE messageId=$messageId";
-    $res = $conn->query($que)->fetch_assoc();
+    $res = myQuery($que)->fetch_assoc();
     $threadReference = $res["threadReference"];
     $imageLink = $res["imageLinks"];
     deleteFileLocOnLocal($imageLink);
 
-    $que = "DELETE FROM messageList WHERE messageId=$messageId";
-    $conn->query($que);
-
-    $que = "UPDATE threadList
+    myQuery("DELETE FROM messageList WHERE messageId=$messageId");
+    myQuery("UPDATE threadList
             SET threadSize=threadSize-1
-            WHERE threadId=$threadReference";
-    $conn->query($que);
+            WHERE threadId=$threadReference");
 
-    $que = "SELECT threadSize FROM threadList WHERE firstPostLink=$messageId";
-    $res = $conn->query($que);
+    $res = myQuery("SELECT threadSize FROM threadList WHERE firstPostLink=$messageId");
     if($res->num_rows > 0){
         if($res->fetch_assoc()["threadSize"] == 0) {
-            $que = "DELETE FROM threadList WHERE firstPostLink=$messageId";
-            $conn->query($que);
+            myQuery("DELETE FROM threadList WHERE firstPostLink=$messageId");
         } else{
             //find oldest and make that the first
-            $que = "SELECT messageId FROM messageList 
-                    WHERE threadReference=$threadReference ORDER BY messageId LIMIT 1";
-            $res = $conn->query($que);
+            $res = myQuery("SELECT messageId FROM messageList 
+                    WHERE threadReference=$threadReference ORDER BY messageId LIMIT 1");
             if($res->num_rows == 0) return false;
             $newMessageId = $res->fetch_assoc()["messageId"];
 
-            $que = "UPDATE threadList 
+            myQuery("UPDATE threadList 
                     SET firstPostLink=$newMessageId
-                    WHERE firstPostLink=$messageId";
-            $conn->query($que);
+                    WHERE firstPostLink=$messageId");
         }
     }
     return true;
 }
 
 function countThreads($board){
-    global $conn;
-    $que = "SELECT threadId FROM threadList WHERE boardReference='$board'";
-    $res = $conn->query($que);
+    $res = myQuery("SELECT threadId FROM threadList WHERE boardReference='$board'");
     return $res->num_rows;
 }
 
