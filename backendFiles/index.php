@@ -128,6 +128,12 @@ function apiRequest(){
                     "reason"=>$retObj["reason"]
                 ));
             } 
+            else if(hasPostCooldown(getIpAddrHash()) == 1){
+                $retStr = json_encode(Array(
+                    "code"=>0,
+                    "msg"=>"You have posted way too quick. Please wait a while to post."
+                ));
+            }
             else if(!empty($hData["messageContent"]) && strlen($hData["messageContent"]) < 1500){
                 if($option == 2000 && !empty($hData["currentBoard"]) && !empty($hData["threadTitle"]) && 
                     !empty($_FILES["messageImage"]["name"]) && verifyImg("messageImage") == 1

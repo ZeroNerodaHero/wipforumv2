@@ -50,7 +50,7 @@ CREATE TABLE threadList(
 );
 CREATE TABLE boardList(
     boardCode int NOT NULL AUTO_INCREMENT,
-    shortHand varchar(10) UNIQUE,
+    shortHand varchar(10),
     longHand varchar(100),
     boardDesc varchar(1000),
     boardImg varchar(400),
@@ -73,6 +73,11 @@ CREATE TABLE bannedIps(
     hashed_ip varchar(64) UNIQUE,
     reason varchar(400),
     startTime timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expireTime timeStamp
+);
+CREATE TABLE cooldownPostTimer(
+    hashed_ip varchar(64) UNIQUE,
+    startTime timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     expireTime timeStamp
 );
 INSERT INTO userList(userId,userName,password,accountPerm) 
