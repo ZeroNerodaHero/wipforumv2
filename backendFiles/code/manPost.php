@@ -36,10 +36,11 @@ function addMessage($threadReference,$messageContent,$messageOwner,$userReferenc
             VALUES($threadReference,'$messageContent',$messageOwner,$userReference,".
                 (empty($imageLink) ? 'null':"'$imageLink'").",'".$hashed_ip."')";
     $conn->query($que);
+    $lastPost = $conn->insert_id;
     updatePostCooldown($hashed_ip,$userReference);
     updateUserExp($userReference);
     
-    return Array("code"=>1,"newMessageId"=>$conn->insert_id);
+    return Array("code"=>1,"newMessageId"=>$lastPost);
 }
 function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner,$loggedIn){
     global $conn;
