@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import apiRequest from '../apiRequest/apiRequest';
+import {postRequest} from '../apiRequest/apiRequest';
 import "./rightTab.css"
 import UserSquare from '../createBox/generateBoxImage';
 import ModeratePrompt from './moderatePrompt/moderate';
@@ -25,13 +25,12 @@ function UserProfile(props){
         var authKey = GetCookie("authKey")
 
         if(userId != null && authKey != null){
-            apiRequest("http://localhost:8070/","",
+            postRequest(
             {
                 option: 3,
                 userId: userId,
                 authKey: authKey
-            },
-            "POST").then((data)=>{
+            }).then((data)=>{
                 if(data["code"]!=0){
                     setProfileName(data["userName"])
                     setAccountPerm(data["accountPerm"])
@@ -84,13 +83,12 @@ function LoginTab(props){
                 <div id="userLoginButtonCont">
                     <div onClick={()=>{props.setTabState(2)}}>Create Account</div>
                     <div onClick={()=>{
-                        apiRequest("http://localhost:8070/","",
+                        postRequest(
                         {
                             option: 2,
                             username: userName,
                             password: password
-                        },
-                        "POST").then((data)=>{
+                        }).then((data)=>{
                             if(data["code"]!=0){
                                 SetCookie("userId",data["userId"],7);
                                 SetCookie("authKey",data["authKey"],7);
@@ -123,13 +121,12 @@ function CreateAccount(props){
                     <div onClick={()=>{props.setTabState(1)}}>Back</div>
                     <div onClick={()=>{
                         if(password === repassword){
-                            apiRequest("http://localhost:8070/","",
+                            postRequest(
                             {
                                 option: 1,
                                 username: userName,
                                 password: password
-                            },
-                            "POST").then((data)=>{
+                            }).then((data)=>{
                                 if(data["code"]!=0){
                                     props.setTabState(1)
                                 } else{

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import apiRequest from '../apiRequest/apiRequest';
+import {getRequest,postRequest} from '../apiRequest/apiRequest';
 import "./mainContent.css"
 import UserProfile from '../userProfile.js/userProfile';
 import WebTab from '../webTabs/webTabs';
@@ -89,12 +89,11 @@ function ThreadCont(props){
     const [updateMessageBox,setUpdateMessageBox] = useState("");
     
     useEffect(()=>{
-        apiRequest("http://localhost:8070/","",
+        getRequest(
         {
             option: 1001,
             currentBoard: props.currentBoard
-        },
-        "POST").then((data)=>{
+        }).then((data)=>{
             if(data["code"]!=0){
                 if(data["threadList"] != undefined && data["threadList"].length != 0){
                     setThreadList(data["threadList"]);
@@ -242,7 +241,7 @@ function GUIcont(props){
                         postObject = tmpData;
                         postObject.append("messageImage",imageUpload[0])
                     }
-                    apiRequest("http://localhost:8070/","",postObject,"POST",hasImg).
+                    postRequest(postObject,hasImg).
                     then((data)=>{
                         //console.log(data)
                         if(data["code"] >= 1){
@@ -334,13 +333,12 @@ function ActiveThreadDisplayer(props){
         ]
     )
     useEffect(()=>{
-        apiRequest("http://localhost:8070/","",
+        getRequest(
         {
             option: 1002,
             activeThread: props.activeThread,
             currentBoard: props.currentBoard
-        },
-        "POST").then((data)=>{
+        }).then((data)=>{
             if(data["code"]==1){
                 if(data["messageList"].length > 0){
                     setActiveThreadMessages(data["messageList"])
@@ -398,15 +396,13 @@ function ActiveThreadDisplayer(props){
                                             <div onClick={()=>{
                                                 var userId = GetCookie("userId")
                                                 var authKey = GetCookie("authKey")
-
-                                                apiRequest("http://localhost:8070/","",
+                                                postRequest(
                                                 {
                                                     option: 2999,
                                                     messageId: message["messageId"],
                                                     userId: userId != null ? userId : Math.floor(Math.random()*1000000000),
                                                     sessionId: authKey != null ? authKey : -1,
-                                                },
-                                                "POST").then((data)=>{
+                                                }).then((data)=>{
                                                     if(data["code"]!=0){
                                                         /* Note: not sure what this line was for */
                                                         //setActiveThread(-1);

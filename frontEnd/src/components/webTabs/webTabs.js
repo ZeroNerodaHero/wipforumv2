@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import apiRequest from '../apiRequest/apiRequest';
+import { getRequest,postRequest } from '../apiRequest/apiRequest';
 import "./webTabs.css"
 import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
 import getLocalStorageItem from '../cookieReader/localStorageReader';
@@ -11,11 +11,10 @@ function WebTab(props){
     const [activeBoard,setActiveBoard] = useState(-1);
 
     useEffect(()=>{
-        apiRequest("http://localhost:8070/","",
+        getRequest(
         {
             option: 1000
-        },
-        "POST").then((data)=>{
+        }).then((data)=>{
             if(data["code"] == 1){
                 setBoardList(data["boardList"]);
             }
@@ -79,11 +78,10 @@ function LatestPosts(props){
     const [latestPost,setLatestPost] = useState([]);
 
     useEffect(()=>{
-        apiRequest("http://localhost:8070/","",
+        getRequest(
         {
             option: 1003
-        },
-        "POST").then((data)=>{
+        }).then((data)=>{
             if(data["code"] == 1){
                 setLatestPost(data["latestPost"]);
             }

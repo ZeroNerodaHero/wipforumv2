@@ -51,6 +51,7 @@
     padding: var(--thumbPadding);
     padding-bottom: 1px;
     overflow: hidden;
+    max-height: 40px;
 }
 .threadTitleText{
     font-weight: bold;

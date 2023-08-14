@@ -11,10 +11,14 @@ echo apiRequest();
 
 function apiRequest(){
     global $isTest;
-    $hData = $_POST;
-    if(empty($_POST)){
-        $hData = json_decode(file_get_contents("php://input"),true);
-    } 
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $hData = $_GET;
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $hData = $_POST;
+        if(empty($_POST)){
+            $hData = json_decode(file_get_contents("php://input"),true);
+        }     
+    }
     if(empty($hData)){
         return "ERROR: WHAT R U DOING HERE? GET OUT >:3 -> ";
     }
