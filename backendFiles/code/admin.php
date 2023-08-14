@@ -82,6 +82,10 @@ function changeBoardCap($board,$newCap){
 function changeBoardPrivacy($board){
     boardChangeData($board,Array("isPrivate","!isPrivate"),false);
 }
+function getBoardListForMod(){
+    $res = myQuery("SELECT shortHand,longHand,boardDesc,boardImg,threadCap,isPrivate FROM boardList");
+    return $res->fetch_all(MYSQLI_ASSOC);
+}
 
 /**
  * boardChangeData 
@@ -94,8 +98,9 @@ function changeBoardPrivacy($board){
  */
 function boardChangeData($board,$param,$quotes=true){
     $processedStr = addSlashes($param[1]);
+    $quoteChar = ($quotes == true ? "'":"");
     myQuery("UPDATE boardList
-            SET ".$param[0]."=".$processedStr.($quotes == true ? "'":"")."
+            SET ".$param[0]."=".$quoteChar.$processedStr.$quoteChar."
             WHERE shortHand='".$board."'");
 }
 

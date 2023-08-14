@@ -4,6 +4,8 @@
     --mainShadeTab: rgba(0, 0, 0, 0.25);
 
     --thumbImageBorderBottom: 5px;
+
+    --activeThreadDisplaySize: min(80%,700px);
 }
 
 #threadViewEncap{
@@ -118,7 +120,7 @@ the problem that clicks will not register as close bc touches
 empty space too
 */
 #activeThreadCont{
-    width: 80%;
+    width: var(--activeThreadDisplaySize);
     height: 90%;
     overflow: auto;
 }
@@ -228,6 +230,7 @@ empty space too
 
 .textContentDisplayer{
     margin-left: 5px;
+    margin-right: 5px;
     word-break: break-word;
 }
 .textContentParagraphSplit{
@@ -425,7 +428,7 @@ empty space too
 .newPrompt{
     content: "hello";
     position: absolute;
-    width: 65%;
+    width: calc(var(--activeThreadDisplaySize) + 6%);
     height: 50%;
     margin-bottom: 2%;
 

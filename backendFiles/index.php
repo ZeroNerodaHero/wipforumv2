@@ -231,7 +231,7 @@ function apiRequest(){
                 }
             }
             //9200 is where board options start
-            else if($option >= 9200 && $option <= 9299){
+            else if($option >= 9200 && $option <= 9249){
                 if(!empty($hData["board"])){
                     if($option == 9200){
                         addBoard($hData["board"],$hData["boardLongHand"],
@@ -255,7 +255,10 @@ function apiRequest(){
                     $retStr = json_encode(Array("code"=>1));
                 }
             }
-            
+            else if($option == 9299){
+                $retStr = json_encode(Array("code"=>1,
+                            "boardList"=>getBoardListForMod()));
+            }
             else if($option == 9899){
                 if(!empty($hData["hashed_ip"]) && unBanIp($hData["hashed_ip"])){
                     $retStr = json_encode(

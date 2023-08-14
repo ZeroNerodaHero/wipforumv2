@@ -27,17 +27,19 @@ function WebTab(props){
         <div id="boardTab" onClick={(e)=>{e.stopPropagation()}}>
             <div id="boardTabLeft">
                 <div className="boardTabHeader">Boards:</div>
-                <div id="boardTabCont">
-                    <div id="boardTabBoardCont">
-                        {boardList.map((item,key)=>(<BoardTab key={key} it={key}
-                            shortHand={item["shortHand"]} longHand={item["longHand"]} 
-                            setActiveBoard={setActiveBoard}
-                        />))}
-                    </div>
-                    <div id="boardTabMiscCont">
-                        <div className='boardTabItem' onClick={()=>{setActiveBoard(-1)}}>Latest</div>
-                        <div className='boardTabItem' onClick={()=>{setActiveBoard(-2)}}>Help</div>
-                        <div className='boardTabItem' onClick={()=>{setActiveBoard(-3)}}>Settings</div>
+                <div id="boardTabContConstraint">
+                    <div id="boardTabCont">
+                        <div id="boardTabBoardCont">
+                            {boardList.map((item,key)=>(<BoardTab key={key} it={key}
+                                shortHand={item["shortHand"]} longHand={item["longHand"]} 
+                                setActiveBoard={setActiveBoard}
+                            />))}
+                        </div>
+                        <div id="boardTabMiscCont">
+                            <div className='boardTabItem' onClick={()=>{setActiveBoard(-1)}}>Latest</div>
+                            <div className='boardTabItem' onClick={()=>{setActiveBoard(-2)}}>Help</div>
+                            <div className='boardTabItem' onClick={()=>{setActiveBoard(-3)}}>Settings</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -154,19 +156,21 @@ function BoardPreview(props){
                 /{props.activeBoardInfo["shortHand"]}/-{props.activeBoardInfo["longHand"]}
             </div>
             <div id="boardPreviewBodyCont">
+                <div id="boardPreviewDescCont">
+                    <div id="boardPreviewDesc">
+                        {props.activeBoardInfo["boardDesc"]}
+                    </div>
+                    <div id='webTabButton'
+                        onClick={()=>{
+                            props.setCurrentBoard(props.activeBoardInfo["shortHand"])
+                            setErrorJSON({show:0})
+                        }}>
+                        Visit
+                    </div>
+                </div>
                 <div id="boardPreviewImgCont">
                     <img id="boardPreviewImg" 
-                        src='https://wabtec.wd1.myworkdayjobs.com/wabtec_careers/assets/banner'/>
-                </div>
-                <div>
-                    {props.activeBoardInfo["boardDesc"]}
-                </div>
-                <div id='webTabButton'
-                    onClick={()=>{
-                        props.setCurrentBoard(props.activeBoardInfo["shortHand"])
-                        setErrorJSON({show:0})
-                    }}>
-                    Visit
+                        src={props.activeBoardInfo["boardImg"]}/>
                 </div>
             </div>
         </div>
@@ -203,8 +207,8 @@ function SiteSettings(props){
                         <div className='settingItemHeader'>Threads Per Row: </div>
                         <div className='settingOptionCont'>
                             <div className='settingOptionText'>n x</div>
-                            {threadSizeAr.map((item)=>(
-                                <div className='settingOptionButtonSmol' onClick={()=>{setThreadSizeValue(item)}}
+                            {threadSizeAr.map((item,key)=>(
+                                <div className='settingOptionButtonSmol' onClick={()=>{setThreadSizeValue(item)}} key={key}
                                     style={{backgroundColor:(threadSizeValue == item?"white":"#00000099")}}>
                                     {item}
                                 </div>
@@ -235,7 +239,7 @@ function SiteGuide(props){
 
     const helpText = [
         ["How do I navigate the site?",
-            "You can navigate the site by clicking the boxes. You can change your current board by clicking the board on the upper left corner"
+            <div>You can navigate the site by clicking the boxes. You can change your current board by clicking the board on the upper left corner</div>
         ],
         ["How do I create an account?",
             "Click the (you) on the upper right corner."
@@ -251,11 +255,19 @@ function SiteGuide(props){
             'No one can computably decrypt your hashed_ip. The hashed '+
             'ip is used to ban users rather than user accounts or ips.'
         ],
+        ["What are the rules?",
+            <div>
+                <ol style={{margin:"0px"}}>
+                    <li><b>Not an NSFW site: </b>Plz don't post that stuff here</li>
+                    <li><b>No harassment/doxxing/degenerate behavior</b></li>
+                </ol>
+            </div>
+        ],
     ]
 
     return (
         <div className='promptCont' onClick={(e)=>{e.stopPropagation()}}>
-            <div className="absoluteTitle">Guide</div>
+            <div className="absoluteTitle">Help</div>
             <div className="absoluteGuideContent">
                 Hello, this is probably your first time on this website so i made this for you.
                 Guide is WIP.

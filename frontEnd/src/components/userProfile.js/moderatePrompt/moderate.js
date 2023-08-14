@@ -24,7 +24,7 @@ function ModeratePrompt(props){
                     gridAutoRows:setFocusOnStyle(moderateFocusOn)
                 }}>
                     <div id="siteStats" onClick={()=>{setModerateFocusOn(1)}}>
-                        <PostStats />
+                        <BoardMod />
                         <BoardStats />
                     </div>
                     <div className='moderateBox' onClick={()=>{setModerateFocusOn(2)}}>
@@ -39,14 +39,130 @@ function ModeratePrompt(props){
     );
 }
 
-function PostStats(props){
+function BoardMod(props){
+    const userId = GetCookie("userId")
+    const authKey = GetCookie("authKey")
+    const [boardInfo,setBoardInfo] = useState([]);
+    function boardReload(){
+        apiRequest("http://localhost:8070/","",
+        {
+            option: 9299,
+            userId: userId,
+            authKey: authKey
+        },
+        "POST").then((data)=>{
+            if(data["code"]!=0){
+                setBoardInfo(data["boardList"])
+            }
+        })
+    }
+
+    useEffect(()=>{
+        boardReload();
+    },[])
+
     return (
-        <div id="postStats" className='statBox'>
+        <div id="boardMod" className='statBox'>
             <div className='statsPaddingBox'>
-                <div className='moderateHeader'>Post Summary</div>
+                <div className='moderateHeader'>Boards</div>
+                <div>
+                    {
+                        boardInfo.map((item,key)=>(
+                            <BoardModItem key={key} item={item} boardReload={boardReload}/>
+                        ))
+                    }
+                </div>
             </div>
         </div>
     );
+}
+function BoardModItem(props){
+    const userId = GetCookie("userId")
+    const authKey = GetCookie("authKey")
+
+    const [boardDesc,setBoardDesc] = useState("");
+    const [boardImg,setBoardImg] = useState("");
+    const [boardCap,setBoardCap] = useState(-1);
+    const [boardPrivacy,setBoardPrivacy] = useState(false);
+
+    const [boardImgChange,setBoardImgChange] = useState("");
+    const [updateBoardOpt,setUpdateBoardOpt] = useState(-1)
+
+    useEffect(()=>{
+        setBoardDesc(props.item.boardDesc)
+        setBoardImg(props.item.boardImg ? props.item.boardImg : "ERROR")
+        setBoardImgChange(props.item.boardImg)
+        setBoardCap(props.item.threadCap)
+        setBoardPrivacy(props.item.isPrivate)
+    },[props.item])
+    useEffect(()=>{
+        if(updateBoardOpt != -1){
+            setUpdateBoardOpt(-1)
+            apiRequest("http://localhost:8070/","",
+            {
+                option: updateBoardOpt,
+                userId: userId,
+                authKey: authKey,
+                board: props.item.shortHand,
+                boardImg: boardImg,
+                boardDesc: boardDesc,
+                newCap: boardCap
+            },
+            "POST").then((data)=>{
+                if(data["code"]!=0){
+                    props.boardReload()
+                }
+            })
+        }
+    },[updateBoardOpt])
+
+    return (
+        <div className='boardModItem'>
+            <div className='boardModTitle'>{props.item.shortHand} - / {props.item.longHand} /</div>
+            <div>
+                <div className='boardModTitle'>Description: </div>
+                <div className='changeBoardInfoTextCont'>
+                    <input value={boardDesc} onChange={(e)=>{setBoardDesc(e.target.value)}}/>
+                    <div className='optionButton' onClick={()=>{setUpdateBoardOpt(9202)}}>Change</div>
+                </div>
+            </div>
+            <div>
+                <div className='boardModTitle'>BoardImg: </div>
+                <div className='changeBoardInfoTextCont'>
+                    <input value={boardImg} onChange={(e)=>{setBoardImg(e.target.value)}}/>
+                    <div className='optionButton' onClick={()=>{
+                        setUpdateBoardOpt(9201)
+                        setBoardImgChange(boardImg)
+                    }}>
+                        Change
+                    </div>
+                </div>
+            </div>
+            <div className='boardModTitle'>Img Preview</div>
+            <div className='boardModImgCont'>
+                <img src={boardImgChange} className='boardModImg'/>
+            </div>
+            <div className='boardModThreadCapCont'>
+                <div className='boardModTitle'>Thread Cap:</div>
+                <div>
+                    {boardCap}
+                </div>
+            </div>
+            <div className='boardModPrivacyCont'>
+                <div className='boardModTitle'>Board Privacy: </div>
+                <div className='boardPrivacyButtonCont'>
+                    <div onClick={()=>{setBoardPrivacy(1);setUpdateBoardOpt(9204)}} 
+                        style={{backgroundColor:(boardPrivacy == 1) ? "#8eff00":"white"}}>
+                        Private
+                    </div>
+                    <div onClick={()=>{setBoardPrivacy(0);setUpdateBoardOpt(9204)}} 
+                        style={{backgroundColor:(boardPrivacy == 0) ? "#8eff00":"white"}}>
+                        Public
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
 }
 function BoardStats(props){
     const userId = GetCookie("userId")

@@ -37,7 +37,7 @@
     grid-auto-rows: 25% 50% 25%;
 }
 
-#postStats{
+#boardMod{
     background-color: var(--postStatColor);
 }
 #boardStats{
@@ -290,6 +290,43 @@
     margin-left: 3px;
     padding-left: 3px;
     border-left: 1px black solid;
+}
+
+.boardModItem{
+    border: 1px black solid;
+    padding: 3px;
+}
+.boardModItem > div{
+    margin-top: 3px;
+}
+.changeBoardInfoTextCont{
+    display: grid;
+    grid-template-columns: auto max-content;
+}
+.boardModTitle{
+    font-weight: bold;
+    margin: 0px 5px;
+}
+.boardModImgCont{
+    display: flex;
+    justify-content: center;
+    margin: 3px;
+}
+.boardModImg{
+    max-width: 50%;
+    max-height: 300px;
+}
+.boardModPrivacyCont, .boardModThreadCapCont{
+    display: flex;
+    justify-content: space-between;
+}
+.boardPrivacyButtonCont{
+    display: flex;
+}
+.boardPrivacyButtonCont > div{
+    border: 1px black solid; 
+    padding: 0px 3px;
+    font-size: 0.9rem;  
 }
 
 @media screen and (max-width: 768px){

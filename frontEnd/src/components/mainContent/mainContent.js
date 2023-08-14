@@ -466,6 +466,7 @@ function ActiveThreadDisplayer(props){
                         return displayActiveContent(message,setMsgExpandOpt)
                     })}
                 </div>
+                <div id="activeThreadDeadSpace" />
             </div>
         </div>
     )

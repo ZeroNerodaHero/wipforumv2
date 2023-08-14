@@ -1,7 +1,7 @@
 <?php
 function getBoardList(){
     $ret = array("code"=>1);
-    $res=myQuery("SELECT shortHand,longHand,boardDesc FROM boardList
+    $res=myQuery("SELECT shortHand,longHand,boardDesc,boardImg FROM boardList
             WHERE isPrivate=false
             ORDER BY boardPriority DESC");
     $ret["boardList"] = $res->fetch_all(MYSQLI_ASSOC);
