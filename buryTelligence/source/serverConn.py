@@ -11,17 +11,21 @@ class serverConn():
         }
         try:
             self.connection = mysql.connector.connect(**self.dbConfig)
-            print("connected to server")
+            print("Connected to server")
             self.conn = self.connection.cursor()
-
-            que = "SELECT * FROM messageList"
-            self.conn.execute(que)
             
-            results = self.conn.fetchall()
-            for row in results:
-                print(row)
         except mysql.connector.Error as err:
-            print("Error:", err)    
+            print("Failed to Connect\nError:", err) 
+
+    def __del__(self):
+        self.conn.close()
+        self.connection.close()  
+
+    def myQuery(self,que,commit=False):
+        self.conn.execute(que)
+        if(commit == True): self.connection.commit()
+        return self.conn.fetchall()
+
 
 
 

@@ -21,7 +21,7 @@ class buryTelligence():
 
             for thread in data['data']:
                 if(thread['threadId'] in thread_ids):
-                    if(debug == True): print("\tDuplicate Thread Id"+thread["threadId"])
+                    #if(debug == True): print("\tDuplicate Thread Id..."+thread["threadId"])
                     continue
                 for post in thread["post"]:
                     post_texts.append(post['postText'])
