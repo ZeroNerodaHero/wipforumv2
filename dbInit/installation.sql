@@ -28,6 +28,13 @@ CREATE TABLE messageList(
         -bit 1 -> report immunity
     */
     isReported bit(2) NOT NULL DEFAULT 0,
+    /*
+        -bit 0 -> is bot reply
+        -bit 1 -> bot has replied to post
+
+        //btw the backend container will not use this. only buryBot
+    */
+    buryBotCode int DEFAULT 0,
     primary key (messageId)
 );
 CREATE TABLE threadList(

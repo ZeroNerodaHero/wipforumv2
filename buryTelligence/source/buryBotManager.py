@@ -25,33 +25,13 @@ class buryBotManager:
 
     def respondToLatestPost(self):
         res = self.myConn.myQuery(que="SELECT threadReference,messageId,messageContent FROM messageList \
-                                    WHERE messageOwner != -1 ORDER BY messageId DESC LIMIT 1")[0];
+                                    WHERE messageOwner != -1 and ((buryBotCode>>1)&1) != 1 ORDER BY messageId DESC LIMIT 1")[0];
         newMsg = self.bot.get_most_similar_response(res[2])
-        print(res[2])
+        print(res[1])
         newMsg = ("#"+str(res[1])+"\n"+newMsg)
-        print("INSERT INTO messageList(threadReference,messageContent,messageOwner,userReference,hashed_ip) \
-                                VALUES('{}','{}',-1,-1,-1)".format(res[0],newMsg))
-        self.myConn.myQuery(que="INSERT INTO messageList(threadReference,messageContent,messageOwner,userReference,hashed_ip) \
-                                VALUES('{}','{}',-1,-1,-1)".format(res[0],newMsg),commit=True)
-        
-
-'''
-        threadReference int,
-    imageLinks varchar(1000),
-    messageContent varchar(3000),
-    messageOwner BIGINT,
-    hashed_ip varchar(64),
-
-    userReference BIGINT,
-
-    messageId int NOT NULL AUTO_INCREMENT,
-    postTime timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    /* 
-        -bit 0 -> report
-        -bit 1 -> report immunity
-    */
-    isReported bit(2) NOT NULL DEFAULT 0,
-    primary key (messageId)
-'''
-
-        
+        self.myConn.myQuery(que="INSERT INTO messageList(threadReference,messageContent,messageOwner,userReference,hashed_ip,buryBotCode) \
+                                VALUES(%s,%s,-1,-1,-1,1)",values=(res[0],newMsg))
+        self.myConn.myQuery(que="UPDATE messageList \
+                                SET buryBotCode=(buryBotCode | (1<<1)) \
+                                WHERE messageId={}".format(str(res[1])))
+        self.myConn.updateSQL()
