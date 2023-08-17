@@ -15,3 +15,8 @@ services:
         volumes: 
             - ./mysqlData:/var/lib/mysql
             - ./dbInit:/docker-entrypoint-initdb.d/:ro
+    burybot:
+        build: buryTelligence/
+        tty: true            # Enables pseudo-TTY
+        stdin_open: true    
+
