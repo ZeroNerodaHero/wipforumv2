@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import apiRequest from '../../apiRequest/apiRequest';
+import { postRequest } from '../../apiRequest/apiRequest';
 import SetCookie, {ClearCookies, GetCookie} from '../../cookieReader/cookieReader';
 import ErrorSetterContext from '../../absolutePrompt/absolutePromptContext';
 import "./moderate.css"
@@ -44,13 +44,12 @@ function BoardMod(props){
     const authKey = GetCookie("authKey")
     const [boardInfo,setBoardInfo] = useState([]);
     function boardReload(){
-        apiRequest("http://localhost:8070/","",
+        postRequest(
         {
             option: 9299,
             userId: userId,
             authKey: authKey
-        },
-        "POST").then((data)=>{
+        }).then((data)=>{
             if(data["code"]!=0){
                 setBoardInfo(data["boardList"])
             }
@@ -98,7 +97,7 @@ function BoardModItem(props){
     useEffect(()=>{
         if(updateBoardOpt != -1){
             setUpdateBoardOpt(-1)
-            apiRequest("http://localhost:8070/","",
+            postRequest(
             {
                 option: updateBoardOpt,
                 userId: userId,
@@ -107,8 +106,7 @@ function BoardModItem(props){
                 boardImg: boardImg,
                 boardDesc: boardDesc,
                 newCap: boardCap
-            },
-            "POST").then((data)=>{
+            }).then((data)=>{
                 if(data["code"]!=0){
                     props.boardReload()
                 }
@@ -172,13 +170,12 @@ function BoardStats(props){
     const [threadDelete, setThreadDelete] = useState(-1)
 
     useEffect(()=>{
-        apiRequest("http://localhost:8070/","",
+        postRequest(
         {
             option: 9001,
             userId: userId,
             authKey: authKey
-        },
-        "POST").then((data)=>{
+        }).then((data)=>{
             if(data["code"]!=0){
                 setBoardList(data["boardList"])
             }
@@ -186,23 +183,21 @@ function BoardStats(props){
     },[])
     useEffect(()=>{
         if(threadDelete != -1){
-            apiRequest("http://localhost:8070/","",
+            postRequest(
             {
                 option: 9101,
                 userId: userId,
                 authKey: authKey,
                 threadId: threadDelete
-            },
-            "POST").then((data)=>{
+            }).then((data)=>{
                 //if delete good-> new request. really bad way to write the code
                 if(data["code"]!=0){
-                    apiRequest("http://localhost:8070/","",
+                    postRequest(
                     {
                         option: 9001,
                         userId: userId,
                         authKey: authKey
-                    },
-                    "POST").then((data)=>{
+                    }).then((data)=>{
                         if(data["code"]!=0){
                             setBoardList(data["boardList"])
                         }
@@ -301,7 +296,7 @@ function DisplayThreadMod(props){
         //one for intial, second for the props.value update
         //third is the first legitamite one
         if(updateCounter > 2){
-            apiRequest("http://localhost:8070/","",
+            postRequest(
             {
                 option: 9100,
                 threadId: props.threadId,
@@ -309,8 +304,7 @@ function DisplayThreadMod(props){
                 value: val,
                 userId: userId,
                 authKey: authKey
-            },
-            "POST").then((data)=>{
+            }).then((data)=>{
                 //explantion: do no want the button and the number to show 
                 //different things. this way prevents that
                 if(data["code"]!=0){
@@ -353,13 +347,12 @@ function ModeratePosts(props){
     const userId = GetCookie("userId")
     const authKey = GetCookie("authKey")
     useEffect(()=>{
-        apiRequest("http://localhost:8070/","",
+        postRequest(
         {
             option: 9002,
             userId: userId,
             authKey: authKey
-        },
-        "POST").then((data)=>{
+        }).then((data)=>{
             if(data["code"]!=0){
                 setReportList(data["reportList"])
             }
@@ -408,14 +401,13 @@ function ModeratePosts(props){
                                     <div className='optionButton' onClick={()=>{
                                         //var userId = GetCookie("userId")
                                         //var authKey = GetCookie("authKey")
-                                        apiRequest("http://localhost:8070/","",
+                                        postRequest(
                                         {
                                             option: 9997,
                                             userId: userId,
                                             authKey: authKey,
                                             messageId: item["messageId"]
-                                        },
-                                        "POST").then((data)=>{
+                                        }).then((data)=>{
                                             if(data["code"]!=0){
                                                 props.updateModReset();
                                             } 
@@ -426,14 +418,13 @@ function ModeratePosts(props){
                                     <div className='optionButton' onClick={()=>{
                                         //var userId = GetCookie("userId")
                                         //var authKey = GetCookie("authKey")
-                                        apiRequest("http://localhost:8070/","",
+                                        postRequest(
                                         {
                                             option: 9999,
                                             userId: userId,
                                             authKey: authKey,
                                             messageId: item["messageId"]
-                                        },
-                                        "POST").then((data)=>{
+                                        }).then((data)=>{
                                             if(data["code"]!=0){
                                                 props.updateModReset();
                                             } 
@@ -492,7 +483,7 @@ function BanUserPrompt(props){
                         if(timeBan != -1 && banReason != ""){
                             var userId = GetCookie("userId")
                             var authKey = GetCookie("authKey")
-                            apiRequest("http://localhost:8070/","",
+                            postRequest(
                             {
                                 option: 9998,
                                 userId: userId,
@@ -500,8 +491,7 @@ function BanUserPrompt(props){
                                 messageId: props.messageId,
                                 banDuration: banTimeDurationList[timeBan][1],
                                 reason: banReason
-                            },
-                            "POST").then((data)=>{
+                            }).then((data)=>{
                                 if(data["code"]!=0){
                                     props.updateModReset();
                                 } 
@@ -523,13 +513,12 @@ function ModerateUsers(props){
     const userId = GetCookie("userId")
     const authKey = GetCookie("authKey")
     useEffect(()=>{
-        apiRequest("http://localhost:8070/","",
+        postRequest(
         {
             option: 9003,
             userId: userId,
             authKey: authKey
-        },
-        "POST").then((data)=>{
+        }).then((data)=>{
             if(data["code"]!=0){
                 setBanList(data["bannedUsers"])
             }
@@ -560,14 +549,13 @@ function ModerateUsers(props){
                                         <div className='optionButton' onClick={()=>{
                                             //var userId = GetCookie("userId")
                                             //var authKey = GetCookie("authKey")
-                                            apiRequest("http://localhost:8070/","",
+                                            postRequest(
                                             {
                                                 option: 9899,
                                                 userId: userId,
                                                 authKey: authKey,
                                                 hashed_ip: item["hashed_ip"]
-                                            },
-                                            "POST").then((data)=>{
+                                            }).then((data)=>{
                                                 if(data["code"]!=0){
                                                     props.updateModReset();
                                                 } else{

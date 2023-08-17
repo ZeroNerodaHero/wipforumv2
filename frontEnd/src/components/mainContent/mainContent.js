@@ -364,11 +364,12 @@ function ActiveThreadDisplayer(props){
                 <div className='messageInfo'>
                     <div className="messageOwnerBoxCont">
                         <div className="messageOwnerBox" style={{
-                            backgroundColor: numToColor(message["messageOwner"],.5)
+                            backgroundColor: message["messageOwner"] == -1 ? "white" : numToColor(message["messageOwner"],.5),
+                            color: message["messageOwner"] == -1 ? "#ff00ea" : "black"
                         }}>
                             {
                                 //i have no clue why i have to write it like this, cause a NaN error if i dont do this
-                                String((message["messageOwner"])%(1<<31)) 
+                                message["messageOwner"] == -1 ? "buryBOT" : String((message["messageOwner"])%(1<<31)) 
                             } 
                         </div>
                     </div>
