@@ -28,8 +28,8 @@ function MainContent(props){
         if(showHelpOnLoad === undefined || showHelpOnLoad === true ){
             setErrorJSON(
                 {show:1,type:99,
-                ele:<WebTab setCurrentBoard={props.setCurrentBoard } 
-                    setActiveThreadPassthrough={props.setActiveThreadPassthrough}
+                ele:<WebTab setCurrentBoard={setCurrentBoard } 
+                    setActiveThreadPassthrough={setActiveThreadPassthrough}
                     type={-2} />
             })
         }
