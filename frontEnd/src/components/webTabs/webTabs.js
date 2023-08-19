@@ -229,7 +229,7 @@ function SiteGuide(props){
     useEffect(()=>{
         //console.log(showHelp,showHelp===false)
         if(clickChange == true){
-            var userSettings = JSON.parse(localStorage.getItem("userSettings"))
+            var userSettings = getLocalStorageItem("userSettings")
             userSettings["showHelp"] = showHelp;
             localStorage.setItem("userSettings",JSON.stringify(userSettings))
         }
