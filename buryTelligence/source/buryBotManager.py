@@ -2,6 +2,7 @@ from .serverConn import serverConn
 from .buryTelligence import buryTelligence
 import mysql.connector
 import time
+import random
 
 
 class buryBotManager:
@@ -80,5 +81,20 @@ class buryBotManager:
         self.myConn = serverConn()
 
     def doNothing(self):
+        self.printCat()
         print("Everything should work. Please use \n\tdocker compose run --rm burybot [opt]\n to run your burybot")
         return
+
+    def printCat(self):
+        eyes = ["o","-",".","V","/",]
+        randomEye = random.randint(0,len(eyes)-1)
+        cheeks = ["//","==","..","  "]
+        randomCheek = random.randint(0,len(cheeks)-1)
+
+        print("This is your not so random cat...")
+        print("    /\_____/\\")
+        print("   /  {}   {}  \\".format(eyes[randomEye],eyes[randomEye]))
+        print("  ( {}  ^  {} )".format(cheeks[randomCheek],cheeks[randomCheek]))
+        print()
+
+
