@@ -16,8 +16,9 @@ class buryBotManager:
         option(int): Option. If debug is true, option does nothing
     """
     def __init__(self,folder_path,json_files,debug=False,option=0):
+        print("Initializing connection...")
         self.myConn = serverConn()
-
+        print("Initializing intelligence...")
         self.bot = buryTelligence(folder_path=folder_path,json_files=json_files,debug=debug)
         
         self.printCat()
