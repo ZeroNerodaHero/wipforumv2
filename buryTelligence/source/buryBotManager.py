@@ -65,7 +65,6 @@ class buryBotManager:
     def runForevea(self):
         timer = input("Minutes inbetween each post \n>>> ")
         timer = 60*float(timer)
-        print("Will add a new post every: "+str(timer)+"sec")
 
         shutdown = input("Shutdown? Type 0 to shutdown. Else, type minutes till next check\n>>> ")
         shutdown = 60*float(shutdown)
@@ -74,11 +73,14 @@ class buryBotManager:
             print("\nCURRENT TIME: ",time.ctime())
             tmp = self.respondToLatestPost();
             if(tmp == -1): break
-            elif(tmp == 0): time.sleep(timer)
+            elif(tmp == 0): 
+                print("Bot will talk again on",time.ctime(time.time()+timer))
+                time.sleep(timer)
             elif(tmp == 1): 
                 if(shutdown == 0): break
                 else: 
                     print("Bot FELL ASLEEP...")
+                    print("Bot will talk again on",time.ctime(time.time()+shutdown))
                     time.sleep(shutdown)
                     self.restartConnection()
                     print("Bot WOKE UP 0<:O")
@@ -88,7 +90,7 @@ class buryBotManager:
 
     def doNothing(self):
         print("Initialization complete...\nEverything should work. Please use:")
-        print_highlighted("docker compose run --rm burybot [opt]")
+        print_highlighted("  docker compose run --rm burybot [opt]")
         print("to run your burybot")
         return
 
