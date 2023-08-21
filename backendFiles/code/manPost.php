@@ -26,8 +26,8 @@ function addMessage($threadReference,$messageContent,$messageOwner,$userReferenc
 
     $messageContent = yeetBadWords($messageContent);
     $que = "UPDATE threadList 
-    SET threadSize=threadSize+1
-    WHERE threadId=" . $threadReference;
+            SET threadSize=threadSize+1
+            WHERE threadId=" . $threadReference;
     $conn->query($que);
 
     $messageContent = addslashes($messageContent);

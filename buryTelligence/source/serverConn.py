@@ -21,7 +21,7 @@ class serverConn():
         self.conn.close()
         self.connection.close()  
 
-    def myQuery(self,que,values="",commit=False):
+    def myQuery(self,que,values=(),commit=False):
         self.conn.execute(que,values)
         if(commit == True): self.connection.commit()
         return self.conn.fetchall()

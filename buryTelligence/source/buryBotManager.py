@@ -1,6 +1,7 @@
 from .serverConn import serverConn
 from .buryTelligence import buryTelligence
 import mysql.connector
+import time
 
 
 class buryBotManager:
@@ -31,7 +32,14 @@ class buryBotManager:
         newMsg = ("#"+str(res[1])+"\n"+newMsg)
         self.myConn.myQuery(que="INSERT INTO messageList(threadReference,messageContent,messageOwner,userReference,hashed_ip,buryBotCode) \
                                 VALUES(%s,%s,-1,-1,-1,1)",values=(res[0],newMsg))
+        #extra comma for tuple definition
+        self.myConn.myQuery(que="UPDATE threadList \
+                                SET threadSize = threadSize+1 \
+                                WHERE threadId=%s",values=(res[0],))
         self.myConn.myQuery(que="UPDATE messageList \
                                 SET buryBotCode=(buryBotCode | (1<<1)) \
                                 WHERE messageId={}".format(str(res[1])))
         self.myConn.updateSQL()
+    def runForever(self):
+        while(1):
+            time.sleep()
