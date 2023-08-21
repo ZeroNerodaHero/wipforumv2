@@ -21,14 +21,25 @@ class buryBotManager:
         
         if(debug == True):
             self.bot.debugSimulate()
-        else:
+        elif(option == 1):
             self.respondToLatestPost()
+        elif(option == 2):
+            self.runForevea()
+        else:
+            self.doNothing()
 
     def respondToLatestPost(self):
-        res = self.myConn.myQuery(que="SELECT threadReference,messageId,messageContent FROM messageList \
-                                    WHERE messageOwner != -1 and ((buryBotCode>>1)&1) != 1 ORDER BY messageId DESC LIMIT 1")[0];
+        serverResponse = self.myConn.myQuery(que="SELECT threadReference,messageId,messageContent FROM messageList \
+                                            WHERE messageOwner != -1 and ((buryBotCode>>1)&1) != 1 ORDER BY messageId DESC LIMIT 1");
+        if(serverResponse == None or len(serverResponse) == 0):
+            print("ERROR: PROBABLY NO POST LEFT")
+            return -1
+
+        res = serverResponse[0]
+
+        print("[-] replying to post "+str(res[1])+"...")
+
         newMsg = self.bot.get_most_similar_response(res[2])
-        print(res[1])
         newMsg = ("#"+str(res[1])+"\n"+newMsg)
         self.myConn.myQuery(que="INSERT INTO messageList(threadReference,messageContent,messageOwner,userReference,hashed_ip,buryBotCode) \
                                 VALUES(%s,%s,-1,-1,-1,1)",values=(res[0],newMsg))
@@ -40,6 +51,16 @@ class buryBotManager:
                                 SET buryBotCode=(buryBotCode | (1<<1)) \
                                 WHERE messageId={}".format(str(res[1])))
         self.myConn.updateSQL()
-    def runForever(self):
+        print("[+] finish replying to post "+str(res[1]))
+        return 1
+
+    def runForevea(self):
+        timer = input("Minutes inbetween each post \n>>>")
+        timer = 60*float(timer)
         while(1):
-            time.sleep()
+            if(self.respondToLatestPost() == -1): break
+            time.sleep(timer)
+            
+    def doNothing(self):
+        print("Everything should work. Please use \n\tdocker compose run --rm burybot [opt]\n to run your burybot")
+        return

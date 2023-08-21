@@ -16,6 +16,10 @@ if(arg == ""):
     option = 0
 elif(arg == "debug"):
     debug = True
+elif(arg=="test"):
+    option = 1
+elif(arg=="run"):
+    option = 2
 
 
 bot = buryBotManager(folder_path=folder_path, json_files=json_files,debug=debug,option=option)

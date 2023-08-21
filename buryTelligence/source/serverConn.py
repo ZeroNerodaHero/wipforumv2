@@ -22,7 +22,11 @@ class serverConn():
         self.connection.close()  
 
     def myQuery(self,que,values=(),commit=False):
-        self.conn.execute(que,values)
+        try:
+            self.conn.execute(que,values)
+        except (mysql.connector.Error , mysql.connector.Warning) as e:
+            print(e)
+            return None
         if(commit == True): self.connection.commit()
         return self.conn.fetchall()
 
