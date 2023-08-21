@@ -11,7 +11,7 @@ class serverConn():
         }
         try:
             self.connection = mysql.connector.connect(**self.dbConfig)
-            print("Connected to server")
+            #print("Connected to server")
             self.conn = self.connection.cursor()
             
         except mysql.connector.Error as err:

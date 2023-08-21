@@ -31,9 +31,10 @@ class buryBotManager:
     def respondToLatestPost(self):
         serverResponse = self.myConn.myQuery(que="SELECT threadReference,messageId,messageContent FROM messageList \
                                             WHERE messageOwner != -1 and ((buryBotCode>>1)&1) != 1 ORDER BY messageId DESC LIMIT 1");
-        if(serverResponse == None or len(serverResponse) == 0):
-            print("ERROR: PROBABLY NO POST LEFT")
+        if(serverResponse == None):
             return -1
+        if(len(serverResponse) == 0):
+            return 1
 
         res = serverResponse[0]
 
@@ -52,15 +53,32 @@ class buryBotManager:
                                 WHERE messageId={}".format(str(res[1])))
         self.myConn.updateSQL()
         print("[+] finish replying to post "+str(res[1]))
-        return 1
+        return 0
 
     def runForevea(self):
-        timer = input("Minutes inbetween each post \n>>>")
+        timer = input("Minutes inbetween each post \n>>> ")
         timer = 60*float(timer)
+        print("Will add a new post every: "+str(timer)+"sec")
+
+        shutdown = input("Shutdown? Type 0 to shutdown. Else, type minutes till next check\n>>> ")
+        shutdown = 60*float(shutdown)
+
         while(1):
-            if(self.respondToLatestPost() == -1): break
-            time.sleep(timer)
-            
+            print("\nCURRENT TIME: ",time.ctime())
+            tmp = self.respondToLatestPost();
+            if(tmp == -1): break
+            elif(tmp == 0): time.sleep(timer)
+            elif(tmp == 1): 
+                if(shutdown == 0): break
+                else: 
+                    print("Bot FELL ASLEEP...")
+                    time.sleep(shutdown)
+                    self.restartConnection()
+                    print("Bot WOKE UP 0<:O")
+
+    def restartConnection(self):
+        self.myConn = serverConn()
+
     def doNothing(self):
         print("Everything should work. Please use \n\tdocker compose run --rm burybot [opt]\n to run your burybot")
         return
