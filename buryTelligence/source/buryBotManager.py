@@ -20,13 +20,18 @@ class buryBotManager:
 
         self.bot = buryTelligence(folder_path=folder_path,json_files=json_files,debug=debug)
         
+        self.printCat()
         if(debug == True):
+            print("You are simulating. No changes will be made to the server")
             self.bot.debugSimulate()
         elif(option == 1):
+            print("Burybot is going to respond to the latest post")
             self.respondToLatestPost()
         elif(option == 2):
+            print("Burybot is going to work very hard to post to everyone")
             self.runForevea()
         else:
+            print("Burybot is lazy and going to go to sleep")
             self.doNothing()
 
     def respondToLatestPost(self):
@@ -81,8 +86,9 @@ class buryBotManager:
         self.myConn = serverConn()
 
     def doNothing(self):
-        self.printCat()
-        print("Everything should work. Please use \n\tdocker compose run --rm burybot [opt]\n to run your burybot")
+        print("Initialization complete...\nEverything should work. Please use:")
+        print_highlighted("docker compose run --rm burybot [opt]")
+        print("to run your burybot")
         return
 
     def printCat(self):
@@ -91,10 +97,45 @@ class buryBotManager:
         cheeks = ["//","==","..","  "]
         randomCheek = random.randint(0,len(cheeks)-1)
 
+        print(34*"_")
         print("This is your not so random cat...")
         print("    /\_____/\\")
         print("   /  {}   {}  \\".format(eyes[randomEye],eyes[randomEye]))
         print("  ( {}  ^  {} )".format(cheeks[randomCheek],cheeks[randomCheek]))
-        print()
+        print(34*"_")
+
+def print_highlighted(text, color="white", background="light_grey"):
+    colors = {
+        "black": "30",
+        "red": "31",
+        "green": "32",
+        "yellow": "33",
+        "blue": "34",
+        "magenta": "35",
+        "cyan": "36",
+        "white": "37",
+        "grey": "90",        
+        "light_grey": "37"
+    }
+    backgrounds = {
+        "black": "40",
+        "red": "41",
+        "green": "42",
+        "yellow": "43",
+        "blue": "44",
+        "magenta": "45",
+        "cyan": "46",
+        "white": "47"
+    }
+
+    color_code = colors.get(color, "33")  # Default to yellow if color is not recognized
+    background_code = backgrounds.get(background, "40")  # Default to black if background is not recognized
+
+    try:
+        highlighted_text = f"\033[{color_code};{background_code}m{text}\033[0m"
+        print(highlighted_text)
+    except:
+        # If formatting fails (no ANSI support), print the text without formatting
+        print(text)
 
 
