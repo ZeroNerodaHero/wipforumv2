@@ -93,7 +93,7 @@
     overflow: hidden;
     justify-content: space-between;
     display: grid;
-    grid-template-rows: 20% 70% max-content;
+    grid-template-rows: 20% 65% max-content;
     grid-template-columns: 100%;
     align-content: space-between;
 }
