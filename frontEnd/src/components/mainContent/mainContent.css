@@ -21,10 +21,13 @@
 .threadCont{
     display: grid;
     grid-template-columns: repeat(var(--thumbPerRow),1fr);
+    /*
     flex-wrap: wrap;
     justify-content: center;
     align-content: flex-start;
-    
+    */
+    justify-items: center;
+
     padding: 9px;
     padding-top: 14px;
     padding-bottom: 21px;
@@ -34,16 +37,16 @@
 }
 
 .threadThumbNail{
-    width: 99%;
+    width: 95%;
     aspect-ratio: 1 / 1;
     background-color: rgba(0, 0, 0, 0.3);
     display: grid;
     grid-template-rows: max-content auto;
     overflow: hidden;
     position: relative;
+    border: 2px transparent solid;
 }
 .threadThumbNail:hover{
-    transform: scale(1.02);
     border: 2px black solid;
 }
 .threadTitle{

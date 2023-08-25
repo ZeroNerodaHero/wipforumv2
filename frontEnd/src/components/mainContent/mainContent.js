@@ -11,7 +11,7 @@ import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
 import {PushPin, Lock} from "@mui/icons-material"
 
 function MainContent(props){
-    const [currentBoard,setCurrentBoard] = useState("h")
+    const [currentBoard,setCurrentBoard] = useState(-1)
     const [threadSearch,setThreadSearch] = useState("")
     const [errorJSON,setErrorJSON] = useState({show:0})
     const [checkStorage,setCheckStorage] = useState(false);
@@ -28,8 +28,8 @@ function MainContent(props){
         if(showHelpOnLoad === undefined || showHelpOnLoad === true ){
             setErrorJSON(
                 {show:1,type:99,
-                ele:<WebTab setCurrentBoard={props.setCurrentBoard } 
-                    setActiveThreadPassthrough={props.setActiveThreadPassthrough}
+                ele:<WebTab setCurrentBoard={setCurrentBoard } 
+                    setActiveThreadPassthrough={setActiveThreadPassthrough}
                     type={-2} />
             })
         }
@@ -89,22 +89,24 @@ function ThreadCont(props){
     const [updateMessageBox,setUpdateMessageBox] = useState("");
     
     useEffect(()=>{
-        getRequest(
-        {
-            option: 1001,
-            currentBoard: props.currentBoard
-        }).then((data)=>{
-            if(data["code"]!=0){
-                if(data["threadList"] != undefined && data["threadList"].length != 0){
-                    setThreadList(data["threadList"]);
-                    setAllThreads(data["threadList"]);
-                } else{
-                    console.log(data["threadList"])
+        if(props.currentBoard !=  -1){
+            getRequest(
+            {
+                option: 1001,
+                currentBoard: props.currentBoard
+            }).then((data)=>{
+                if(data["code"]!=0){
+                    if(data["threadList"] != undefined && data["threadList"].length != 0){
+                        setThreadList(data["threadList"]);
+                        setAllThreads(data["threadList"]);
+                    } else{
+                        console.log(data["threadList"])
+                    }
+                /* Note: not sure what this line was for */
+                    //setActiveThread(-1);
                 }
-            /* Note: not sure what this line was for */
-                //setActiveThread(-1);
-            }
-        })
+            })
+        }
     },[props.currentBoard,forceUpdateCnt])
 
     useEffect(()=>{
