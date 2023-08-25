@@ -47,12 +47,7 @@
 #boardTabMiscCont{
     overflow-y: auto;
 }
-#boardPreviewBodyCont{
-    text-align: center;
-    display: flex;
-    overflow: hidden;
-    justify-content: space-between;
-}
+
 .boardTabItem{
     padding: 2px 7px;
     border: 1px black solid;
@@ -90,23 +85,40 @@
 #webTabButton:hover{
     background-color: rgb(0, 81, 255);;
 }
-#boardPreviewImgCont{
-    max-height: 100%;
-    margin-left: 13px;
-    max-width: 50%;
-}
-#boardPreviewImg{
+
+#boardPreviewBodyCont{
+    text-align: center;
     height: 100%;
-    aspect-ratio: auto;
+
+    overflow: hidden;
+    justify-content: space-between;
+    display: grid;
+    grid-template-rows: 20% 70% max-content;
+    grid-template-columns: 100%;
+    align-content: space-between;
 }
-#boardPreviewDesc{
+
+#webTabButton{
+    height: fit-content;
+}
+#boardImageHeader{
+    font-size: x-large;
+    font-weight: bold;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    background-blend-mode: color-burn;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#boardPreviewDescCont{
     height: 100%;
     overflow-y: auto;
 }
-#boardPreviewDescCont{
-    display: grid;
-    grid-template-rows: auto max-content;
-    margin-top: 11px;
+#boardPreviewDesc{
+    padding-top: 13px;   
 }
 
 #latestImagePostCont{

@@ -11,10 +11,7 @@ function ModeratePrompt(props){
     const [moderateFocusOn,setModerateFocusOn] = useState(0);
     function setFocusOnStyle(val){
         return ""+
-            (val == 0?"25% 50% 25%":"")+
-            (val == 1?"80% 10% 10%":"")+
-            (val == 2?"10% 80% 10%":"")+
-            (val == 3?"10% 10% 80%":"");
+            (val == 0?"25%".repeat(4):"6.6% ".repeat(val-1) +"80% "+"6.6% ".repeat(4-val))
     }
 
     return (
@@ -23,14 +20,16 @@ function ModeratePrompt(props){
                 <div id="moderatePromptConstraint" style={{
                     gridAutoRows:setFocusOnStyle(moderateFocusOn)
                 }}>
-                    <div id="siteStats" onClick={()=>{setModerateFocusOn(1)}}>
+                    <div className='moderateBox' onClick={()=>{setModerateFocusOn(1)}}>
                         <BoardMod />
-                        <BoardStats />
                     </div>
                     <div className='moderateBox' onClick={()=>{setModerateFocusOn(2)}}>
+                        <BoardStats />
+                    </div>
+                    <div className='moderateBox' onClick={()=>{setModerateFocusOn(3)}}>
                         <ModeratePosts updateModReset={updateModReset} modForceReset={modForceReset}/>
                     </div>
-                    <div id="moderateUsers" className='moderateBox' onClick={()=>{setModerateFocusOn(3)}}>
+                    <div id="moderateUsers" className='moderateBox' onClick={()=>{setModerateFocusOn(4)}}>
                         <ModerateUsers updateModReset={updateModReset} modForceReset={modForceReset}/>
                     </div>
                 </div>

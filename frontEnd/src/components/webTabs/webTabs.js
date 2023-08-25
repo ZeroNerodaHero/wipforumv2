@@ -151,24 +151,25 @@ function BoardPreview(props){
     return (
         <div id="boardPreviewCont">
             <div className='boardTabHeader'>
-                /{props.activeBoardInfo["shortHand"]}/-{props.activeBoardInfo["longHand"]}
+                {
+                    // /{props.activeBoardInfo["shortHand"]}/-{props.activeBoardInfo["longHand"]}
+                }
             </div>
             <div id="boardPreviewBodyCont">
+                <div id="boardImageHeader" style={{backgroundImage: 'url('+props.activeBoardInfo["boardImg"]+')'}}>
+                    /{props.activeBoardInfo["shortHand"]}/-{props.activeBoardInfo["longHand"]}
+                </div>
                 <div id="boardPreviewDescCont">
                     <div id="boardPreviewDesc">
                         {props.activeBoardInfo["boardDesc"]}
                     </div>
-                    <div id='webTabButton'
-                        onClick={()=>{
-                            props.setCurrentBoard(props.activeBoardInfo["shortHand"])
-                            setErrorJSON({show:0})
-                        }}>
-                        Visit
-                    </div>
                 </div>
-                <div id="boardPreviewImgCont">
-                    <img id="boardPreviewImg" 
-                        src={props.activeBoardInfo["boardImg"]}/>
+                <div id='webTabButton'
+                    onClick={()=>{
+                        props.setCurrentBoard(props.activeBoardInfo["shortHand"])
+                        setErrorJSON({show:0})
+                    }}>
+                    Visit
                 </div>
             </div>
         </div>
@@ -229,7 +230,7 @@ function SiteGuide(props){
     useEffect(()=>{
         //console.log(showHelp,showHelp===false)
         if(clickChange == true){
-            var userSettings = getLocalStorageItem("userSettings")
+            var userSettings = JSON.parse(localStorage.getItem("userSettings"))
             userSettings["showHelp"] = showHelp;
             localStorage.setItem("userSettings",JSON.stringify(userSettings))
         }
