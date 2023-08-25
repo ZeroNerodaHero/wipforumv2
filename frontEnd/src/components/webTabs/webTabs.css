@@ -19,8 +19,7 @@
 }
 #boardTabLeft{
     white-space: nowrap;
-    display: grid;
-    grid-template-rows: max-content auto;
+    display: flex;
     overflow: hidden;
 }
 .boardTabCollapse::before{
@@ -35,10 +34,11 @@
 #boardTabCont{
     padding: 0px 10px;
     border-right: 3px black solid;
-    display: grid;
+    display: flex;
     align-content: space-between;
-    text-align: center;
+    text-align: end;
     height: 100%;
+    align-items: flex-end;
 }
 #boardTabBoardCont{
     overflow-y: auto;
@@ -75,7 +75,7 @@
     font-size: 1.3rem;
 }
 #webTabButton{
-    margin-top: 7px;
+    margin: 7px 0px;
     color: white;
     border: 1px black solid;
     text-align: center;
@@ -102,7 +102,8 @@
     height: fit-content;
 }
 #boardImageHeader{
-    font-size: x-large;
+    font-size: xx-large;
+    word-break: break-all;
     font-weight: bold;
     background-repeat: repeat-x;
     background-size: auto 100%;
@@ -111,6 +112,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    border: 1px black solid;
+    border-bottom-width: 7px;
 }
 
 #boardPreviewDescCont{
@@ -220,6 +223,11 @@
     border: 1px black solid;
     padding: 1px 3px;
     background-color: white;
+}
+
+
+.boardTabBoardListCont{
+    display: grid;
 }
 
 @media screen and (max-width: 768px){

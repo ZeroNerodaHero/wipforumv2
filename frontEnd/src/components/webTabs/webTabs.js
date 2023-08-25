@@ -7,34 +7,31 @@ import getLocalStorageItem from '../cookieReader/localStorageReader';
 
 
 function WebTab(props){
-    const [boardList,setBoardList] = useState([]);
-    const [activeBoard,setActiveBoard] = useState(-1);
+    const [activeBoard,setActiveBoard] = useState(0);
 
     useEffect(()=>{
-        getRequest(
-        {
-            option: 1000
-        }).then((data)=>{
-            if(data["code"] == 1){
-                setBoardList(data["boardList"]);
-            }
-        })
         if(props.type != undefined) setActiveBoard(props.type)
     },[])
 
     return (
         <div id="boardTab" onClick={(e)=>{e.stopPropagation()}}>
             <div id="boardTabLeft">
-                <div className="boardTabHeader">Boards:</div>
                 <div id="boardTabContConstraint">
                     <div id="boardTabCont">
+                        {
+                            /*
                         <div id="boardTabBoardCont">
-                            {boardList.map((item,key)=>(<BoardTab key={key} it={key}
+                            
+                            boardList.map((item,key)=>(<BoardTab key={key} it={key}
                                 shortHand={item["shortHand"]} longHand={item["longHand"]} 
                                 setActiveBoard={setActiveBoard}
-                            />))}
+                            />))
+                            
                         </div>
+                            */
+                        }
                         <div id="boardTabMiscCont">
+                            <div className='boardTabItem' onClick={()=>{setActiveBoard(0)}}>Boards</div>
                             <div className='boardTabItem' onClick={()=>{setActiveBoard(-1)}}>Latest</div>
                             <div className='boardTabItem' onClick={()=>{setActiveBoard(-2)}}>Help</div>
                             <div className='boardTabItem' onClick={()=>{setActiveBoard(-3)}}>Settings</div>
@@ -44,6 +41,9 @@ function WebTab(props){
             </div>
             <div id="boardTabRight">
                 {
+                    activeBoard == 0 ? 
+                    <BoardPageView setCurrentBoard={props.setCurrentBoard} /> 
+                    :
                     activeBoard == -1 ? 
                     <LatestPosts setCurrentBoard={props.setCurrentBoard} 
                         setActiveThreadPassthrough={props.setActiveThreadPassthrough}/> 
@@ -54,21 +54,63 @@ function WebTab(props){
                     activeBoard == -3 ?
                     <SiteSettings /> 
                     :
-                    <BoardPreview activeBoardInfo={boardList[activeBoard]} 
-                        setCurrentBoard={props.setCurrentBoard}/>
+                    <div />
+                }
+            </div>
+        </div>
+    )
+}
+function BoardPageView(props){
+    const [boardList,setBoardList] = useState([]);
+
+    useEffect(()=>{
+        getRequest(
+        {
+            option: 1000
+        }).then((data)=>{
+            if(data["code"] == 1){
+                setBoardList(data["boardList"]);
+            }
+        })
+    },[])
+
+    return (
+        <div>
+            <div className='boardTabHeader'>
+                Boards
+            </div>
+            <div className='boardTabBoardListCont'>
+                {
+                    boardList.map((item,key)=>(
+                        <BoardPreview activeBoardInfo={boardList[key]}
+                            setCurrentBoard={props.setCurrentBoard}/>
+                    ))
                 }
             </div>
         </div>
     )
 }
 
-function BoardTab(props){
+function BoardPreview(props){
+    const {errorJSON,setErrorJSON} = useContext(ErrorSetterContext)
+
     return (
-        <div className='boardTabItem'
-            onClick={()=>{
-                props.setActiveBoard(props.it)
-            }}>
-            /{props.shortHand}/-{props.longHand}
+        <div id="boardPreviewCont">
+            <div id="boardImageHeader" style={{backgroundImage: 'url('+props.activeBoardInfo["boardImg"]+')'}}>
+                /{props.activeBoardInfo["shortHand"]}/-{props.activeBoardInfo["longHand"]}
+            </div>
+            <div id="boardPreviewDescCont">
+                <div id="boardPreviewDesc">
+                    {props.activeBoardInfo["boardDesc"]}
+                </div>
+            </div>
+            <div id='webTabButton'
+                onClick={()=>{
+                    props.setCurrentBoard(props.activeBoardInfo["shortHand"])
+                    setErrorJSON({show:0})
+                }}>
+                Visit
+            </div>
         </div>
     )
 }
@@ -145,36 +187,6 @@ function LatestPosts(props){
     )
 }
 
-function BoardPreview(props){
-    const {errorJSON,setErrorJSON} = useContext(ErrorSetterContext)
-
-    return (
-        <div id="boardPreviewCont">
-            <div className='boardTabHeader'>
-                {
-                    // /{props.activeBoardInfo["shortHand"]}/-{props.activeBoardInfo["longHand"]}
-                }
-            </div>
-            <div id="boardPreviewBodyCont">
-                <div id="boardImageHeader" style={{backgroundImage: 'url('+props.activeBoardInfo["boardImg"]+')'}}>
-                    /{props.activeBoardInfo["shortHand"]}/-{props.activeBoardInfo["longHand"]}
-                </div>
-                <div id="boardPreviewDescCont">
-                    <div id="boardPreviewDesc">
-                        {props.activeBoardInfo["boardDesc"]}
-                    </div>
-                </div>
-                <div id='webTabButton'
-                    onClick={()=>{
-                        props.setCurrentBoard(props.activeBoardInfo["shortHand"])
-                        setErrorJSON({show:0})
-                    }}>
-                    Visit
-                </div>
-            </div>
-        </div>
-    )
-}
 
 function SiteSettings(props){
     const [threadSizeValue,setThreadSizeValue] = useState(-1);
