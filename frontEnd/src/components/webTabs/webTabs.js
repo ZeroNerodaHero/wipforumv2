@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { getRequest,postRequest } from '../apiRequest/apiRequest';
 import "./webTabs.css"
 import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
-import getLocalStorageItem from '../cookieReader/localStorageReader';
+import getLocalStorageItem,{updateLocalStorage} from '../cookieReader/localStorageReader';
 
 
 
@@ -76,13 +76,13 @@ function BoardPageView(props){
 
     return (
         <div>
-            <div className='boardTabHeader'>
+            <div className='absoluteTitle'>
                 Boards
             </div>
             <div className='boardTabBoardListCont'>
                 {
                     boardList.map((item,key)=>(
-                        <BoardPreview activeBoardInfo={boardList[key]}
+                        <BoardPreview key={key} activeBoardInfo={boardList[key]}
                             setCurrentBoard={props.setCurrentBoard}/>
                     ))
                 }
@@ -139,7 +139,7 @@ function LatestPosts(props){
 
     return (
         <div>
-            <div className='boardTabHeader'>
+            <div className='absoluteTitle'>
                 Latest Posts
             </div>
             <div>
@@ -189,8 +189,22 @@ function LatestPosts(props){
 
 
 function SiteSettings(props){
+    return (
+        <div className='promptCont'>
+            <div className="absoluteTitle">Settings</div>
+            <div className="absoluteGuideContent">
+                <div id="settingCont">
+                    <SiteSettingThumbNail />
+                    <SiteSettingsColor />
+                </div>
+            </div>
+        </div>
+    )
+}
+function SiteSettingThumbNail(){
     const [threadSizeValue,setThreadSizeValue] = useState(-1);
     const threadSizeAr = Array.from({length: 8}, (_, i) => i + 1)
+
 
     useEffect(()=>{
         if(getLocalStorageItem("userSettings","threadSize") != undefined){
@@ -202,31 +216,75 @@ function SiteSettings(props){
 
     useEffect(()=>{
         if(threadSizeValue != -1){
-            var userSettings = getLocalStorageItem("userSettings");
-            userSettings["threadSize"] = threadSizeValue;
-            localStorage.setItem("userSettings",JSON.stringify(userSettings))
+            updateLocalStorage("threadSize",threadSizeValue)
             document.getElementById("root").style.setProperty("--thumbPerRow",threadSizeValue)
         }
     },[threadSizeValue])
 
     return (
-        <div className='promptCont'>
-            <div className="absoluteTitle">Settings</div>
-            <div className="absoluteGuideContent">
-                <div id="settingCont">
-                    <div className='settingItemCont'>
-                        <div className='settingItemHeader'>Threads Per Row: </div>
-                        <div className='settingOptionCont'>
-                            <div className='settingOptionText'>n x</div>
-                            {threadSizeAr.map((item,key)=>(
-                                <div className='settingOptionButtonSmol' onClick={()=>{setThreadSizeValue(item)}} key={key}
-                                    style={{backgroundColor:(threadSizeValue == item?"white":"#00000099")}}>
-                                    {item}
-                                </div>
-                            ))}
+        <div className='settingItemCont'>
+            <div className='settingItemHeader'>Threads Per Row: </div>
+            <div className='settingOptionCont'>
+                <div className='settingOptionText'>n x</div>
+                {threadSizeAr.map((item,key)=>(
+                    <div className='settingOptionButtonSmol' onClick={()=>{setThreadSizeValue(item)}} key={key}
+                        style={{backgroundColor:(threadSizeValue == item?"white":"#00000099")}}>
+                        {item}
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+function SiteSettingsColor(){
+    const colorSettings = [["Main Page","threadMainPageColor"],["Active Thread","activeThreadColor"],["Web Tab","webTabBackgroundColor"]]
+    const [colorSettingValue, setColorSettingValue] = useState(
+        {threadMainPageColor:getColor("threadMainPageColor"),activeThreadColor:getColor("activeThreadColor"),webTabBackgroundColor:getColor("webTabBackgroundColor")}
+    )
+
+    useEffect(()=>{
+        updateLocalStorage("colors",colorSettingValue)
+    },[colorSettingValue])
+    //debouncer 
+    var timeoutId = null;
+
+    function updateColor(key,color){
+        document.getElementById("root").style.setProperty("--"+key,color)
+        setColorSettingValue((prevState)=>({
+            ...prevState,
+            [key]: color
+        }))
+    }
+    function getColor(key){
+        return getComputedStyle(document.getElementById("root")).getPropertyValue("--"+key).trim()
+    }
+
+    return (
+        <div className='settingItemBoxCont'>
+            <div className="settingItemBoxContHeader">
+                Color Picker
+            </div>
+            {
+                colorSettings.map((item,key)=>(
+                    <div className='settingItemCont' key={key}>
+                        <div className='settingItemHeader'>{item[0]}</div>
+                        <div className='colorInputCont'>
+                            <div onClick={()=>{updateColor(item[1],"")}}>&#8635;</div>
+                            <input type="color" 
+                                onInput={(e)=>{
+                                    clearTimeout(timeoutId);
+                                    timeoutId = setTimeout(() => {
+                                        updateColor(item[1],e.target.value)
+                                    }, 300);
+                                }}
+                                defaultValue={colorSettingValue[item[1]]}
+                            />
                         </div>
                     </div>
-                </div>
+                ))
+            }
+            <div id="colorDisclaimer">
+                This is a dev mainly used option. Not optimized for user usage. Will lag. Also reload after color choice.
             </div>
         </div>
     )
@@ -268,7 +326,7 @@ function SiteGuide(props){
         ],
         ["What are the rules?",
             <div>
-                <ol style={{margin:"0px"}}>
+                <ol style={{margin:"0px",wordBreak:"break-all"}}>
                     <li><b>Not an NSFW site: </b>Plz don't post that stuff here</li>
                     <li><b>No harassment/doxxing/degenerate behavior</b></li>
                 </ol>

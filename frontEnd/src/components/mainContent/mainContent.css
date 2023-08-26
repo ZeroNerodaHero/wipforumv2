@@ -6,6 +6,14 @@
     --thumbImageBorderBottom: 5px;
 
     --activeThreadDisplaySize: min(80%,700px);
+
+    --threadMiscContColor: rgba(159, 255, 159, 0.4);
+    --activeThreadColor: #eaff9c;
+
+    --upperTabColor: rgba(0, 128, 0, 0.3);
+    --upperTabColorHover: rgba(0, 128, 0, 0.7);
+
+    --threadMainPageColor: #687eb1;
 }
 
 #threadViewEncap{
@@ -86,7 +94,7 @@
     bottom: 0;
     left: 0;
     font-size: 0.9rem;
-    background-color: rgba(159, 255, 159, 0.4);
+    background-color: var(--threadMiscContColor);
     border-top: 1px black solid;
     border-right: 1px black solid;
     padding: 0px 3px;
@@ -129,7 +137,7 @@ empty space too
     overflow: auto;
 }
 #activeThreadTitle{
-    background-color: rgb(234, 255, 156);
+    background-color: var(--activeThreadColor);
     position: sticky;
     top: 0;
     left: 0;
@@ -143,7 +151,7 @@ empty space too
     margin-top: 3px;
     display: flex;
     flex-direction: column;
-    background-color: rgb(234, 255, 156);
+    background-color: var(--activeThreadColor);
     padding: 3px 3px;
 }
 .activeThreadBody{
@@ -260,7 +268,7 @@ empty space too
     flex-direction: column;
 }
 #mainContentDisplayer{
-    background-color: rgba(20, 57, 138, 0.527);
+    background-color: var(--threadMainPageColor);
     border-top: 1px black solid;
     height: 98%;
     display: flex;
@@ -319,14 +327,14 @@ empty space too
 
 }
 #mainContentTabs_left > div, #mainContentTabs_right > div {
-    background-color: rgba(0, 128, 0, 0.3);
+    background-color: var(--upperTabColor);
     border: 1px black solid;
     border-bottom-width: 0px;
     padding: 0px 7px 0px 7px;
     margin-right: 3px;
 }
 #mainContentTabs_left > div:hover, #mainContentTabs_right > div:hover {
-    background-color: rgba(0, 128, 0, 0.7);
+    background-color: var(--upperTabColorHover);
 }
 /* */
 #GUIcont{
@@ -362,31 +370,6 @@ empty space too
     width: 1.2rem;
     display: grid;
 }
-#pageUpButton::before{
-    position: absolute;
-    content: " ";
-    width: 100%;
-    top: -10px;
-    position: absolute;
-    border-top: 5px solid transparent;
-}
-
-#pageUpButton:hover::before{
-    border-top: 5px solid rgb(255, 118, 118);
-}
-#pageDownButton::before{
-    position: absolute;
-    content: " ";
-    width: 100%;
-    bottom: -10px;
-    position: absolute;
-    border-top: 5px solid transparent;
-}
-
-#pageDownButton:hover::before{
-    border-top: 5px solid rgb(255, 118, 118);
-}
-
 
 #addMessageButton{
     font-size: 4rem;
