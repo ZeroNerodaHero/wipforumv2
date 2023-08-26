@@ -8,7 +8,10 @@ import getLocalStorageItem from "../cookieReader/localStorageReader"
 import AbsolutePrompt from '../absolutePrompt/absolutePrompt';
 import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
 //import { func } from 'prop-types';
+
 import {PushPin, Lock} from "@mui/icons-material"
+import SearchIcon from '@mui/icons-material/Search';
+
 
 function MainContent(props){
     const [currentBoard,setCurrentBoard] = useState(-1)
@@ -65,7 +68,7 @@ function MenuBar(props){
             
         </div>
         <div id="menuLeftCont">
-            Search:
+            <SearchIcon />
             <input id="threadSearchInput" value={props.threadSearch} 
                 onChange={(e)=>{props.setThreadSearch(e.target.value)}}/>
         </div>

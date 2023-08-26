@@ -186,6 +186,7 @@
     height: 100%;
     overflow-y: auto;
     padding-right: 2px;
+    padding-top: 2px;
 }
 .helpTextItemCont{
     margin: 3px 0px;
@@ -262,7 +263,29 @@
     font-weight: bold;
     text-align: center;
 }
+#boardSearchBarCont{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+}
+#boardSearchBarCont > input{
+    background-color: transparent;
+    border: 0px black solid;
+    border-bottom: 2px black solid;
+    border-radius: 0px;
+    outline: none;
+    margin-bottom: 3px;
+    width: 30%;
+    transition: width 0.5s;
+}
+#boardSearchBarCont > input:focus{
+    width: 100%;
 
+}
+#boardSearchBarIconCont{
+    
+}
 @media screen and (max-width: 768px){
     #boardTab{
         width: 95%;
@@ -283,5 +306,11 @@
     #settingCont{
         font-size: 1rem;
         grid-template-columns: auto;
+    }
+    #boardSearchBarCont > input{
+        width: 60%;
+    }
+    #boardSearchBarCont > input:focus{
+        width: 100%;
     }
 }

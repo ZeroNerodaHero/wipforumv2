@@ -300,9 +300,13 @@ empty space too
     border-radius: 0px;
     outline: none;
     padding: 0px 3px;
-
-    width: 100%;
     color: white;
+
+    width: 50%;
+    transition: width 0.5s;
+}
+#threadSearchInput:focus{
+    width: 100%;
 }
 
 #menuCont > div{
@@ -523,6 +527,9 @@ empty space too
         font-size: 1.1rem;
     }
     #threadSearchInput{
+        width: 30%;
+    }
+    #threadSearchInput:focus{
         width: 60%;
     }
 }

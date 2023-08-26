@@ -3,7 +3,7 @@ import { getRequest,postRequest } from '../apiRequest/apiRequest';
 import "./webTabs.css"
 import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
 import getLocalStorageItem,{updateLocalStorage} from '../cookieReader/localStorageReader';
-
+import SearchIcon from '@mui/icons-material/Search';
 
 
 function WebTab(props){
@@ -18,18 +18,6 @@ function WebTab(props){
             <div id="boardTabLeft">
                 <div id="boardTabContConstraint">
                     <div id="boardTabCont">
-                        {
-                            /*
-                        <div id="boardTabBoardCont">
-                            
-                            boardList.map((item,key)=>(<BoardTab key={key} it={key}
-                                shortHand={item["shortHand"]} longHand={item["longHand"]} 
-                                setActiveBoard={setActiveBoard}
-                            />))
-                            
-                        </div>
-                            */
-                        }
                         <div id="boardTabMiscCont">
                             <div className='boardTabItem' onClick={()=>{setActiveBoard(0)}}>Boards</div>
                             <div className='boardTabItem' onClick={()=>{setActiveBoard(-1)}}>Latest</div>
@@ -41,18 +29,14 @@ function WebTab(props){
             </div>
             <div id="boardTabRight">
                 {
-                    activeBoard == 0 ? 
-                    <BoardPageView setCurrentBoard={props.setCurrentBoard} /> 
+                    activeBoard == 0 ?  <BoardPageView setCurrentBoard={props.setCurrentBoard} /> 
                     :
-                    activeBoard == -1 ? 
-                    <LatestPosts setCurrentBoard={props.setCurrentBoard} 
+                    activeBoard == -1 ?  <LatestPosts setCurrentBoard={props.setCurrentBoard} 
                         setActiveThreadPassthrough={props.setActiveThreadPassthrough}/> 
                     :
-                    activeBoard == -2 ?
-                    <SiteGuide /> 
+                    activeBoard == -2 ? <SiteGuide /> 
                     :
-                    activeBoard == -3 ?
-                    <SiteSettings /> 
+                    activeBoard == -3 ? <SiteSettings /> 
                     :
                     <div />
                 }
@@ -62,6 +46,8 @@ function WebTab(props){
 }
 function BoardPageView(props){
     const [boardList,setBoardList] = useState([]);
+    const [boardListSearch,setBoardListSearch] = useState([]);
+    const [boardSearchStr,setBoardSearchStr] = useState("")
 
     useEffect(()=>{
         getRequest(
@@ -70,19 +56,35 @@ function BoardPageView(props){
         }).then((data)=>{
             if(data["code"] == 1){
                 setBoardList(data["boardList"]);
+                setBoardListSearch(data["boardList"]);
             }
         })
     },[])
+    useEffect(()=>{
+        setBoardListSearch(
+            boardList.filter((element)=>{
+                if(element["shortHand"].substr(0,boardSearchStr.length).toLowerCase() === boardSearchStr.toLowerCase()) return true;
+                if(element["longHand"].substr(0,boardSearchStr.length).toLowerCase() === boardSearchStr.toLowerCase()) return true;
+                return false;
+        }))
+        console.log(boardListSearch)
+    }, [boardSearchStr])
 
     return (
         <div>
             <div className='absoluteTitle'>
                 Boards
             </div>
+            <div id="boardSearchBarCont">
+                <div className="boardSearchBarIconCont">
+                    <SearchIcon fontSize="small"/>
+                </div>
+                <input value={boardSearchStr} onInput={(e)=>{setBoardSearchStr(e.target.value)}}/>
+            </div>
             <div className='boardTabBoardListCont'>
                 {
-                    boardList.map((item,key)=>(
-                        <BoardPreview key={key} activeBoardInfo={boardList[key]}
+                    boardListSearch.map((item,key)=>(
+                        <BoardPreview key={key} activeBoardInfo={item}
                             setCurrentBoard={props.setCurrentBoard}/>
                     ))
                 }
@@ -189,13 +191,20 @@ function LatestPosts(props){
 
 
 function SiteSettings(props){
+    /*
+        make site ont a left and right side
+    */
     return (
         <div className='promptCont'>
             <div className="absoluteTitle">Settings</div>
             <div className="absoluteGuideContent">
                 <div id="settingCont">
-                    <SiteSettingThumbNail />
-                    <SiteSettingsColor />
+                    <div>
+                        <SiteSettingThumbNail />
+                    </div>
+                    <div>
+                        <SiteSettingsColor />
+                    </div>
                 </div>
             </div>
         </div>
@@ -269,7 +278,10 @@ function SiteSettingsColor(){
                     <div className='settingItemCont' key={key}>
                         <div className='settingItemHeader'>{item[0]}</div>
                         <div className='colorInputCont'>
-                            <div onClick={()=>{updateColor(item[1],"")}}>&#8635;</div>
+                            <div onClick={()=>{
+                                updateColor(item[1],"")
+                                //updateColor(item[1],getColor(item[1]))
+                            }}>&#8635;</div>
                             <input type="color" 
                                 onInput={(e)=>{
                                     clearTimeout(timeoutId);
