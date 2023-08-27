@@ -292,12 +292,22 @@
     border-left: 1px black solid;
 }
 
-.boardModItem{
-    border: 1px black solid;
+.boardModItem,.boardModItemAddBoardCont{
+    border: 2px black solid;
     padding: 3px;
+    margin: 0px 5px 7px 5px;
 }
 .boardModItem > div{
     margin-top: 3px;
+}
+.boardModAddBoard{
+    display: flex;
+    justify-content: center;
+    font-size: xx-large;
+    font-weight: bold;
+}
+.boardModItemAddBoardCont:hover{
+    background-color: rgba(0, 0, 0, 0.2);
 }
 .changeBoardInfoTextCont{
     display: grid;
@@ -327,6 +337,14 @@
     border: 1px black solid; 
     padding: 0px 3px;
     font-size: 0.9rem;  
+}
+
+.addBoardItemCont{
+    display: grid;
+    grid-template-columns: max-content auto;
+}
+.addBoardItemCont > div{
+    margin-right: 11px;
 }
 
 @media screen and (max-width: 768px){

@@ -67,7 +67,6 @@ function BoardPageView(props){
                 if(element["longHand"].substr(0,boardSearchStr.length).toLowerCase() === boardSearchStr.toLowerCase()) return true;
                 return false;
         }))
-        console.log(boardListSearch)
     }, [boardSearchStr])
 
     return (

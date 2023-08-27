@@ -99,12 +99,10 @@ function ThreadCont(props){
                 currentBoard: props.currentBoard
             }).then((data)=>{
                 if(data["code"]!=0){
-                    if(data["threadList"] != undefined && data["threadList"].length != 0){
+                    if(data["threadList"] != undefined){
                         setThreadList(data["threadList"]);
                         setAllThreads(data["threadList"]);
-                    } else{
-                        console.log(data["threadList"])
-                    }
+                    } 
                 /* Note: not sure what this line was for */
                     //setActiveThread(-1);
                 }
@@ -149,7 +147,11 @@ function ThreadCont(props){
             <div className='threadViewCont'>
                 <div className='threadCont'>
                     {
-                        threadList === undefined ? <div/> :
+                        threadList === undefined || threadList.length == 0 ? 
+                        <div id="emptyBoardList">
+                            Empty Board. Be the first to post...
+                        </div> 
+                        :
                         threadList.map((item)=>(
                         <ThreadViewDisplay setActiveThread={setActiveThread} setActiveThreadTitle={setActiveThreadTitle}
                             threadName={item["threadTitle"]} threadThumb={item["imageLinks"]}

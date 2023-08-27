@@ -59,6 +59,8 @@ function BoardMod(props){
         boardReload();
     },[])
 
+    const [addNewBoard,updateAddNewBoard] = useState(0)
+
     return (
         <div id="boardMod" className='statBox'>
             <div className='statsPaddingBox'>
@@ -69,11 +71,66 @@ function BoardMod(props){
                             <BoardModItem key={key} item={item} boardReload={boardReload}/>
                         ))
                     }
+                    {
+                        addNewBoard === 0 ?
+                        <div className='boardModItemAddBoardCont' onClick={()=>{updateAddNewBoard(1)}}>
+                            <div className='boardModAddBoard'>
+                                +
+                            </div>
+                        </div> 
+                        :
+                        <BoardModAddBoard boardReload={boardReload} updateAddNewBoard={updateAddNewBoard}/>
+                    }
                 </div>
             </div>
         </div>
     );
 }
+
+function BoardModAddBoard(props){
+    const [shortHand,setShortHand] = useState("")
+    const [longHand,setLongHand] = useState("")
+    const [desc,setDesc] = useState("")
+    const [img,setImg] = useState("")
+
+    function addBoard(){
+        const userId = GetCookie("userId")
+        const authKey = GetCookie("authKey")
+        postRequest(
+        {
+            option: 9200,
+            userId: userId,
+            authKey: authKey,
+            board: shortHand,
+            boardLongHand: longHand,
+            boardDesc: desc,
+            boardImg: img
+        }).then((data)=>{
+            if(data["code"]!=0){
+                props.boardReload()
+            }
+        })
+    }
+    return (
+        <div className='boardModItem'>
+            <div className="addBoardItemCont">
+                <div>Short Hand</div>
+                <input value={shortHand} onInput={(e)=>{setShortHand(e.target.value)}}/>
+                <div>Long Hand</div>
+                <input value={longHand} onInput={(e)=>{setLongHand(e.target.value)}} />
+                <div>Board Desc</div>
+                <input value={desc} onInput={(e)=>{setDesc(e.target.value)}} />
+                <div>Board Img</div>
+                <input value={img} onInput={(e)=>{setImg(e.target.value)}} />
+            </div>
+            <div className="optionButtonConstraint">
+                <div className="optionButton" onClick={()=>{props.updateAddNewBoard(0)}}>Cancel</div>
+                <div className="optionButton" onClick={()=>{addBoard()}}>Add</div>
+            </div>
+        </div>
+    )
+}
+
 function BoardModItem(props){
     const userId = GetCookie("userId")
     const authKey = GetCookie("authKey")

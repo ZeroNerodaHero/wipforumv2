@@ -237,6 +237,10 @@ function apiRequest(){
             //9200 is where board options start
             else if($option >= 9200 && $option <= 9249){
                 if(!empty($hData["board"])){
+                    $hData["board"] = addslashes($hData["board"]);
+                    $hData["boardLongHand"] = addslashes($hData["boardLongHand"]);
+                    $hData["boardImg"] = addslashes($hData["boardImg"]);
+                    $hData["boardDesc"] = addslashes($hData["boardDesc"]);
                     if($option == 9200){
                         addBoard($hData["board"],$hData["boardLongHand"],
                             $hData["boardDesc"],$hData["boardImg"]);

@@ -63,8 +63,8 @@ function updateMessageMod($threadId,$threadMod,$value){
     return myQuery($que);
 }
 function addBoard($shortHand,$longHand,$boardDesc,$boardImg){
-    myQuery("INSERT INTO boardList(shortHand,longHand,boardDesc,boardImg)
-            VALUES('$shortHand','$longHand','$boardDesc','$boardImg') ");
+    myQuery("INSERT INTO boardList(shortHand,longHand,boardDesc,boardImg,isPrivate)
+            VALUES('$shortHand','$longHand','$boardDesc','$boardImg',true) ");
 }
 
 function changeBoardImg($board,$boardImg){

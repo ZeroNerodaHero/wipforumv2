@@ -518,6 +518,11 @@ empty space too
     margin-right: 7px;
 }
 
+#emptyBoardList{
+    font-size: xx-large;
+    font-weight: bold;
+    font-style: italic;
+}
 
 @media screen and (max-width: 768px){
     .newPrompt{
