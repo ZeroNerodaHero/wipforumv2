@@ -139,6 +139,7 @@ function BoardModItem(props){
     const [boardImg,setBoardImg] = useState("");
     const [boardCap,setBoardCap] = useState(-1);
     const [boardPrivacy,setBoardPrivacy] = useState(false);
+    const [boardPerm,setBoardPerm] = useState(0);
 
     const [boardImgChange,setBoardImgChange] = useState("");
     const [updateBoardOpt,setUpdateBoardOpt] = useState(-1)
@@ -149,6 +150,7 @@ function BoardModItem(props){
         setBoardImgChange(props.item.boardImg)
         setBoardCap(props.item.threadCap)
         setBoardPrivacy(props.item.isPrivate)
+        setBoardPerm(props.item.boardPermPost)
     },[props.item])
     useEffect(()=>{
         if(updateBoardOpt != -1){
@@ -161,7 +163,8 @@ function BoardModItem(props){
                 board: props.item.shortHand,
                 boardImg: boardImg,
                 boardDesc: boardDesc,
-                newCap: boardCap
+                newCap: boardCap,
+                boardPerm: boardPerm
             }).then((data)=>{
                 if(data["code"]!=0){
                     props.boardReload()
@@ -212,6 +215,19 @@ function BoardModItem(props){
                     <div onClick={()=>{setBoardPrivacy(0);setUpdateBoardOpt(9204)}} 
                         style={{backgroundColor:(boardPrivacy == 0) ? "#8eff00":"white"}}>
                         Public
+                    </div>
+                </div>
+            </div>
+            <div className='boardModPrivacyCont'>
+                <div className='boardModTitle'>Lockdown: </div>
+                <div className='boardPrivacyButtonCont'>
+                    <div onClick={()=>{setBoardPerm(50);setUpdateBoardOpt(9205)}} 
+                        style={{backgroundColor:(boardPerm == 50) ? "#8eff00":"white"}}>
+                        On
+                    </div>
+                    <div onClick={()=>{setBoardPerm(0);setUpdateBoardOpt(9205)}} 
+                        style={{backgroundColor:(boardPerm == 0) ? "#8eff00":"white"}}>
+                        Off
                     </div>
                 </div>
             </div>

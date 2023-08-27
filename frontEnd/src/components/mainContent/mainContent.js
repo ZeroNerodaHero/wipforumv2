@@ -22,8 +22,9 @@ function MainContent(props){
     const [activeThreadPassthrough,setActiveThreadPassthrough] = useState(-1);
 
     useEffect(()=>{
-        if(getLocalStorageItem("userSettings","currentBoard") != undefined){
-            setCurrentBoard(getLocalStorageItem("userSettings","currentBoard") )
+        var tmpBoard = getLocalStorageItem("userSettings","currentBoard") 
+        if(tmpBoard != undefined && typeof(tmpBoard) === "string"){
+            setCurrentBoard(tmpBoard )
         } else{
             setCurrentBoard("h");
         }
@@ -266,7 +267,6 @@ function GUIcont(props){
                             setImageUpload(-1)
                             setImageTemp(0)
                         } else{
-                            console.log(data["code"]+ " aa ")
                             if(data["code"] === -1){
                                 //user is banned
                                 setErrorJSON({show:1,type:1,title:"Failed to Post: User is Banned",

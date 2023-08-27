@@ -95,21 +95,28 @@ function BoardPageView(props){
 function BoardPreview(props){
     const {errorJSON,setErrorJSON} = useContext(ErrorSetterContext)
 
+    function changeBoard(board){
+        props.setCurrentBoard(board)
+        setErrorJSON({show:0})
+    }
+
     return (
-        <div id="boardPreviewCont">
-            <div id="boardImageHeader" style={{backgroundImage: 'url('+props.activeBoardInfo["boardImg"]+')'}}>
-                /{props.activeBoardInfo["shortHand"]}/-{props.activeBoardInfo["longHand"]}
-            </div>
-            <div id="boardPreviewDescCont">
-                <div id="boardPreviewDesc">
-                    {props.activeBoardInfo["boardDesc"]}
+        <div className="boardPreviewCont"
+        onClick={()=>{
+            changeBoard(props.activeBoardInfo["shortHand"])
+        }}>
+            <div className="boardImageCont" style={{backgroundImage: 'url('+props.activeBoardInfo["boardImg"]+')'}}>
+                <div className="boardImageTitle">
+                    /{props.activeBoardInfo["shortHand"]}/-{props.activeBoardInfo["longHand"]}
+                </div>
+                <div className="boardPreviewDescCont">
+                    <div className="boardPreviewDesc">
+                        {props.activeBoardInfo["boardDesc"]}
+                    </div>
                 </div>
             </div>
-            <div id='webTabButton'
-                onClick={()=>{
-                    props.setCurrentBoard(props.activeBoardInfo["shortHand"])
-                    setErrorJSON({show:0})
-                }}>
+            
+            <div className='webTabButton'>
                 Visit
             </div>
         </div>

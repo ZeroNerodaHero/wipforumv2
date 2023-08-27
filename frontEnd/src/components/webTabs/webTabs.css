@@ -63,13 +63,13 @@
     padding: 0px 13px;   
     overflow-y: auto;
 }
-#boardPreviewCont{
+.boardPreviewCont{
     height: 100%;
     overflow: hidden;
     display: flex;
     flex-direction: column;
 }
-#boardPreviewCont::after{
+.boardPreviewCont::after{
     width: 100%;
     text-align: center;
     content: "---";
@@ -79,17 +79,7 @@
     font-weight: bold;
     font-size: 1.3rem;
 }
-#webTabButton{
-    margin: 7px 0px;
-    color: white;
-    border: 1px black solid;
-    text-align: center;
-    background-color: rgb(60 121 255);;
-}
 
-#webTabButton:hover{
-    background-color: rgb(0, 81, 255);;
-}
 
 #boardPreviewBodyCont{
     text-align: center;
@@ -103,31 +93,44 @@
     align-content: space-between;
 }
 
-#webTabButton{
-    height: fit-content;
-}
-#boardImageHeader{
-    font-size: xx-large;
+
+.boardImageCont{
     word-break: break-all;
-    font-weight: bold;
     background-repeat: repeat-x;
     background-size: auto 100%;
     background-color: rgba(255, 255, 255, 0.5);
     background-blend-mode: color-burn;
-    display: flex;
+    display: grid;
     justify-content: center;
     align-items: center;
     border: 1px black solid;
-    border-bottom-width: 7px;
     text-align: center;
 }
+.boardImageTitle{
+    font-weight: bold;
+    font-size: xx-large;
+}
 
-#boardPreviewDescCont{
+.boardPreviewDescCont{
     height: 100%;
     overflow-y: auto;
 }
-#boardPreviewDesc{
-    padding-top: 13px;   
+.boardPreviewDesc{
+    padding-top: 7px;   
+    padding-bottom: 3px;   
+    word-break: break-word;
+}
+
+.webTabButton{
+    height: fit-content;
+    color: white;
+    border: 1px black solid;
+    border-bottom-width: 7px;
+    text-align: center;
+    background-color: rgb(60 121 255);
+}
+.boardPreviewCont:hover > .webTabButton{
+    background-color: rgb(0, 81, 255);
 }
 
 #latestImagePostCont{
