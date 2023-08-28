@@ -143,10 +143,17 @@ function apiRequest(){
                     !empty($_FILES["messageImage"]["name"]) && verifyImg("messageImage") == 1
                     && strlen($hData["threadTitle"]) < 100
                 ){
-                    $ret = addThread($hData["currentBoard"],$hData["threadTitle"],
+                    if(boardIsLocked($hData["currentBoard"],$permLevel)){
+                        $retStr = json_encode(Array(
+                            "code"=>0,
+                            "msg"=>"Board is on lockdown mode. No more threads can be posted. Please wait while issue is solved"
+                        ));
+                    } else{
+                        $ret = addThread($hData["currentBoard"],$hData["threadTitle"],
                         $hData["messageContent"],$userId,$loggedIn);
-                    $ret["code"] = 1;
-                    $retStr = json_encode($ret);
+                        $ret["code"] = 1;
+                        $retStr = json_encode($ret);
+                    }
                 } else if($option == 2001 && !empty($hData["threadId"])){
                     if(threadIsLocked($hData["threadId"],$permLevel)){
                         $retStr = json_encode(Array(
@@ -256,6 +263,9 @@ function apiRequest(){
                     }
                     else if($option == 9204){
                         changeBoardPrivacy($hData["board"]);
+                    }
+                    else if($option == 9205){
+                        changeBoardLock($hData["board"],$hData["boardPerm"]);
                     }
                     else if($option == 9205){
                         //lock board

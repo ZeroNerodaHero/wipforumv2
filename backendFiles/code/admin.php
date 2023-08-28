@@ -82,8 +82,11 @@ function changeBoardCap($board,$newCap){
 function changeBoardPrivacy($board){
     boardChangeData($board,Array("isPrivate","!isPrivate"),false);
 }
+function changeBoardLock($board,$permLevel){
+    boardChangeData($board,Array("boardPermPost",$permLevel),false);
+}
 function getBoardListForMod(){
-    $res = myQuery("SELECT shortHand,longHand,boardDesc,boardImg,threadCap,isPrivate FROM boardList");
+    $res = myQuery("SELECT shortHand,longHand,boardDesc,boardImg,threadCap,isPrivate,boardPermPost FROM boardList");
     return $res->fetch_all(MYSQLI_ASSOC);
 }
 

@@ -5,6 +5,11 @@ function threadIsLocked($threadId,$permLevel){
             WHERE threadId=$threadId AND permLevel <= $permLevel");
     return $res->num_rows == 0;
 }
+function boardIsLocked($board,$permLevel){
+    $res = myQuery("SELECT shortHand FROM boardList 
+            WHERE shortHand='$board' AND boardPermPost >= $permLevel");
+    return $res->num_rows != 0;
+}
 //what is the difference between messageOwner and userreference?
 function addMessage($threadReference,$messageContent,$messageOwner,$userReference=-1){
     global $conn;
