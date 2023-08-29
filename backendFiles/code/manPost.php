@@ -7,7 +7,7 @@ function threadIsLocked($threadId,$permLevel){
 }
 function boardIsLocked($board,$permLevel){
     $res = myQuery("SELECT shortHand FROM boardList 
-            WHERE shortHand='$board' AND boardPermPost >= $permLevel");
+            WHERE shortHand='$board' AND boardPermPost > $permLevel");
     return $res->num_rows != 0;
 }
 //what is the difference between messageOwner and userreference?
