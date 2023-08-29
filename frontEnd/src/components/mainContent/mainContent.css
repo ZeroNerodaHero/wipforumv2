@@ -52,7 +52,7 @@
     grid-template-rows: max-content auto;
     overflow: hidden;
     position: relative;
-    border: 2px var(--threadMainPageColor) solid;
+    border: 2px transparent solid;
 }
 .threadThumbNail:hover{
     border: 2px black solid;
@@ -98,6 +98,14 @@
     border-top: 1px black solid;
     border-right: 1px black solid;
     padding: 0px 3px;
+
+    /* inorder for animation to work, you need to set the height */
+    height: 1rem;
+    transition: height 1s;
+}
+.threadThumbNail:hover > .threadMiscInfo{
+    height: 0px;
+    border: 0px;
 }
 .threadPermCont{
     position: sticky;
