@@ -111,9 +111,7 @@ function BoardPreview(props){
                 </div>
                 <div className="boardPreviewDescCont">
                     <div className="boardPreviewDesc">
-                        <div>
-                            {props.activeBoardInfo["boardDesc"]}
-                        </div>
+                        {props.activeBoardInfo["boardDesc"]}
                     </div>
                 </div>
             </div>

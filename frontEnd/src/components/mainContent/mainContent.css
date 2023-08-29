@@ -52,7 +52,7 @@
     grid-template-rows: max-content auto;
     overflow: hidden;
     position: relative;
-    border: 2px transparent solid;
+    border: 2px var(--threadMainPageColor) solid;
 }
 .threadThumbNail:hover{
     border: 2px black solid;
