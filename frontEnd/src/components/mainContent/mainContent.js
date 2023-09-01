@@ -4,14 +4,15 @@ import "./mainContent.css"
 import UserProfile from '../userProfile.js/userProfile';
 import WebTab from '../webTabs/webTabs';
 import SetCookie, {ClearCookies, GetCookie} from "../cookieReader/cookieReader"
-import getLocalStorageItem from "../cookieReader/localStorageReader"
+import getLocalStorageItem, { updateLocalStorage } from "../cookieReader/localStorageReader"
 import AbsolutePrompt from '../absolutePrompt/absolutePrompt';
 import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
 //import { func } from 'prop-types';
 
 import {PushPin, Lock} from "@mui/icons-material"
 import SearchIcon from '@mui/icons-material/Search';
-
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 function MainContent(props){
     const [currentBoard,setCurrentBoard] = useState(-1)
@@ -464,7 +465,18 @@ function ActiveThreadDisplayer(props){
     return (
         <div id="activeThreadCont" >
             <div id="activeThreadConstraint" onClick={(e)=>{e.stopPropagation()}}>
-                <div id="activeThreadTitle">{props.threadTitle}</div>
+                <div id="activeThreadTopBar">
+                    <div id="activeThreadTitle">{props.threadTitle}</div>
+                    <div id="activeThreadOptionCont">
+                        <div id="activeThreadFlagOff" onClick={()=>{
+                            var tmpFlag = getLocalStorageItem("userSettings","flagged")
+                            var tmpNum = Number(props.activeThread)
+                            if(tmpFlag == undefined) tmpFlag = Array()
+                            if(tmpFlag.find((item)=> tmpNum === item) === undefined) tmpFlag.push(tmpNum)
+                            updateLocalStorage("flagged",tmpFlag)
+                        }}/>
+                    </div>
+                </div>
                 <div ref={messageReferenceList}>
                     { activeThreadMessages.map((message)=>{
                         return displayActiveContent(message,setMsgExpandOpt)

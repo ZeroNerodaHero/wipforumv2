@@ -14,7 +14,7 @@ function postRequest(body="",hasImg=false){
 
 function apiRequest(params="", body="", method="GET",hasImg=false) {
     var url = "https://schizoi.cyou/request"
-    //url = "http://localhost:8070/";
+    url = "http://localhost:8070/";
     
     return new Promise((resolve, reject) => {
         axios({
