@@ -15,11 +15,13 @@ class buryBotManager:
         debug(bool): Debug on or not.
         option(int): Option. If debug is true, option does nothing
     """
-    def __init__(self,folder_path,json_files,debug=False,option=0):
+    def __init__(self,folder_path,json_files,debug=False,option=0,clearMemory=True):
         print("Initializing connection...")
         self.myConn = serverConn()
         print("Initializing intelligence...")
         self.bot = buryTelligence(folder_path=folder_path,json_files=json_files,debug=debug)
+
+        self.clearMemory = clearMemory
         
         self.printCat()
         if(debug == True):
@@ -72,18 +74,23 @@ class buryBotManager:
         while(1):
             print("\nCURRENT TIME: ",time.ctime())
             tmp = self.respondToLatestPost();
+            nextTime = timer
             if(tmp == -1): break
             elif(tmp == 0): 
                 print("Bot will talk again on",time.ctime(time.time()+timer))
-                time.sleep(timer)
             elif(tmp == 1): 
                 if(shutdown == 0): break
                 else: 
                     print("Bot FELL ASLEEP...")
                     print("Bot will talk again on",time.ctime(time.time()+shutdown))
-                    time.sleep(shutdown)
-                    self.restartConnection()
+                    nextTime = shutdown
                     print("Bot WOKE UP 0<:O")
+            if(self.clearMemory):
+                print("clearing memory")
+                self.bot.clearMem()
+            time.sleep(nextTime)
+            self.restartConnection()
+
 
     def restartConnection(self):
         self.myConn = serverConn()

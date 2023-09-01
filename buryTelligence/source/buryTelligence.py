@@ -4,19 +4,27 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+import gc
 
 class buryTelligence():
     def __init__(self,folder_path,json_files,debug=False):
-        if(debug == True): print("Initializing")
+        self.folder_path = folder_path
+        self.json_files = json_files
+        self.debug = debug
 
+        if(self.debug == True): print("Initializing")
+
+        self.buildBot()
+
+    def buildBot(self):
         post_texts = []
         response_texts = []
         thread_ids = []
         board_ids = []
-        for file in json_files:
-            if(debug == True): print("\tReading File..."+file)
+        for file in self.json_files:
+            if(self.debug == True): print("\tReading File..."+file)
 
-            with open(folder_path + file, 'r') as json_file:
+            with open(self.folder_path + file, 'r') as json_file:
                 data = json.load(json_file)
 
             for thread in data['data']:
@@ -33,6 +41,16 @@ class buryTelligence():
 
         self.vectorizer = TfidfVectorizer()
         self.tfidf_matrix = self.vectorizer.fit_transform(self.df['postText'])
+    
+    def clearMem(self):
+        self.df = self.df.iloc[0:0]
+        self.vectorizer = None
+        self.tfidf_matrix = None
+
+        #garbage collection for manual space saving:
+        #always called bc clearmem should only be used when clearMem is on
+        gc.collect()
+
 
     def get_most_similar_response(self,user_input):
         user_tfidf = self.vectorizer.transform([user_input])
@@ -50,3 +68,4 @@ class buryTelligence():
                 break
             bot_response = self.get_most_similar_response(user_input)
             print(f"Chatbot: {bot_response}")
+
