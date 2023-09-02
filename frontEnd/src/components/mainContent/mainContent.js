@@ -92,6 +92,8 @@ function ThreadCont(props){
     const refreshActive = function(){setForceRefreshActive(forceRefreshActive ^ 1)}
 
     const [updateMessageBox,setUpdateMessageBox] = useState("");
+
+    const [flagUpdateThread,setFlagUpdateThread] = useState(-1)
     
     useEffect(()=>{
         if(props.currentBoard !=  -1){
@@ -139,6 +141,7 @@ function ThreadCont(props){
                         forceRefreshActive={forceRefreshActive}
                         currentBoard={props.currentBoard}
                         setUpdateMessageBox={setUpdateMessageBox}
+                        setFlagUpdateThread={setFlagUpdateThread}
                         />
                 </div>
             }
@@ -158,6 +161,7 @@ function ThreadCont(props){
                             update_time={(new Date(convertTimeToJS(item["updateTime"]))).toLocaleTimeString("en-US").replace(/:\d+ /," ").replace(/,/,"")}
                             messageContent={item["messageContent"]}
                             key={item["threadId"]}
+                            flagUpdateThread={flagUpdateThread} setFlagUpdateThread={setFlagUpdateThread}
                         />))
                     }
                 </div>
@@ -358,7 +362,6 @@ function ActiveThreadDisplayer(props){
         var tmpFlag = getLocalStorageItem("userSettings","flagged")
         if(tmpFlag != undefined) setThreadFlagged(tmpFlag.find((item)=> props.activeThread == item) !== undefined);
     },[props.activeThread,props.forceRefreshActive])
-
     useEffect(()=>{
         if(threadFlagUpdate != -1){
             var tmpFlag = getLocalStorageItem("userSettings","flagged")
@@ -367,9 +370,11 @@ function ActiveThreadDisplayer(props){
             if(tmpFlag == undefined) tmpFlag = Array()
             if(threadFlagged === false){
                 tmpFlag.splice(tmpIndex,1)
+                props.setFlagUpdateThread(tmpNum)
             } else{
                 if(tmpIndex == -1){
                     tmpFlag.push(tmpNum)
+                    props.setFlagUpdateThread(tmpNum)
                 }
             }
             updateLocalStorage("flagged",tmpFlag)
@@ -522,6 +527,14 @@ function ThreadViewDisplay(props){
         var tmpFlag = getLocalStorageItem("userSettings","flagged")
         if(tmpFlag != undefined) setIsFlagged(tmpFlag.find((item)=> props.threadId == item) !== undefined);
     },[props.threadName,props.threadThumb])
+    useEffect(()=>{
+        if(props.flagUpdateThread != -1 && props.flagUpdateThread == props.threadId){
+            //setFlagUpdateThread
+            var tmpFlag = getLocalStorageItem("userSettings","flagged")
+            if(tmpFlag != undefined) setIsFlagged(tmpFlag.find((item)=> props.threadId == item) !== undefined);
+            props.setFlagUpdateThread(-1)
+        }
+    },[props.flagUpdateThread])
 
     return (
         <div className="threadThumbNail" onClick={()=>{
