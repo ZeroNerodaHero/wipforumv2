@@ -125,11 +125,7 @@ function ThreadCont(props){
             setActiveThreadTitle(props.activeThreadPassthrough["threadTitle"])
         }
     },[props.activeThreadPassthrough])
-    /*
-    useEffect(()=>{
-        console.log(threadList)
-    },[threadList])
-    */
+
     return (
         <div id='threadViewEncap'>
             <GUIcont activeThread={activeThread} setActiveThread={setActiveThread} setActiveThreadTitle={setActiveThreadTitle}
@@ -331,6 +327,9 @@ function ActiveThreadDisplayer(props){
     /*activeThreadCont has a problem !!!!! */
     const {errorJSON,setErrorJSON} = useContext(ErrorSetterContext)
     const [expandMsgOpt,setMsgExpandOpt] = useState(-1)
+
+    const [threadFlagged,setThreadFlagged] = useState(false)
+    const [threadFlagUpdate,setThreadFlagUpdate] = useState(-1)
     const messageReferenceList = useRef(null)
     //const messageIdMap = new Map();
 
@@ -355,7 +354,28 @@ function ActiveThreadDisplayer(props){
                 setErrorJSON({show:1,type:1,title:"Failed to Load",content:"Not sure what happened"})
             }
         })
+
+        var tmpFlag = getLocalStorageItem("userSettings","flagged")
+        if(tmpFlag != undefined) setThreadFlagged(tmpFlag.find((item)=> props.activeThread == item) !== undefined);
     },[props.activeThread,props.forceRefreshActive])
+
+    useEffect(()=>{
+        if(threadFlagUpdate != -1){
+            var tmpFlag = getLocalStorageItem("userSettings","flagged")
+            var tmpNum = Number(props.activeThread)
+            var tmpIndex = tmpFlag.indexOf(tmpNum)
+            if(tmpFlag == undefined) tmpFlag = Array()
+            if(threadFlagged === false){
+                tmpFlag.splice(tmpIndex,1)
+            } else{
+                if(tmpIndex == -1){
+                    tmpFlag.push(tmpNum)
+                }
+            }
+            updateLocalStorage("flagged",tmpFlag)
+        }
+    },[threadFlagUpdate])
+
 
     function callBackFocusPost(messageId){
         const eleId = activeThreadMessages.findIndex((ele)=> ele["messageId"] === messageId)
@@ -462,19 +482,19 @@ function ActiveThreadDisplayer(props){
         )
     };
 
+    
+
     return (
         <div id="activeThreadCont" >
             <div id="activeThreadConstraint" onClick={(e)=>{e.stopPropagation()}}>
                 <div id="activeThreadTopBar">
                     <div id="activeThreadTitle">{props.threadTitle}</div>
-                    <div id="activeThreadOptionCont">
-                        <div id="activeThreadFlagOff" onClick={()=>{
-                            var tmpFlag = getLocalStorageItem("userSettings","flagged")
-                            var tmpNum = Number(props.activeThread)
-                            if(tmpFlag == undefined) tmpFlag = Array()
-                            if(tmpFlag.find((item)=> tmpNum === item) === undefined) tmpFlag.push(tmpNum)
-                            updateLocalStorage("flagged",tmpFlag)
-                        }}/>
+                    <div className="activeThreadOptionCont">
+                        <div className={threadFlagged == true? "activeThreadFlagOn" : "activeThreadFlagOff"} 
+                            onClick={()=>{
+                                setThreadFlagged(threadFlagged == true ? false: true)
+                                setThreadFlagUpdate(threadFlagUpdate+1)
+                            }}/>
                     </div>
                 </div>
                 <div ref={messageReferenceList}>
@@ -490,6 +510,7 @@ function ActiveThreadDisplayer(props){
 function ThreadViewDisplay(props){
     const [threadThumb,setThreadThumb] = useState("https://media.discordapp.net/attachments/700130094844477561/961128316306350120/1610023331992.png")
     const [threadName,setThreadName] = useState("ERROR")
+    const [isFlagged,setIsFlagged] = useState(false)
 
     useEffect(()=>{
         if(props.threadName !== undefined){
@@ -498,6 +519,8 @@ function ThreadViewDisplay(props){
         if(props.threadThumb !== undefined){
             setThreadThumb(props.threadThumb)    
         }
+        var tmpFlag = getLocalStorageItem("userSettings","flagged")
+        if(tmpFlag != undefined) setIsFlagged(tmpFlag.find((item)=> props.threadId == item) !== undefined);
     },[props.threadName,props.threadThumb])
 
     return (
@@ -505,8 +528,10 @@ function ThreadViewDisplay(props){
                 props.setActiveThread(props.threadId)
                 props.setActiveThreadTitle(props.threadName)
             }}>
+                
             <div className="threadTitle">
                 <div className='threadTitleText'>{threadName}</div>
+                
             </div>
             <div className='threadBodyCont'>
                 <div className='threadPermCont'><div className='threadPermInfo'>
@@ -523,12 +548,15 @@ function ThreadViewDisplay(props){
                 <div className='threadPreviewCont'>
                     { convertMessageIntoFormat(props.messageContent) }
                 </div>
-
-                
             </div>
             <div className='threadMiscInfo'>
                 {props.update_time} / {props.threadSize}
             </div>
+            {isFlagged === false ? <div style={{display:"none"}}/> : 
+                    <div className='activeThreadOptionCont' style={{height:"3%"}}>
+                        <div className="activeThreadFlagOn" /> 
+                    </div>    
+                }
         </div>
     )
 }
