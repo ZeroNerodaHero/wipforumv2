@@ -31,7 +31,10 @@ function App() {
     console.log(currentURL)
     preLoadGetRequest(setGETboard,setGETthread,setGETtitle)
   },[currentURL])
-  
+  useEffect(()=>{
+    console.log("Board: "+GETboard+"\nThread: "+GETthread+"\nTitle: "+GETtitle)
+  },[GETboard,GETthread,GETtitle])
+
   return (
     <div className="App">
       <div id='AppMainContent'>

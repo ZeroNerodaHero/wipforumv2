@@ -18,38 +18,29 @@ function preLoadGetRequest(setGETBoard,setGETThread,setGETThreadTitle){
     const currentURL = window.location.href;
     var params = getPageParams(currentURL)
 
-    if(params["board"] !== undefined){
-        setGETBoard(params["board"])
-    } else{
-        setGETBoard("")
-    }
-    if(params["thread"] !== undefined){
-        setGETThread(params["thread"])
-    } else{
-        setGETThread("")
-    }
-    if(params["title"] !== undefined){
-        setGETThreadTitle(params["title"])
-    }else{
-        setGETThreadTitle("")
-    }
-    console.log(params)
+    setGETBoard(params["board"] !== undefined ? params["board"] : "")
+    setGETThread(params["thread"] !== undefined? params["thread"] : "")
+    setGETThreadTitle(params["title"] !== undefined ? params["title"] : "")
+
+    //console.log(params)
 }
 function updatePageParams(keyValueObject){
-    var currentURL = window.location.href;
+    const currentURL = window.location.href;
+    var newURL = window.location.href;
     var params = getPageParams(currentURL)
     
     for (const key of Object.keys(keyValueObject)) {
         if(params[key] !== undefined){
             const replaceStr = key + "=" + encodeURIComponent(params[key])
-            currentURL = currentURL.replace(replaceStr,key+"="+encodeURIComponent(keyValueObject[key]))
+            newURL = newURL.replace(replaceStr,key+"="+encodeURIComponent(keyValueObject[key]))
         } else{
-            if(Object.keys(params).length > 0) currentURL += "&"
-            currentURL += key+"="+keyValueObject[key]
+            if(Object.keys(params).length > 0) newURL += "&"
+            newURL += key+"="+keyValueObject[key]
         }
     }
     //console.log(currentURL)
-    window.history.pushState({}, '', currentURL);
+
+    if(currentURL !== newURL) window.history.pushState({}, '', newURL);
 }
 function clearPageParams(keyArray){
     var currentURL = window.location.href;
@@ -73,7 +64,7 @@ function getPageParams(url){
     var params = {};
     while ((match = regex.exec(url))) {
         const paramName = decodeURIComponent(match[1]);
-        const paramValue = decodeURIComponent(match[2]);
+        const paramValue = decodeURIComponent(match[2].trim());
         params[paramName] = paramValue;
     }
     return params
