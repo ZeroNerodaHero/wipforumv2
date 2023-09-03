@@ -20,14 +20,20 @@ function preLoadGetRequest(setGETBoard,setGETThread,setGETThreadTitle){
 
     if(params["board"] !== undefined){
         setGETBoard(params["board"])
-    } 
+    } else{
+        setGETBoard("")
+    }
     if(params["thread"] !== undefined){
         setGETThread(params["thread"])
+    } else{
+        setGETThread("")
     }
     if(params["title"] !== undefined){
         setGETThreadTitle(params["title"])
+    }else{
+        setGETThreadTitle("")
     }
-    //console.log(params)
+    console.log(params)
 }
 function updatePageParams(keyValueObject){
     var currentURL = window.location.href;

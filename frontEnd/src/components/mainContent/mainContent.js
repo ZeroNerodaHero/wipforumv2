@@ -54,15 +54,20 @@ function MainContent(props){
         }
     },[props.GETboard])
     useEffect(()=>{
+        console.log(props.GETthread)
+
         if(props.GETthread !== ""){
-            //console.log(props.GETthread)
             getInitObject["threadId"] = props.GETthread
             getInitComplete()
+        } else{
+            //pass through a -1
+            console.log("update thread id to -1")
+            setActiveThreadPassthrough({"threadId":-1})
         }
     },[props.GETthread])
     useEffect(()=>{
         if(props.GETtitle !== ""){
-            //console.log(props.GETtitle)
+            console.log(props.GETtitle)
             getInitObject["threadTitle"] = props.GETtitle
             getInitComplete()
         }
