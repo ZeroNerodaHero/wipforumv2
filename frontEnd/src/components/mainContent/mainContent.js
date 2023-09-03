@@ -11,8 +11,7 @@ import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
 
 import {PushPin, Lock} from "@mui/icons-material"
 import SearchIcon from '@mui/icons-material/Search';
-import StarIcon from '@mui/icons-material/Star';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
+import {updatePageParams, clearPageParams} from "../preLoad/preLoad"
 
 function MainContent(props){
     const [currentBoard,setCurrentBoard] = useState(-1)
@@ -21,6 +20,12 @@ function MainContent(props){
     const [checkStorage,setCheckStorage] = useState(false);
 
     const [activeThreadPassthrough,setActiveThreadPassthrough] = useState(-1);
+    var getInitObject = {}
+    function getInitComplete(){
+        if(getInitObject["threadId"] !== undefined && getInitObject["threadTitle"] !== undefined){
+            setActiveThreadPassthrough(getInitObject)
+        }
+    }
 
     useEffect(()=>{
         var tmpBoard = getLocalStorageItem("userSettings","currentBoard") 
@@ -40,11 +45,36 @@ function MainContent(props){
         }
         setCheckStorage(true);
     },[])
+
+    //inefficent double call. will first do a call for /h/ then this. and then maybe another...fix?
+    useEffect(()=>{
+        if(props.GETboard !== ""){
+            //console.log(props.GETboard)
+            setCurrentBoard(props.GETboard)
+        }
+    },[props.GETboard])
+    useEffect(()=>{
+        if(props.GETthread !== ""){
+            //console.log(props.GETthread)
+            getInitObject["threadId"] = props.GETthread
+            getInitComplete()
+        }
+    },[props.GETthread])
+    useEffect(()=>{
+        if(props.GETtitle !== ""){
+            //console.log(props.GETtitle)
+            getInitObject["threadTitle"] = props.GETtitle
+            getInitComplete()
+        }
+    },[props.GETtitle])
+    
+    
     useEffect(()=>{
         if(currentBoard != -1 && checkStorage !== false){
             var userSettings = getLocalStorageItem("userSettings");
             userSettings["currentBoard"] = currentBoard;
             localStorage.setItem("userSettings",JSON.stringify(userSettings))
+            updatePageParams({"board":currentBoard})
         }
     },[currentBoard])
 
@@ -55,7 +85,8 @@ function MainContent(props){
                     setActiveThreadPassthrough={setActiveThreadPassthrough}/>
                 <div id="mainContentDisplayer">
                     <MenuBar threadSearch={threadSearch} setThreadSearch={setThreadSearch}/>
-                    <ThreadCont currentBoard={currentBoard} threadSearch={threadSearch} 
+                    <ThreadCont currentBoard={currentBoard} setCurrentBoard={setCurrentBoard}
+                        threadSearch={threadSearch} 
                         activeThreadPassthrough={activeThreadPassthrough} />
                 </div>
                 <AbsolutePrompt prompt={errorJSON} />
@@ -81,7 +112,7 @@ function MenuBar(props){
 
 function ThreadCont(props){
     const [activeThread,setActiveThread] = useState(-1);
-    const [activeThreadTitle,setActiveThreadTitle] = useState("test");
+    const [activeThreadTitle,setActiveThreadTitle] = useState("LOADING...");
 
     const [threadList, setThreadList] = useState([])
     const [allThreads,setAllThreads] = useState([])
@@ -109,6 +140,8 @@ function ThreadCont(props){
                     } 
                 /* Note: not sure what this line was for */
                     //setActiveThread(-1);
+                } else{
+                    props.setCurrentBoard("h")
                 }
             })
         }
@@ -125,6 +158,7 @@ function ThreadCont(props){
         if(props.activeThreadPassthrough != -1){
             setActiveThread(props.activeThreadPassthrough["threadId"])
             setActiveThreadTitle(props.activeThreadPassthrough["threadTitle"])
+            updatePageParams({"thread":props.activeThreadPassthrough["threadId"],"title":props.activeThreadPassthrough["threadTitle"]})
         }
     },[props.activeThreadPassthrough])
 
@@ -135,7 +169,10 @@ function ThreadCont(props){
                 updateMessageBox={updateMessageBox} />
             {
                 activeThread == -1 ? <div /> :
-                <div id="activeThreadDisplay" onClick={()=>{setActiveThread(-1)}}>
+                <div id="activeThreadDisplay" onClick={()=>{
+                    setActiveThread(-1)
+                    clearPageParams(["thread","title"])
+                }}>
                     <ActiveThreadDisplayer activeThread={activeThread}
                         threadTitle={activeThreadTitle}
                         forceRefreshActive={forceRefreshActive}
@@ -365,9 +402,10 @@ function ActiveThreadDisplayer(props){
     useEffect(()=>{
         if(threadFlagUpdate != -1){
             var tmpFlag = getLocalStorageItem("userSettings","flagged")
+            if(tmpFlag == undefined) tmpFlag = Array()
+
             var tmpNum = Number(props.activeThread)
             var tmpIndex = tmpFlag.indexOf(tmpNum)
-            if(tmpFlag == undefined) tmpFlag = Array()
             if(threadFlagged === false){
                 tmpFlag.splice(tmpIndex,1)
                 props.setFlagUpdateThread(tmpNum)
@@ -540,6 +578,7 @@ function ThreadViewDisplay(props){
         <div className="threadThumbNail" onClick={()=>{
                 props.setActiveThread(props.threadId)
                 props.setActiveThreadTitle(props.threadName)
+                updatePageParams({"thread":props.threadId,"title":props.threadName})
             }}>
                 
             <div className="threadTitle">
