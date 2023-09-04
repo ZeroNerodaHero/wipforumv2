@@ -14,28 +14,30 @@ function preLoadSettings(){
     }
 }
 
-function preLoadGetRequest(setGETBoard,setGETThread,setGETThreadTitle){
+function preLoadGetRequest(){
     const currentURL = window.location.href;
     var params = getPageParams(currentURL)
 
+    /*
     setGETBoard(params["board"] !== undefined ? params["board"] : "")
     setGETThread(params["thread"] !== undefined? params["thread"] : "")
     setGETThreadTitle(params["title"] !== undefined ? params["title"] : "")
-
-    //console.log(params)
+    */
+    return (params)
 }
 function updatePageParams(keyValueObject){
     const currentURL = window.location.href;
     var newURL = window.location.href;
     var params = getPageParams(currentURL)
+    if(Object.keys(params).length == 0) newURL += "?"
     
     for (const key of Object.keys(keyValueObject)) {
         if(params[key] !== undefined){
-            const replaceStr = key + "=" + encodeURIComponent(params[key])
-            newURL = newURL.replace(replaceStr,key+"="+encodeURIComponent(keyValueObject[key]))
+            const replaceStr = key + "=" + params[key]
+            newURL = newURL.replace(replaceStr,key+"="+stringValNormalizer(keyValueObject[key]))
         } else{
             if(Object.keys(params).length > 0) newURL += "&"
-            newURL += key+"="+keyValueObject[key]
+            newURL += key+"="+stringValNormalizer(keyValueObject[key])
         }
     }
     //console.log(currentURL)
@@ -48,9 +50,9 @@ function clearPageParams(keyArray){
     for(const key of keyArray){
         if(params[key] !== undefined){
             //in efficient. there is a better way but im kinda lazy. refactor for later
-            const replaceStrAnd = "&"+key + "=" + encodeURIComponent(params[key])
+            const replaceStrAnd = "&"+key + "=" + stringValNormalizer(params[key])
             currentURL = currentURL.replace(replaceStrAnd,"")
-            const replaceStr = key + "=" + encodeURIComponent(params[key])
+            const replaceStr = key + "=" + stringValNormalizer(params[key])
             currentURL = currentURL.replace(replaceStr,"")
         }
     }
@@ -64,10 +66,15 @@ function getPageParams(url){
     var params = {};
     while ((match = regex.exec(url))) {
         const paramName = decodeURIComponent(match[1]);
-        const paramValue = decodeURIComponent(match[2].trim());
+        const paramValue = decodeURIComponent(match[2].trim()).replaceAll("_"," ");
         params[paramName] = paramValue;
     }
-    return params
+    //console.log("params are ", params)
+    return params;
+}
+function stringValNormalizer(str){
+    //return encodeURIComponent(str);
+    return encodeURIComponent(str.replaceAll(" ","_"));
 }
 export {preLoadGetRequest,updatePageParams,clearPageParams}
 export default preLoadSettings

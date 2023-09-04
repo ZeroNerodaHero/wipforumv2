@@ -11,7 +11,7 @@ import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
 
 import {PushPin, Lock} from "@mui/icons-material"
 import SearchIcon from '@mui/icons-material/Search';
-import {updatePageParams, clearPageParams} from "../preLoad/preLoad"
+import {preLoadGetRequest, updatePageParams, clearPageParams} from "../preLoad/preLoad"
 
 function MainContent(props){
     const [currentBoard,setCurrentBoard] = useState(-1)
@@ -20,14 +20,41 @@ function MainContent(props){
     const [checkStorage,setCheckStorage] = useState(false);
 
     const [activeThreadPassthrough,setActiveThreadPassthrough] = useState(-1);
-    var getInitObject = {}
-    function getInitComplete(){
-        if(getInitObject["threadId"] !== undefined && getInitObject["threadTitle"] !== undefined){
-            setActiveThreadPassthrough(getInitObject)
+
+    //const [currentURL,setCurrentUrl] = useState(window.location.href)
+    const handleURLChange = () => {
+        //setCurrentUrl(window.location.href);
+        const currentURL = window.location.href
+        const requestObj = preLoadGetRequest(currentURL)
+
+        if(requestObj["board"] !== undefined) setCurrentBoard(requestObj["board"])
+        if(requestObj["title"] !== undefined && requestObj["thread"] !== undefined){
+            setActiveThreadPassthrough({threadId:requestObj["thread"],threadTitle:requestObj["title"]})
+        } else{
+            setActiveThreadPassthrough({threadId:-1,threadTitle:requestObj["title"]})
         }
-    }
+    };
+    /*
+    useEffect(()=>{
+        const requestObj = preLoadGetRequest(currentURL)
+
+        if(requestObj["board"] !== undefined) setCurrentBoard(requestObj["board"])
+        if(requestObj["title"] !== undefined && requestObj["thread"] !== undefined){
+            setActiveThreadPassthrough({threadId:requestObj["thread"],threadTitle:requestObj["title"]})
+        } else{
+            setActiveThreadPassthrough({threadId:-1,threadTitle:requestObj["title"]})
+        }
+    },[currentURL])
+    */
 
     useEffect(()=>{
+        var tmpBoard = getLocalStorageItem("userSettings","currentBoard") 
+        if(tmpBoard != undefined && typeof(tmpBoard) === "string"){
+            setCurrentBoard(tmpBoard )
+        } else{
+            setCurrentBoard("h");
+        }
+
         const showHelpOnLoad = getLocalStorageItem("userSettings","showHelp");
         if(showHelpOnLoad === undefined || showHelpOnLoad === true ){
             setErrorJSON(
@@ -38,43 +65,13 @@ function MainContent(props){
             })
         }
         setCheckStorage(true);
+
+        window.addEventListener('popstate', handleURLChange);
+        return () => {
+            console.log("remove ")
+            window.removeEventListener('popstate', handleURLChange);
+        };
     },[])
-
-    //inefficent double call. will first do a call for /h/ then this. and then maybe another...fix?
-    //may have fixed
-    //idea-> priority for get board then settings then h
-    useEffect(()=>{
-        //console.log("GET BOARD IS " + props.GETboard)
-        if(props.GETboard !== ""){
-            //console.log(props.GETboard)
-            setCurrentBoard(props.GETboard)
-        } else{
-            var tmpBoard = getLocalStorageItem("userSettings","currentBoard") 
-            if(tmpBoard != undefined && typeof(tmpBoard) === "string"){
-                setCurrentBoard(tmpBoard )
-            } else{
-                setCurrentBoard("h");
-            }
-        }
-    },[props.GETboard])
-    useEffect(()=>{
-        //console.log(props.GETthread)
-
-        if(props.GETthread !== ""){
-            getInitObject["threadId"] = props.GETthread
-            getInitComplete()
-        } else{
-            //pass through a -1
-            setActiveThreadPassthrough({"threadId":-1})
-        }
-    },[props.GETthread])
-    useEffect(()=>{
-        if(props.GETtitle !== ""){
-            getInitObject["threadTitle"] = props.GETtitle
-            getInitComplete()
-        }
-    },[props.GETtitle])
-    
     
     useEffect(()=>{
         if(currentBoard != -1 && checkStorage !== false){
@@ -166,8 +163,9 @@ function ThreadCont(props){
             setActiveThread(props.activeThreadPassthrough["threadId"])
             setActiveThreadTitle(props.activeThreadPassthrough["threadTitle"])
 
-            if(props.activeThreadPassthrough["threadId"] != -1)
+            if(props.activeThreadPassthrough["threadId"] != -1){
                 updatePageParams({"thread":props.activeThreadPassthrough["threadId"],"title":props.activeThreadPassthrough["threadTitle"]})
+            }
         }
     },[props.activeThreadPassthrough])
 
