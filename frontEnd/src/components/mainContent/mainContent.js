@@ -7,11 +7,17 @@ import SetCookie, {ClearCookies, GetCookie} from "../cookieReader/cookieReader"
 import getLocalStorageItem, { updateLocalStorage } from "../cookieReader/localStorageReader"
 import AbsolutePrompt from '../absolutePrompt/absolutePrompt';
 import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
+import HelmetUpdateContext from '../preLoad/helmetUpdateContext';
 //import { func } from 'prop-types';
 
 import {PushPin, Lock} from "@mui/icons-material"
 import SearchIcon from '@mui/icons-material/Search';
 import {preLoadGetRequest, updatePageParams, clearPageParams} from "../preLoad/preLoad"
+
+function updateHelmetANDurl(func,paramObj,setHelmetUpdate,newState){
+    func(paramObj)
+    setHelmetUpdate(newState+1)
+}
 
 function MainContent(props){
     const [currentBoard,setCurrentBoard] = useState(-1)
@@ -21,38 +27,34 @@ function MainContent(props){
 
     const [activeThreadPassthrough,setActiveThreadPassthrough] = useState(-1);
 
+    const {helmetUpdate,setHelmetUpdate} = useContext(HelmetUpdateContext)
+
+
     //const [currentURL,setCurrentUrl] = useState(window.location.href)
+    //returns false if url causes a change...this will prevent a double api call
     const handleURLChange = () => {
         //setCurrentUrl(window.location.href);
         const currentURL = window.location.href
         const requestObj = preLoadGetRequest(currentURL)
 
-        if(requestObj["board"] !== undefined) setCurrentBoard(requestObj["board"])
         if(requestObj["title"] !== undefined && requestObj["thread"] !== undefined){
             setActiveThreadPassthrough({threadId:requestObj["thread"],threadTitle:requestObj["title"]})
         } else{
             setActiveThreadPassthrough({threadId:-1,threadTitle:requestObj["title"]})
         }
+        if(requestObj["board"] !== undefined) setCurrentBoard(requestObj["board"])
+        else return false
+        return true
     };
-    /*
-    useEffect(()=>{
-        const requestObj = preLoadGetRequest(currentURL)
-
-        if(requestObj["board"] !== undefined) setCurrentBoard(requestObj["board"])
-        if(requestObj["title"] !== undefined && requestObj["thread"] !== undefined){
-            setActiveThreadPassthrough({threadId:requestObj["thread"],threadTitle:requestObj["title"]})
-        } else{
-            setActiveThreadPassthrough({threadId:-1,threadTitle:requestObj["title"]})
-        }
-    },[currentURL])
-    */
 
     useEffect(()=>{
-        var tmpBoard = getLocalStorageItem("userSettings","currentBoard") 
-        if(tmpBoard != undefined && typeof(tmpBoard) === "string"){
-            setCurrentBoard(tmpBoard )
-        } else{
-            setCurrentBoard("h");
+        if(handleURLChange() == false){
+            var tmpBoard = getLocalStorageItem("userSettings","currentBoard") 
+            if(tmpBoard != undefined && typeof(tmpBoard) === "string"){
+                setCurrentBoard(tmpBoard )
+            } else{
+                setCurrentBoard("h");
+            }
         }
 
         const showHelpOnLoad = getLocalStorageItem("userSettings","showHelp");
@@ -68,7 +70,6 @@ function MainContent(props){
 
         window.addEventListener('popstate', handleURLChange);
         return () => {
-            console.log("remove ")
             window.removeEventListener('popstate', handleURLChange);
         };
     },[])
@@ -78,7 +79,8 @@ function MainContent(props){
             var userSettings = getLocalStorageItem("userSettings");
             userSettings["currentBoard"] = currentBoard;
             localStorage.setItem("userSettings",JSON.stringify(userSettings))
-            updatePageParams({"board":currentBoard})
+            updateHelmetANDurl(updatePageParams,{"board":currentBoard},
+                setHelmetUpdate,helmetUpdate)
         }
     },[currentBoard])
 
@@ -129,6 +131,8 @@ function ThreadCont(props){
     const [updateMessageBox,setUpdateMessageBox] = useState("");
 
     const [flagUpdateThread,setFlagUpdateThread] = useState(-1)
+
+    const {helmetUpdate,setHelmetUpdate} = useContext(HelmetUpdateContext)
     
     useEffect(()=>{
         if(props.currentBoard !=  -1){
@@ -164,7 +168,9 @@ function ThreadCont(props){
             setActiveThreadTitle(props.activeThreadPassthrough["threadTitle"])
 
             if(props.activeThreadPassthrough["threadId"] != -1){
-                updatePageParams({"thread":props.activeThreadPassthrough["threadId"],"title":props.activeThreadPassthrough["threadTitle"]})
+                updateHelmetANDurl(updatePageParams,
+                    {"thread":props.activeThreadPassthrough["threadId"],"title":props.activeThreadPassthrough["threadTitle"]},
+                    setHelmetUpdate,helmetUpdate)
             }
         }
     },[props.activeThreadPassthrough])
@@ -178,7 +184,8 @@ function ThreadCont(props){
                 activeThread == -1 ? <div /> :
                 <div id="activeThreadDisplay" onClick={()=>{
                     setActiveThread(-1)
-                    clearPageParams(["thread","title"])
+                    updateHelmetANDurl(clearPageParams,["thread","title"],
+                        setHelmetUpdate,helmetUpdate)
                 }}>
                     <ActiveThreadDisplayer activeThread={activeThread}
                         threadTitle={activeThreadTitle}
@@ -561,6 +568,8 @@ function ThreadViewDisplay(props){
     const [threadThumb,setThreadThumb] = useState("https://media.discordapp.net/attachments/700130094844477561/961128316306350120/1610023331992.png")
     const [threadName,setThreadName] = useState("ERROR")
     const [isFlagged,setIsFlagged] = useState(false)
+    const {helmetUpdate,setHelmetUpdate} = useContext(HelmetUpdateContext)
+
 
     useEffect(()=>{
         if(props.threadName !== undefined){
@@ -585,7 +594,8 @@ function ThreadViewDisplay(props){
         <div className="threadThumbNail" onClick={()=>{
                 props.setActiveThread(props.threadId)
                 props.setActiveThreadTitle(props.threadName)
-                updatePageParams({"thread":props.threadId,"title":props.threadName})
+                updateHelmetANDurl(updatePageParams,{"thread":props.threadId,"title":props.threadName},
+                    setHelmetUpdate,helmetUpdate)
             }}>
                 
             <div className="threadTitle">
@@ -612,7 +622,7 @@ function ThreadViewDisplay(props){
                 {props.update_time} / {props.threadSize}
             </div>
             {isFlagged === false ? <div style={{display:"none"}}/> : 
-                    <div className='activeThreadOptionCont' style={{height:"3%"}}>
+                    <div className='activeThreadOptionCont' style={{height:"3%",zIndex:1}}>
                         <div className="activeThreadFlagOn" /> 
                     </div>    
                 }

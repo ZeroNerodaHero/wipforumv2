@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect} from 'react';
 import "./absolutePrompt.css"
 import getLocalStorageItem from '../cookieReader/localStorageReader';
 
