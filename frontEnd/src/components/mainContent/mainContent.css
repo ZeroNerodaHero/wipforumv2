@@ -473,10 +473,14 @@ empty space too
     background-color: white;
     padding: 3px 13px 3px 7px;
 }
+.promptTitleCont{
+    display: flex;
+    width: 100%;
+}
 .promptBody{
     text-align: center;
     background-color: white;
-    padding: 5px;
+    padding: 7px;
     display: grid;
     justify-items: center;
 }
@@ -504,7 +508,14 @@ empty space too
 }
 .promptBody textarea{
     resize: vertical;
-    width: 98%;
+    width: 100%;
+    height: 100%;
+}
+.textAreaCont{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    margin-top: 3px;
 }
 #promptSubmitCont{
     background-color: white;
@@ -515,6 +526,7 @@ empty space too
 #promptOptCont{
     display: flex;
     justify-content: center;
+    margin-top: 5px;
 }
 #promptOptionList{
     display: flex;

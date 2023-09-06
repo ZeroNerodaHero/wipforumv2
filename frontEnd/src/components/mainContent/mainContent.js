@@ -14,6 +14,8 @@ import {PushPin, Lock} from "@mui/icons-material"
 import SearchIcon from '@mui/icons-material/Search';
 import {preLoadGetRequest, updatePageParams, clearPageParams} from "../preLoad/preLoad"
 
+import PiChart from '../HTMLentities/piChart';
+
 function updateHelmetANDurl(func,paramObj,setHelmetUpdate,newState){
     func(paramObj)
     setHelmetUpdate(newState+1)
@@ -223,6 +225,8 @@ function ThreadCont(props){
 
 }
 function GUIcont(props){
+    const maxThreadTitle = 100
+    const maxThreadText = 1500
     const [addMessageState,setAddMessageState] = useState(-1);
     const [threadTitle,setThreadTitle] = useState("");
     const [messageContent,setMessageContent] = useState("");
@@ -248,6 +252,74 @@ function GUIcont(props){
         }
     },[props.updateMessageBox])
 
+    function managePostSubmit(){
+        var hasImg = false;
+
+        var userId = GetCookie("userId")
+        var authKey = GetCookie("authKey")
+
+        var postObject = {
+            option: (props.activeThread != -1)+2000,
+
+            userId: userId != null ? userId : Math.floor(Math.random()*1000000000),
+            sessionId: authKey != null ? authKey : -1,
+        };
+        if(props.activeThread == -1){
+            postObject.currentBoard = props.currentBoard
+            postObject.threadTitle = threadTitle;
+            postObject.messageContent = newMessageContent
+        } else{
+            postObject.threadId = props.activeThread;
+            postObject.messageContent = messageContent;
+        }
+
+        if(imageUpload != -1 && imageUpload.length > 0){
+            hasImg = true;
+            var tmpData = new FormData();
+            for ( var key in postObject ) {
+                tmpData.append(key, postObject[key]);
+            }
+            postObject = tmpData;
+            postObject.append("messageImage",imageUpload[0])
+        }
+        postRequest(postObject,hasImg).
+        then((data)=>{
+            //console.log(data)
+            if(data["code"] >= 1){
+                setAddMessageState(-1)
+                props.forceUpdate();
+                if(props.activeThread == -1){
+                    setThreadTitle(""); setNewMessageContent("");
+                    props.setActiveThread(data["newThreadId"]);
+                    //can set title like this but maybe not so good       
+                    props.setActiveThreadTitle(threadTitle) 
+                } else{
+                    setMessageContent("")
+                    props.refreshActive();      
+                }
+                setImageUpload(-1)
+                setImageTemp(0)
+            } else{
+                if(data["code"] === -1){
+                    //user is banned
+                    setErrorJSON({show:1,type:1,title:"Failed to Post: User is Banned",
+                        content:(<div>
+                            <div>You are <b>banned</b>.</div>
+                            <div>Your ban started on: <b>{data["startTime"]}</b></div>
+                            <div>Your ban will end on: <b>{data["expireTime"]}</b></div><br/>
+                            <div>Admin's Reason: <div><b>{data["reason"]}</b></div></div>
+                        </div>)
+                    })
+                } else{
+                    setErrorJSON({show:1,type:1,title:"Failed to Post",content:data["msg"]})
+                }
+            }
+        })
+    }
+    function capInputSize(value,maxSize){
+        return value.length < maxSize;
+    }
+
     const submitCont = (
         <div id="promptSubmitCont">
             <div id="promptOptCont">
@@ -271,83 +343,33 @@ function GUIcont(props){
                 </div>     
             </div>
             <div id="promptSubmitButtonCont">
-                <div id="promptSubmit" className="noselect" onClick={()=>{
-                    var hasImg = false;
-
-                    var userId = GetCookie("userId")
-                    var authKey = GetCookie("authKey")
-
-                    var postObject = {
-                        option: (props.activeThread != -1)+2000,
-
-                        userId: userId != null ? userId : Math.floor(Math.random()*1000000000),
-                        sessionId: authKey != null ? authKey : -1,
-                    };
-                    if(props.activeThread == -1){
-                        postObject.currentBoard = props.currentBoard
-                        postObject.threadTitle = threadTitle;
-                        postObject.messageContent = newMessageContent
-                    } else{
-                        postObject.threadId = props.activeThread;
-                        postObject.messageContent = messageContent;
-                    }
-
-                    if(imageUpload != -1 && imageUpload.length > 0){
-                        hasImg = true;
-                        var tmpData = new FormData();
-                        for ( var key in postObject ) {
-                            tmpData.append(key, postObject[key]);
-                        }
-                        postObject = tmpData;
-                        postObject.append("messageImage",imageUpload[0])
-                    }
-                    postRequest(postObject,hasImg).
-                    then((data)=>{
-                        //console.log(data)
-                        if(data["code"] >= 1){
-                            setAddMessageState(-1)
-                            props.forceUpdate();
-                            if(props.activeThread == -1){
-                                setThreadTitle(""); setNewMessageContent("");
-                                props.setActiveThread(data["newThreadId"]);
-                                //can set title like this but maybe not so good       
-                                props.setActiveThreadTitle(threadTitle) 
-                            } else{
-                                setMessageContent("")
-                                props.refreshActive();      
-                            }
-                            setImageUpload(-1)
-                            setImageTemp(0)
-                        } else{
-                            if(data["code"] === -1){
-                                //user is banned
-                                setErrorJSON({show:1,type:1,title:"Failed to Post: User is Banned",
-                                    content:(<div>
-                                        <div>You are <b>banned</b>.</div>
-                                        <div>Your ban started on: <b>{data["startTime"]}</b></div>
-                                        <div>Your ban will end on: <b>{data["expireTime"]}</b></div><br/>
-                                        <div>Admin's Reason: <div><b>{data["reason"]}</b></div></div>
-                                    </div>)
-                                })
-                            } else{
-                                setErrorJSON({show:1,type:1,title:"Failed to Post",content:data["msg"]})
-                            }
-                        }
-                    })
-                }}>Post</div>
+                <div id="promptSubmit" className="noselect" onClick={()=>{managePostSubmit()}}>Post</div>
             </div>
         </div>
     );
     const promptTextArea = function(content,setContent)
     {
-        return <textarea value={content} placeholder="Your Message" onChange={(e)=>{setContent(e.target.value)}}/>
+        return (
+            <div className='textAreaCont'>
+                <textarea value={content} placeholder="Your Message" onChange={(e)=>{
+                    var newThreadVal = e.target.value
+                    if(capInputSize(newThreadVal,maxThreadText)){
+                        setContent(e.target.value)
+                    }
+                }}/>
+                <div style={{
+                        position: "absolute",
+                        bottom: "0px",
+                        right: "0px"
+                }}>
+                    <PiChart color="red" colorBack="grey" value={content.length} maxValue={maxThreadText}/>
+                </div>
+            </div>
+        )
     }
     return (
         <div id="GUIcont">
             <div id="bottomRightGuiCont">
-                {
-                /*<div id='PageControlGuiCont'><div className="PageGuiButton" id='pageUpButton'>&#9650;</div><div className="PageGuiButton" id='pageDownButton'>&#9660;</div></div>*/
-                }
                 <div id="addMessageButton" onClick={()=>{setAddMessageState(1)}}>+</div>
             </div>
             {
@@ -358,8 +380,12 @@ function GUIcont(props){
                     <div id="newThreadPrompt" className='newPrompt' onClick={(e)=>{e.stopPropagation()}}>
                         <div className='promptTitle'>New Thread</div>
                         <div className="promptBody">
-                            <input value={threadTitle} onChange={(e)=>{setThreadTitle(e.target.value)}}
-                                    placeholder="Title"/>
+                            <div className='promptTitleCont'>
+                                <input value={threadTitle} onChange={(e)=>{setThreadTitle(e.target.value)}}
+                                        placeholder="Title"/>
+                                <PiChart color="red" colorBack="grey" value={threadTitle.length} maxValue={maxThreadTitle}/>
+                            </div>
+                            
                             {promptTextArea(newMessageContent,setNewMessageContent)}
                             {submitCont}
                         </div>
@@ -368,7 +394,7 @@ function GUIcont(props){
                     <div id="newMessagePrompt" className='newPrompt' onClick={(e)=>{e.stopPropagation()}}>
                         <div className='promptTitle'>Add Message</div>
                         <div className="promptBody">
-                            {promptTextArea(messageContent,setMessageContent)}    
+                            {promptTextArea(messageContent,setMessageContent)}
                             {submitCont}
                         </div>
                     </div>

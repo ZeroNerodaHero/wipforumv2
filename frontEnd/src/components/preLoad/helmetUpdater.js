@@ -34,7 +34,6 @@ function HelmetUpdater(props){
         <HelmetProvider>
             <Helmet>
                 <title>{titleStr}</title>
-                <meta name="description" content="Welcome to schizoi.cyou"/>
             </Helmet>
         </HelmetProvider>
     )
