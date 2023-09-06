@@ -22,7 +22,8 @@ function PiChart(props){
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            marginLeft: "5px"
+            marginLeft: "5px",
+            aspectRatio: "1/1"
         }}>
             <div className="piChartInterior"
                 style={{

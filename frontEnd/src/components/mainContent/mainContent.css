@@ -476,6 +476,7 @@ empty space too
 .promptTitleCont{
     display: flex;
     width: 100%;
+    align-items: center;
 }
 .promptBody{
     text-align: center;
