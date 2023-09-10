@@ -204,7 +204,7 @@ empty space too
 .messageInfo{
     display: flex;
     justify-content: space-between;
-    margin: 0px 7px 3px 7px;
+    margin: 3px 0px 3px 2px;
 }
 .messageInfoRightCont{
     display: flex;
@@ -288,6 +288,7 @@ empty space too
 }
 .textContentParagraphSplit{
     margin-bottom: 2px;
+    word-break: break-word;
 }
 .textContentColorChange{
     color: rgb(255, 116, 243);
@@ -576,6 +577,13 @@ empty space too
     font-size: xx-large;
     font-weight: bold;
     font-style: italic;
+}
+
+.threadThumbNail, .messageOptPointerText, .activeThreadFlagOff, .activeThreadFlagOn, 
+#mainContentTabPointerText,.boardPreviewCont, .boardTabItem,#addMessageButton,
+#promptSubmit, #image_buttonPlaceHolder,#userProfilePointerText, #userLoginButtonCont > div,
+.expandedOptClose > div, .profileButton{
+    cursor: pointer;
 }
 
 @media screen and (max-width: 768px){

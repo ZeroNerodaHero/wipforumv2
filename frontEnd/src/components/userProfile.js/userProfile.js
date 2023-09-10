@@ -54,7 +54,7 @@ function UserProfile(props){
 
     return (
         <div id="userProfileCont" onClick={changeState}>
-            <div>(You)</div>
+            <div id="userProfilePointerText">(You)</div>
             {
                 profileState == 0 ?
                 <div></div>:

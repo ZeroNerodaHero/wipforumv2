@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import {getRequest,postRequest} from '../apiRequest/apiRequest';
-import "./mainContent.css"
+import "./mainContent.css";
 import UserProfile from '../userProfile.js/userProfile';
 import WebTab from '../webTabs/webTabs';
 import SetCookie, {ClearCookies, GetCookie} from "../cookieReader/cookieReader"
@@ -495,7 +495,7 @@ function ActiveThreadDisplayer(props){
                         <div className='messageOpt' onClick={()=>{
                             setMsgExpandOpt(message["messageId"])
                         }}>
-                            &#8942;
+                            <div className="messageOptPointerText">&#8942;</div>
                             {
                                 expandMsgOpt != message["messageId"] ? <div/> :
                                 <div>
@@ -674,7 +674,7 @@ function MainContentTabs(props){
                                 setActiveThreadPassthrough={props.setActiveThreadPassthrough}/>
                             })
                         }}>
-                    <div>
+                    <div id="mainContentTabPointerText">
                         ☰ Board: /{props.currentBoard}/
                     </div>
                 </div>
