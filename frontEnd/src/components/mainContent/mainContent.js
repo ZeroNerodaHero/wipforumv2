@@ -324,15 +324,20 @@ function GUIcont(props){
         <div id="promptSubmitCont">
             <div id="promptOptCont">
                 <div id="promptOptionList">
-                    <div><b>Image:</b></div>
+                    <div id="promptAddImageHeading"><b>Image:</b></div>
                     <div className="promptOption">
                         <div id="image_buttonPlaceHolder" onClick={()=>{fileInput.current.click()}}>
-                            {imageTemp == 0 ? "Add" : 
-                                <div>
+                            {imageTemp == 0 ? 
+                                <div id='uploadDummyImage'>+</div>
+                                 :
+                                /* 
+                                <div id="uploadedImageIconCont">
                                     <img id="uploadedImageIcon" src={imageTemp}></img>
-                                    <span>Change</span>
                                 </div>
+                                */
+                                <img id="uploadedImageIcon" src={imageTemp}></img>
                             }
+                            <span>({imageTemp == 0 ? "Add" : "Change"})</span>
                         </div>
                         <input type="file" ref={fileInput} style={{ display: "none"}}
                             onChange={(e)=>{

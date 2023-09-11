@@ -224,6 +224,7 @@ empty space too
 .messageOpt{
     margin-left: 3px;
     position: relative;
+    font-weight: bold;
 }
 .messageOption{
     text-decoration: none;
@@ -460,7 +461,7 @@ empty space too
 }
 .newPrompt{
     content: "hello";
-    position: absolute;
+    position: relative;
     width: calc(var(--activeThreadDisplaySize) + 6%);
     height: 50%;
     margin-bottom: 2%;
@@ -485,13 +486,17 @@ empty space too
     padding: 7px;
     display: grid;
     justify-items: center;
+
+    height: 100%;
 }
 #newThreadPrompt .promptBody{
-    grid-template-rows: max-content auto max-content;
+    grid-template-rows: max-content auto 20%;
 }
-#newMessagePrompt .promptBody{
-    grid-template-rows: auto max-content;
+#newMessagePrompt  .promptBody{
+    grid-template-rows: 80% 20%;
+    align-content: space-between;
 }
+
 .promptBody input, textarea{
     border: 0px;
     border-bottom: 2px black solid;
@@ -512,6 +517,7 @@ empty space too
     resize: vertical;
     width: 100%;
     height: 100%;
+    padding: 0;
 }
 .textAreaCont{
     width: 100%;
@@ -529,27 +535,49 @@ empty space too
     display: flex;
     justify-content: center;
     margin-top: 5px;
+
+    height: 100%;
 }
 #promptOptionList{
     display: flex;
     margin-left: 7px;
+
+    align-items: center;
 }
-#promptOptionList div{
+#promptAddImageHeading{
     margin: 0px 7px;
+    height: fit-content;
 }
 .promptOption{
-    height: 1.3rem;
+    height: 100%;
 }
-.promptOption:hover{
-    background-color: rgba(0, 0, 0, 0.3);
-}
+
 #image_buttonPlaceHolder{
-    white-space: nowrap;;
+    white-space: nowrap;
+    display: grid;
+
+    justify-items: center;
+
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+#image_buttonPlaceHolder:hover > #uploadDummyImage, #image_buttonPlaceHolder:hover > #uploadedImageIcon{
+    --hoverColor: rgba(0, 0, 0, 0.3);
+    --hoverBoxShadowRadius: 0px 0px 0px 5px;
+    background-color: var(--hoverColor);
+    box-shadow: var(--hoverBoxShadowRadius) var(--hoverColor);
+    -webkit-box-shadow: var(--hoverBoxShadowRadius) var(--hoverColor);
+    -moz-box-shadow: var(--hoverBoxShadowRadius) var(--hoverColor);
 }
 #promptSubmitButtonCont{
     display: flex;
     justify-content: flex-end;
     margin: 3px;
+
+    position: absolute;
+    right: 0;
+    bottom: 0;
 }
 #promptSubmitButtonCont > div{
     padding: 1px 7px;
@@ -567,10 +595,29 @@ empty space too
     z-index: 1000;
     left: 0px;
 }
+#uploadedImageIconCont{
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
 #uploadedImageIcon{
-    height: 1rem;
+    height: 40px;
+}
+#uploadedImageIcon, #uploadDummyImage{
     width: auto;
-    margin-right: 7px;
+    margin-right: 5px;
+}
+#uploadDummyImage{
+    height: 50%;
+    aspect-ratio: 1/1;
+    border: 2px black dashed;
+
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.5rem;
 }
 
 #emptyBoardList{

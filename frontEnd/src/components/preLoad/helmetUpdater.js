@@ -34,6 +34,8 @@ function HelmetUpdater(props){
         <HelmetProvider>
             <Helmet>
                 <title>{titleStr}</title>
+                <meta property="description" content="test"/>
+                <meta property="og:description" content="test"/>
             </Helmet>
         </HelmetProvider>
     )
