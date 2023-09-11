@@ -383,24 +383,28 @@ function GUIcont(props){
                     
                 {props.activeThread == -1? 
                     <div id="newThreadPrompt" className='newPrompt' onClick={(e)=>{e.stopPropagation()}}>
-                        <div className='promptTitle'>New Thread</div>
-                        <div className="promptBody">
-                            <div className='promptTitleCont'>
-                                <input value={threadTitle} onChange={(e)=>{setThreadTitle(e.target.value)}}
-                                        placeholder="Title"/>
-                                <PiChart color="red" colorBack="grey" value={threadTitle.length} maxValue={maxThreadTitle}/>
+                        <div className="promptPaddingCont"><div className='promptTitle'>New Thread</div></div>
+                        <div className="promptBodyPaddingCont">
+                            <div className="promptBody">
+                                <div className='promptTitleCont'>
+                                    <input value={threadTitle} onChange={(e)=>{setThreadTitle(e.target.value)}}
+                                            placeholder="Title"/>
+                                    <PiChart color="red" colorBack="grey" value={threadTitle.length} maxValue={maxThreadTitle}/>
+                                </div>
+                                
+                                {promptTextArea(newMessageContent,setNewMessageContent)}
+                                {submitCont}
                             </div>
-                            
-                            {promptTextArea(newMessageContent,setNewMessageContent)}
-                            {submitCont}
                         </div>
                     </div> 
                     :
                     <div id="newMessagePrompt" className='newPrompt' onClick={(e)=>{e.stopPropagation()}}>
-                        <div className='promptTitle'>Add Message</div>
-                        <div className="promptBody">
-                            {promptTextArea(messageContent,setMessageContent)}
-                            {submitCont}
+                        <div className="promptPaddingCont"><div className='promptTitle'>Add Message</div></div>
+                        <div className="promptBodyPaddingCont">
+                            <div className="promptBody">
+                                {promptTextArea(messageContent,setMessageContent)}
+                                {submitCont}
+                            </div>
                         </div>
                     </div>
                 }

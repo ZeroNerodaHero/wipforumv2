@@ -480,10 +480,13 @@ empty space too
     width: 100%;
     align-items: center;
 }
+.promptBodyPaddingCont{
+    padding: 7px;
+    background-color: white;
+}
 .promptBody{
     text-align: center;
     background-color: white;
-    padding: 7px;
     display: grid;
     justify-items: center;
 
@@ -645,5 +648,11 @@ empty space too
     }
     #threadSearchInput:focus{
         width: 60%;
+    }
+    #uploadDummyImage{
+        font-size: 0.7rem;
+    }
+    .newPrompt{
+        margin-bottom: 5%;
     }
 }
