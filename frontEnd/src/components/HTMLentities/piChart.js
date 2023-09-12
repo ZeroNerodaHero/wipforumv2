@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 
 function PiChart(props){
-    const [gradientStr,setGradientStr] = useState("conic-gradient(red 180deg,black 180deg)")
     const piChartInteriorSize = "65%"
+    const warningRateShow = "0.3"
+    const [gradientStr,setGradientStr] = useState("conic-gradient(red 180deg,black 180deg)")
+    const [elementHover,setElementHover] = useState(false)
+    const [elementRate,setElementRate] = useState(0)
+
     useEffect(()=>{
         //this controls how much black is shown in px
         const degShadeBlackArea = 20
@@ -11,6 +15,7 @@ function PiChart(props){
         setGradientStr(
             "conic-gradient("+props.color+" 0deg "+degShade+"deg, black "+degShade+"deg "+degShadeBlock+"deg,"+props.colorBack+" "+degShadeBlock+"deg 360deg)"
         )
+        setElementRate(props.value/props.maxValue)
     },[props.color,props.colorBack,props.value,props.maxValue])
 
     return (
@@ -23,17 +28,44 @@ function PiChart(props){
             justifyContent: "center",
             alignItems: "center",
             marginLeft: "5px",
-            aspectRatio: "1/1"
-        }}>
+            aspectRatio: "1/1",
+
+            position: "relative"
+        }} onMouseEnter={()=>{setElementHover(true)}} onMouseLeave={()=>{setElementHover(false)}}>
             <div className="piChartInterior"
                 style={{
                     width: piChartInteriorSize,
                     height: piChartInteriorSize,
                     borderRadius: "100%",
-                    backgroundColor: "white"
+                    backgroundColor: "white",
+                    border: "1px black solid"
                 }}
                 >
             </div>
+            {
+                (elementHover == false && (elementRate <= warningRateShow)) ? <div /> :
+                <div style={{
+                    position: "absolute",
+                    fontSize: "0.5rem",
+                    marginRight:"3px",
+                    right:"100%",
+                }}>
+                    {props.value+"/"+props.maxValue}
+                </div>
+            }
+            {
+                (elementRate < warningRateShow) ? <div /> :
+                <div style={{
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "red",
+                    marginBottom: "2px"
+                }}>!</div>
+            }
         </div>
     )
 }

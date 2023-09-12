@@ -327,17 +327,20 @@ function GUIcont(props){
                     <div id="promptAddImageHeading"><b>Image:</b></div>
                     <div className="promptOption">
                         <div id="image_buttonPlaceHolder" onClick={()=>{fileInput.current.click()}}>
-                            {imageTemp == 0 ? 
-                                <div id='uploadDummyImage'>+</div>
-                                 :
-                                /* 
-                                <div id="uploadedImageIconCont">
+                            <div id="imageAddChangeButton">
+                                {imageTemp == 0 ? 
+                                    <div id='uploadDummyImage'>+</div>
+                                    :
+                                    /* 
+                                    <div id="uploadedImageIconCont">
+                                        <img id="uploadedImageIcon" src={imageTemp}></img>
+                                    </div>
+                                    */
                                     <img id="uploadedImageIcon" src={imageTemp}></img>
-                                </div>
-                                */
-                                <img id="uploadedImageIcon" src={imageTemp}></img>
-                            }
-                            <span>({imageTemp == 0 ? "Add" : "Change"})</span>
+                                }
+                            </div>
+
+                            <div id="image_buttonRemoveFileButton">&#10005;</div>
                         </div>
                         <input type="file" ref={fileInput} style={{ display: "none"}}
                             onChange={(e)=>{
@@ -364,8 +367,8 @@ function GUIcont(props){
                 }}/>
                 <div style={{
                         position: "absolute",
-                        bottom: "0px",
-                        right: "0px"
+                        bottom: "2px",
+                        right: "2px"
                 }}>
                     <PiChart color="red" colorBack="grey" value={content.length} maxValue={maxThreadText}/>
                 </div>
