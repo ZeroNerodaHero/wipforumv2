@@ -637,7 +637,7 @@ empty space too
     margin-right: 3px;
 }
 #image_buttonRemoveFileButton{
-    padding-left: 3px;
+    padding: 0px 3px;
     border: 1px black solid;
     border-left: 0px;
     background-color: #ff9393;
