@@ -241,6 +241,8 @@ function GUIcont(props){
     useEffect(()=>{
         if(imageUpload != "" && imageUpload[0] != null){
             setImageTemp(URL.createObjectURL(imageUpload[0]))
+        } else{
+            setImageTemp(0)
         }
     },[imageUpload])
     useEffect(()=>{
@@ -326,26 +328,27 @@ function GUIcont(props){
                 <div id="promptOptionList">
                     <div id="promptAddImageHeading"><b>Image:</b></div>
                     <div className="promptOption">
-                        <div id="image_buttonPlaceHolder" onClick={()=>{fileInput.current.click()}}>
-                            <div id="imageAddChangeButton">
+                        <div id="image_buttonPlaceHolder">
+                            <div id="imageAddChangeButton" onClick={()=>{fileInput.current.click()}}>
+                                <div className="imageSuggestText">{imageTemp == 0 ? "Add":"Change"}</div>
                                 {imageTemp == 0 ? 
                                     <div id='uploadDummyImage'>+</div>
                                     :
-                                    /* 
-                                    <div id="uploadedImageIconCont">
-                                        <img id="uploadedImageIcon" src={imageTemp}></img>
-                                    </div>
-                                    */
-                                    <img id="uploadedImageIcon" src={imageTemp}></img>
+                                    <img id="uploadedImageIcon" src={imageTemp} />
                                 }
                             </div>
-
-                            <div id="image_buttonRemoveFileButton">&#10005;</div>
+                            {imageTemp == 0 ? <div style={{display:"none"}} /> :
+                                <div id="image_buttonRemoveFileButton" onClick={()=>{
+                                    fileInput.current.value = null
+                                    setImageUpload("")
+                                }}>
+                                    &#10005;
+                                </div>
+                            }
                         </div>
                         <input type="file" ref={fileInput} style={{ display: "none"}}
                             onChange={(e)=>{
                                 setImageUpload(Array.from(e.target.files));
-                                
                             }} />
                     </div>
                 </div>     
