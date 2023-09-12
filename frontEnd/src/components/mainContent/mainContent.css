@@ -540,6 +540,7 @@ empty space too
     display: flex;
     justify-content: flex-start;
     height: 100%;
+    width: 80%;
 }
 #promptOptionList{
     display: flex;
@@ -560,15 +561,16 @@ empty space too
 
     display: flex;
     height: 100%;
-    align-items: flex-start;
+    align-items: flex-end;
 }
 #imageAddChangeButton{
     height: 90%;
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
 
-    border: 2px black solid;
+    border: 1px black solid;
 }
 /* #imageAddChangeButton:hover > #uploadDummyImage, #imageAddChangeButton:hover > #uploadedImageIcon{ */
 #imageAddChangeButton:hover{
@@ -578,6 +580,7 @@ empty space too
 .imageSuggestText{
     writing-mode: tb-rl;
     transform: rotateZ(180deg);
+    font-size: 0.7rem;
 }
 #promptSubmitButtonCont{
     display: flex;
@@ -621,7 +624,7 @@ empty space too
 }
 #uploadDummyImage{
     height: 90%;
-    aspect-ratio: 1/1;
+    width: 20px;
     border: 2px black dashed;
 
     display: grid;
