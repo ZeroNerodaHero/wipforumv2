@@ -3,7 +3,6 @@ import {getRequest,postRequest} from '../apiRequest/apiRequest';
 import "./mainContent.css";
 import UserProfile from '../userProfile.js/userProfile';
 import WebTab from '../webTabs/webTabs';
-import SetCookie, {ClearCookies, GetCookie} from "../cookieReader/cookieReader"
 import getLocalStorageItem, { updateLocalStorage } from "../cookieReader/localStorageReader"
 import AbsolutePrompt from '../absolutePrompt/absolutePrompt';
 import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
@@ -26,9 +25,7 @@ function MainContent(props){
     const [threadSearch,setThreadSearch] = useState("")
     const [errorJSON,setErrorJSON] = useState({show:0})
     const [checkStorage,setCheckStorage] = useState(false);
-
     const [activeThreadPassthrough,setActiveThreadPassthrough] = useState(-1);
-
     const {helmetUpdate,setHelmetUpdate} = useContext(HelmetUpdateContext)
 
 
@@ -104,17 +101,13 @@ function MainContent(props){
 }
 function MenuBar(props){
     return (
-    <div id='menuCont'>
-        <div>
-            
+        <div id='menuCont'>
+            <div id="menuLeftCont">
+                <SearchIcon />
+                <input id="threadSearchInput" value={props.threadSearch} 
+                    onChange={(e)=>{props.setThreadSearch(e.target.value)}}/>
+            </div>
         </div>
-        <div id="menuLeftCont">
-            <SearchIcon />
-            <input id="threadSearchInput" value={props.threadSearch} 
-                onChange={(e)=>{props.setThreadSearch(e.target.value)}}/>
-        </div>
-
-    </div>
     )
 }
 
@@ -220,9 +213,7 @@ function ThreadCont(props){
                 </div>
             </div>
         </div>
-
     )
-
 }
 function GUIcont(props){
     const maxThreadTitle = 100
@@ -256,15 +247,8 @@ function GUIcont(props){
 
     function managePostSubmit(){
         var hasImg = false;
-
-        var userId = GetCookie("userId")
-        var authKey = GetCookie("authKey")
-
         var postObject = {
             option: (props.activeThread != -1)+2000,
-
-            userId: userId != null ? userId : Math.floor(Math.random()*1000000000),
-            sessionId: authKey != null ? authKey : -1,
         };
         if(props.activeThread == -1){
             postObject.currentBoard = props.currentBoard
@@ -284,7 +268,7 @@ function GUIcont(props){
             postObject = tmpData;
             postObject.append("messageImage",imageUpload[0])
         }
-        postRequest(postObject,hasImg).
+        postRequest(postObject,true,hasImg).
         then((data)=>{
             //console.log(data)
             if(data["code"] >= 1){
@@ -474,7 +458,6 @@ function ActiveThreadDisplayer(props){
         }
     },[threadFlagUpdate])
 
-
     function callBackFocusPost(messageId){
         const eleId = activeThreadMessages.findIndex((ele)=> ele["messageId"] === messageId)
         if(eleId >= 0){
@@ -521,15 +504,11 @@ function ActiveThreadDisplayer(props){
                                         </div>
                                         <div className="expandedOptClose">
                                             <div onClick={()=>{
-                                                var userId = GetCookie("userId")
-                                                var authKey = GetCookie("authKey")
                                                 postRequest(
                                                 {
                                                     option: 2999,
-                                                    messageId: message["messageId"],
-                                                    userId: userId != null ? userId : Math.floor(Math.random()*1000000000),
-                                                    sessionId: authKey != null ? authKey : -1,
-                                                }).then((data)=>{
+                                                    messageId: message["messageId"]
+                                                },true).then((data)=>{
                                                     if(data["code"]!=0){
                                                         /* Note: not sure what this line was for */
                                                         //setActiveThread(-1);
@@ -579,8 +558,6 @@ function ActiveThreadDisplayer(props){
             </div>
         )
     };
-
-    
 
     return (
         <div id="activeThreadCont" >
@@ -675,7 +652,6 @@ function ThreadViewDisplay(props){
 webtabs
 */
 function MainContentTabs(props){
-    const [expandLeft,setExpandLeft] = useState(0);
     const {errorJSON,setErrorJSON} = useContext(ErrorSetterContext)
     
     return (
@@ -725,25 +701,6 @@ function numToColor(num,lockOpacity=1){
     }
     return "rgba("+r+","+g+","+b+","+lockOpacity+")"
 }
-
-function scrollToChild(ele, parentEle,offset=-0){
-    const parentRect = parentEle.getBoundingClientRect();
-    const eleRect = ele.getBoundingClientRect();
-    console.log(parentRect)
-    console.log(eleRect)
-    const scrollTop = eleRect.top - parentRect.top + parentEle.scrollTop+offset;
-
-    parentEle.scrollTo({
-        top: 0,
-        behavior: 'instant'
-    })
-    parentEle.scrollTo({
-        top: scrollTop,
-        behavior: 'smooth'
-    })
-}
-
-
 
 function convertMessageIntoFormat(message,splitMore=false,callBackFunc=null){
     var newLineList = [];

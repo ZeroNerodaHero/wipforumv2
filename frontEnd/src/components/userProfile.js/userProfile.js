@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {postRequest} from '../apiRequest/apiRequest';
 import "./rightTab.css"
 import UserSquare from '../createBox/generateBoxImage';

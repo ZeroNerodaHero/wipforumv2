@@ -1,4 +1,5 @@
 import axios from "axios"
+import {GetCookie} from "../cookieReader/cookieReader"
 
 function getRequest(params={}){
     var paramsStr = "";
@@ -8,13 +9,19 @@ function getRequest(params={}){
     }
     return apiRequest(paramsStr,"","GET");
 }
-function postRequest(body="",hasImg=false){
-    return apiRequest("",body,"POST",hasImg);
+function postRequest(body="",authUser=false,hasImg=false){
+    return apiRequest("",body,"POST",hasImg,authUser);
 }
 
-function apiRequest(params="", body="", method="GET",hasImg=false) {
+function apiRequest(params="", body="", method="GET",hasImg=false,authUser=false) {
     var url = "https://schizoi.cyou/request"
     //url = "http://localhost:8070/";
+
+    if(authUser === true){
+        var userId = GetCookie("userId"), authKey = GetCookie("authKey")
+        body["userId"] = userId != null ? userId : Math.floor(Math.random()*1000000000)
+        body["authKey"] = authKey != null ? authKey : -1
+    }
     
     return new Promise((resolve, reject) => {
         axios({

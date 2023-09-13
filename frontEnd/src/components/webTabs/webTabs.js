@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { getRequest,postRequest } from '../apiRequest/apiRequest';
+import { getRequest} from '../apiRequest/apiRequest';
 import "./webTabs.css"
 import ErrorSetterContext from '../absolutePrompt/absolutePromptContext';
 import getLocalStorageItem,{updateLocalStorage} from '../cookieReader/localStorageReader';
@@ -152,23 +152,6 @@ function LatestPosts(props){
             </div>
             <div>
             {
-                /*
-                latestPost["imagePost"] === undefined ? <div>Failed to load image messages</div>:
-                <div id="latestImagePostCont">
-                    <div><b>Latest Images</b></div>
-                    {
-                        latestPost["imagePost"].map((item,key)=>(
-                            <div key={key} className="latestImagePostCont">
-                                <div className='latestImageCont'>
-                                    <img className='latestImage' src={item["imageLinks"]}/>
-                                </div>
-                            </div>
-                        ))
-                    }
-                </div>
-                */
-            }
-            {
                 latestPost["messagePost"] === undefined ? <div>Failed to load text messages</div>:
                 <div id='latestMessagePostCont'>
                 {
@@ -219,7 +202,6 @@ function SiteSettings(props){
 function SiteSettingThumbNail(){
     const [threadSizeValue,setThreadSizeValue] = useState(-1);
     const threadSizeAr = Array.from({length: 8}, (_, i) => i + 1)
-
 
     useEffect(()=>{
         if(getLocalStorageItem("userSettings","threadSize") != undefined){
