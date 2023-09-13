@@ -6,6 +6,9 @@ function preLoadSettings(){
     if(preLoad["threadSize"] != undefined){
         rootEleStyle.setProperty("--thumbPerRow",preLoad["threadSize"])
     }
+    if(preLoad["fontSize"] != undefined){
+        rootEleStyle.setProperty("font-size",preLoad["fontSize"]+"px")
+    } 
     if(preLoad["colors"] != undefined){
         for (const key of Object.keys(preLoad["colors"])) {
             const color = preLoad["colors"][key];

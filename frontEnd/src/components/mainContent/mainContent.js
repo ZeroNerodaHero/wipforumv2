@@ -102,6 +102,8 @@ function MainContent(props){
 function MenuBar(props){
     return (
         <div id='menuCont'>
+            <div id="menuRightCont">
+            </div>
             <div id="menuLeftCont">
                 <SearchIcon />
                 <input id="threadSearchInput" value={props.threadSearch} 

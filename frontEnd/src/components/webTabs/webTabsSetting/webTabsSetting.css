@@ -1,0 +1,67 @@
+#settingCont{
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+#settingCont > div{
+    margin: 3px;
+}
+.settingItemCont{
+    display: grid;
+    grid-template-columns: max-content auto;
+    align-items: center;
+}
+.settingItemHeader{
+    font-weight: bold;
+}
+.settingItemBoxCont{
+    display: grid;
+    border: 1px black solid;
+    padding: 3px;
+}
+.settingItemBoxContHeader{
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: center;
+}
+.settingItemBoxCont > .settingItemCont{
+    margin: 0px;
+}
+.settingOptionCont{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+.settingOptionText{
+    font-weight: bold;
+    margin-right: 7px;
+}
+.settingOptionButtonSmol{
+    border: 1px black solid;
+    padding: 1px 3px;
+    background-color: white;
+}
+
+.colorInputCont{
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+.colorInputCont > div{
+    margin-right: 5px;
+}
+#colorDisclaimer{
+    font-style: italic;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+
+@media screen and (max-width: 768px){
+    #settingCont{
+        font-size: 1rem;
+        grid-template-columns: auto;
+    }
+}

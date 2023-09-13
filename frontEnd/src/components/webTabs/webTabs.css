@@ -12,7 +12,7 @@
     display: grid;
     grid-template-columns: max-content auto;
 
-    width: 70%;
+    width: 90%;
     height: 40%;
     margin-bottom: 10%;
     overflow: hidden;
@@ -221,62 +221,8 @@
     margin-bottom: 3px;
 }
 
-#settingCont{
-    display: grid;
-    grid-template-columns: 50% 50%;
-}
-#settingCont > div{
-    margin: 3px;
-}
-.settingItemCont{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-}
-.settingItemBoxCont{
-    display: grid;
-    border: 1px black solid;
-    padding: 3px;
-}
-.settingItemBoxContHeader{
-    font-size: 1.1rem;
-    font-weight: bold;
-    text-align: center;
-}
-.settingItemBoxCont > .settingItemCont{
-    margin: 0px;
-}
-.settingOptionCont{
-    display: flex;
-    align-items: center;
-}
-.settingOptionText{
-    font-weight: bold;
-    margin-right: 7px;
-}
-.settingOptionButtonSmol{
-    border: 1px black solid;
-    padding: 1px 3px;
-    background-color: white;
-}
-
-
 .boardTabBoardListCont{
     display: grid;
-}
-.colorInputCont{
-    display: flex;
-    align-items: center;
-}
-.colorInputCont > div{
-    margin-right: 5px;
-}
-#colorDisclaimer{
-    font-style: italic;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-align: center;
 }
 #boardSearchBarCont{
     display: flex;
@@ -318,10 +264,7 @@
     #latestImagePostCont{
         grid-template-columns: auto;
     }
-    #settingCont{
-        font-size: 1rem;
-        grid-template-columns: auto;
-    }
+
     #boardSearchBarCont > input{
         width: 60%;
     }
