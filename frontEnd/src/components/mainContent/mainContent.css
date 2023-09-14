@@ -507,6 +507,7 @@ empty space too
     border-bottom: 2px black solid;
     background-color: #80808027;
     border-radius: 0px;
+    font-size: var(--fontSize);
 }
 .promptBody input:focus, textarea:focus{
     outline: none;
@@ -567,7 +568,7 @@ empty space too
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    overflow: hidden;
 
     border: 1px black solid;
 }

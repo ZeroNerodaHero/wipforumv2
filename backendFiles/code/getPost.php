@@ -8,11 +8,15 @@ function getBoardList(){
     return json_encode($ret);
 }
 
-function getThreadList($currentBoard){
+function getThreadList($currentBoard,$loadStart=0,$loadSize=0){
+    $limitStr = "";
+    if($loadSize != 0){
+        $limitStr = "LIMIT $loadStart OFFSET $loadSize";
+    }
     $ret = array("code"=>1,"threadList"=>[]);
     $res = myQuery("SELECT threadTitle,threadId,permLevel,creationTime,updateTime,threadSize,firstPostLink,threadPriority FROM threadList
             WHERE boardReference = '".$currentBoard."'
-            ORDER BY threadPriority DESC, updateTime DESC");
+            ORDER BY threadPriority DESC, updateTime DESC ".$limitStr);
     while($data = $res->fetch_assoc()){
         $data["errorThread"] = false;
         if (!empty($data["firstPostLink"]) && $data["firstPostLink"] != NULL) {

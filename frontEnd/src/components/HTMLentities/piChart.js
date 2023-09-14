@@ -46,9 +46,9 @@ function PiChart(props){
                 (elementHover == false && (elementRate <= warningRateShow)) ? <div /> :
                 <div style={{
                     position: "absolute",
-                    fontSize: "0.5rem",
+                    fontSize: "0.7rem",
                     marginRight:"3px",
-                    right:"100%",
+                    bottom: "100%",
                 }}>
                     {props.value+"/"+props.maxValue}
                 </div>

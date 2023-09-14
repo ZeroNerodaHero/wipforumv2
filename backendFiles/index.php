@@ -92,7 +92,9 @@ function apiRequest(){
         }
         else if($option == 1001){
             if(!empty($hData["currentBoard"])){
-                $retStr = getThreadList($hData["currentBoard"]);
+                $loadStart= (!empty($hData["loadStart"])) ?  $hData["loadStart"] : 0;
+                $loadSize=(!empty($hData["loadSize"])) ?  $hData["loadSize"] : 0;
+                $retStr = getThreadList($hData["currentBoard"],$loadStart,$loadSize);
             }
         }
         else if($option == 1002){
