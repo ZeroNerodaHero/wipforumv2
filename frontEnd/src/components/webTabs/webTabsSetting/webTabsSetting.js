@@ -39,7 +39,7 @@ function SiteSettingThumbNail(){
     useEffect(()=>{
         if(threadSizeValue != -1){
             updateLocalStorage("threadSize",threadSizeValue)
-            document.getElementById("root").style.setProperty("--thumbPerRow",threadSizeValue)
+            document.documentElement.style.setProperty("--thumbPerRow",threadSizeValue)
         }
     },[threadSizeValue])
 
@@ -72,7 +72,7 @@ function SiteFontSize(props){
     useEffect(()=>{
         if(fontSize != -1){
             updateLocalStorage("fontSize",fontSize)
-            document.getElementById("root").style.setProperty("font-size",fontSize+"px")
+            document.documentElement.style.setProperty("font-size",fontSize+"px")
         }
     },[fontSize])
 
@@ -112,14 +112,14 @@ function SiteSettingsColor(){
     var timeoutId = null;
 
     function updateColor(key,color){
-        document.getElementById("root").style.setProperty("--"+key,color)
+        document.documentElement.style.setProperty("--"+key,color)
         setColorSettingValue((prevState)=>({
             ...prevState,
             [key]: color
         }))
     }
     function getColor(key){
-        return getComputedStyle(document.getElementById("root")).getPropertyValue("--"+key).trim()
+        return getComputedStyle(document.documentElement).getPropertyValue("--"+key).trim()
     }
 
     return (

@@ -53,6 +53,7 @@
     border: 1px black solid;
     border-left: 3px black solid;
     margin-top: 3px;
+    font-weight: bold;
 }
 .boardTabItem:hover{
     background-color: var(--shadeColor);
@@ -103,7 +104,7 @@
 }
 .boardImageTitle{
     font-weight: bold;
-    font-size: xx-large;
+    font-size: 2rem
 }
 
 .boardPreviewDescCont{

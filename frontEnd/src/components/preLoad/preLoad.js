@@ -2,7 +2,7 @@ import getLocalStorageItem from "../cookieReader/localStorageReader"
 
 function preLoadSettings(){
     var preLoad = getLocalStorageItem("userSettings")
-    var rootEleStyle = document.getElementById("root").style
+    var rootEleStyle = document.documentElement.style
     if(preLoad["threadSize"] != undefined){
         rootEleStyle.setProperty("--thumbPerRow",preLoad["threadSize"])
     }
