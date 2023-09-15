@@ -204,15 +204,23 @@ function SiteGuide(props){
             "Click the (you) on the upper right corner."
         ],
         ["What is the point of an account?",
-            "Not much. It only makes your userId show the same for a given thread. Like a trip code"+
-            "I just have it as a possible feature."
+            <div>
+                <div>
+                    Not much. It only makes your userId show the same for a given thread. 
+                    Like a trip code. I just have it as a possible feature.
+                </div>
+            </div>
         ],
         
         ["Is this site an ip grabber?",
-            'No. This site does not store your ip. '+
-            'It only stores a hashed version via SHA256. '+
-            'No one can computably decrypt your hashed_ip. The hashed '+
-            'ip is used to ban users rather than user accounts or ips.'
+            <div>
+                <div>
+                    No. This site does not store your ip. It only stores a hashed version via SHA256.
+                    No one can computably decrypt your hashed_ip. The hashed ip is used to ban users rather than user accounts or ips.
+                    Also, if you lose access to an account, the hashed ip(aka last login position) is used to recover it. 
+                </div>
+                <SiteGuideGetHashIP />
+            </div>
         ],
         ["What are the rules?",
             <div>
@@ -258,6 +266,28 @@ function HelpTextItem(props){
             {expandHelp == 0 ? <div/> : 
                 <div className='helpTextItemBody'>{props.body}</div>
             }
+        </div>
+    )
+}
+
+function SiteGuideGetHashIP(){
+    const [hashIP,setHashIP] = useState("");
+    useEffect(()=>{
+        getRequest(
+            {
+                option: 999
+            }).then((data)=>{
+                if(data["code"] == 1){
+                    setHashIP(data["hashed_ip"]);
+                } else{
+                    setHashIP("ERROR");
+                }
+            })
+    })
+
+    return (
+        <div style={{wordBreak:"break-all"}}>
+            Your hashed ip is: <b>{hashIP}</b>
         </div>
     )
 }

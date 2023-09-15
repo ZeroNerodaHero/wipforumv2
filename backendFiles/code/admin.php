@@ -16,7 +16,9 @@ function banPost($messageId,$banDuration,$reason){
         if(!userIsBanned($hashed_ip))
             banIp($hashed_ip,$banDuration*60*60,$reason); 
         deletePost($messageId);
+        return Array("code"=>1,"msg"=>"User banned","hashed_ip"=>$hashed_ip);
     }
+    return Array("code"=>0,"msg"=>"Message is not found in db. interesting");
 }
 
 function banIp($hash_ip,$endSeconds,$reason="Unknown."){
@@ -30,7 +32,7 @@ function banIp($hash_ip,$endSeconds,$reason="Unknown."){
 
 function unBanIp($hash_ip){
     myQuery("DELETE FROM bannedIps WHERE hashed_ip='$hash_ip'");
-    return true;
+    return Array("code"=>1,"hash_ip"=>$hash_ip);
 }
 
 function loadBoardThreads(){

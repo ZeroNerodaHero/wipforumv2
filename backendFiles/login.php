@@ -20,4 +20,12 @@
         global $conn;
         return $conn->query($que);
     }
+    function valueExistsInTable($table,$key,$value){
+        $res = myQuery("SELECT $key FROM $table WHERE $key='$value'");
+        return $res->num_rows > 0;
+    }
+
+    function generateErrorToCode(){
+        
+    }
 ?>

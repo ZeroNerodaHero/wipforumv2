@@ -10,9 +10,29 @@ function boardIsLocked($board,$permLevel){
             WHERE shortHand='$board' AND boardPermPost > $permLevel");
     return $res->num_rows != 0;
 }
+function bannedUserInfoREST($hashed_ip){
+    $res = myQuery("SELECT hashed_ip,reason,startTime,expireTime FROM bannedIps WHERE hashed_ip='$hashed_ip'")->fetch_assoc();
+    return Array(
+        "code" => -1,
+        "msg"=>"You are banned(hash".$res["hashed_ip"].")",
+        "startTime"=>$res["startTime"],
+        "expireTime"=>$res["expireTime"],
+        "reason"=>$res["reason"]
+    );
+}
 //what is the difference between messageOwner and userreference?
-function addMessage($threadReference,$messageContent,$messageOwner,$userReference=-1){
+function addMessage($threadReference,$messageContent,$messageOwner,$userReference=-1,$permLevel=0){
     global $conn;
+
+    if(!valueExistsInTable("threadList","threadId",$threadReference)){
+        return Array("code"=>0,"msg"=>"Thread Doesn't exist. Try again or don't. I dunno");
+    }
+    if(threadIsLocked($threadReference,$permLevel)){
+        return Array(
+            "code"=>0,
+            "msg"=>"Thread is locked. Only admins can post in this thread. Sorry"
+        );
+    } 
 
     $imageLink = "";
     if(!empty($_FILES["messageImage"])){
@@ -47,8 +67,28 @@ function addMessage($threadReference,$messageContent,$messageOwner,$userReferenc
     
     return Array("code"=>1,"newMessageId"=>$lastPost);
 }
-function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner,$loggedIn){
+function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner,$loggedIn,$permLevel){
     global $conn;
+    if(!valueExistsInTable("boardList","shortHand",$currentBoard)){
+        return Array("code"=>0,"msg"=>"Board Doesn't exist. Try again or don't. I dunno");
+    }
+    if(boardIsLocked($currentBoard,$permLevel)){
+        return Array(
+            "code"=>0,
+            "msg"=>"Board is on lockdown mode. No more threads can be posted. Please wait while issue is solved"
+        );
+    } 
+    if(verifyImg("messageImage") != 1){
+        return generateImageError(verifyImg("messageImage"));
+    }
+    if(strlen($threadTitle) > 100){
+        return Array(
+            "code"=>0,
+            "msg"=>"Thread title too long(100char max)"
+        );
+    }
+    
+
     $imageErrorType = verifyImg("messageImage");
     if($imageErrorType < 0) return generateImageError($imageErrorType);
 
@@ -58,7 +98,7 @@ function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner,$
             VALUES('$currentBoard','$threadTitle',$messageOwner)";
     $conn->query($que);
     $threadId = $conn->insert_id;
-    $msgLink = addMessage($threadId, $newMessageContent, $messageOwner, ($loggedIn ? $messageOwner : -1))["newMessageId"];
+    $msgLink = addMessage($threadId, $newMessageContent, $messageOwner, ($loggedIn ? $messageOwner : -1),$permLevel)["newMessageId"];
     $que = "UPDATE threadList
             SET firstPostLink=".$msgLink."
             WHERE threadId=".$threadId;
@@ -67,14 +107,19 @@ function addThread($currentBoard,$threadTitle,$newMessageContent,$messageOwner,$
     maintainBoardSize($currentBoard);
     
 
-    return array("newThreadId"=>$threadId);
+    return array("code"=>1,"newThreadId"=>$threadId);
 }
 
-function hasPostCooldown($hash_ip){
+function getPostCooldown($hash_ip){
     $res = myQuery("SELECT expireTime FROM cooldownPostTimer
             WHERE hashed_ip='$hash_ip'");
-    if(empty($res) || $res->num_rows == 0) return -1;
-    return (new DateTime($res->fetch_assoc()["expireTime"]) > new DateTime()) ? 1 : 0;
+    if(empty($res) || $res->num_rows == 0) return null;
+    return new DateTime($res->fetch_assoc()["expireTime"]);
+}
+function hasPostCooldown($hash_ip){
+    $cooldown = getPostCooldown($hash_ip);
+    if($cooldown == null) return -1;
+    return ($cooldown > new DateTime()) ? 1 : 0;
 }
 function updatePostCooldown($hash_ip,$userId){
     //default cooldown = 120
@@ -84,7 +129,7 @@ function updatePostCooldown($hash_ip,$userId){
         $expireSeconds = max(10,$expireSeconds - ($res->fetch_assoc()["userExp"]));
     }
     $expireTime = "DATE_ADD(NOW(),INTERVAL $expireSeconds SECOND)";
-    if(hasPostCooldown($hash_ip) == -1){
+    if(getPostCooldown($hash_ip) == null){
         myQuery("INSERT INTO cooldownPostTimer(hashed_ip,expireTime)
                 VALUES('$hash_ip',$expireTime)");
     } else{

@@ -75,6 +75,8 @@
     border: 0px;
     border-bottom: 2px black solid;
     border-radius: 0px;
+    box-sizing: border-box;
+
 
     width: 100%;
 }

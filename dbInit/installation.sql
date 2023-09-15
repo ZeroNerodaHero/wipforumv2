@@ -1,8 +1,8 @@
 USE funpills;
 CREATE TABLE userList(
     userId BIGINT,
-    userName varchar(60) UNIQUE,
-    password varchar(60),
+    userName varchar(64) UNIQUE,
+    password varchar(64),
     accountPerm TINYINT DEFAULT 0,
     userExp int DEFAULT 0,
     status varchar(256),
@@ -87,8 +87,8 @@ CREATE TABLE cooldownPostTimer(
     startTime timeStamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     expireTime timeStamp
 );
-INSERT INTO userList(userId,userName,password,accountPerm) 
-    VALUES(1,"eve","eve",99);
+INSERT INTO userList(userId,userName,password,accountPerm,last_hashedLoginIp) 
+    VALUES(1,"eve","eve",99,0);
 INSERT INTO boardList(shortHand,longHand,boardPermPost,threadCap,boardPriority,boardDesc)
     VALUES("h","home",98,3000,99,
         "This is the home board. There really is no topic.");

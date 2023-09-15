@@ -130,7 +130,7 @@ function CreateAccount(props){
                                 if(data["code"]!=0){
                                     props.setTabState(1)
                                 } else{
-                                    setErrorJSON({show:1,type:1,title:"Failed to Create Account",content:"Server is broken or something"})
+                                    setErrorJSON({show:1,type:1,title:"Failed to Create Account",content:data["msg"]})
                                 }
                             })
                         } else {

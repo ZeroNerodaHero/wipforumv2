@@ -55,5 +55,4 @@ function bannedUserInfo($hash_ip){
     $res = myQuery("SELECT hashed_ip FROM bannedIps WHERE hashed_ip='$hash_ip'");
     if($res->num_rows != 0) return $res->fetch_assoc();
 }
-
 ?>
