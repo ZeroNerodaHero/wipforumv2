@@ -41,26 +41,3 @@ function HelmetUpdater(props){
     )
 }
 export default HelmetUpdater
-/*
-const [helmentEle,setHelmetEle] = useState(<Helmet />)
-    function handleURLtoHeader(){
-        const currentURL = window.location.href
-        const requestObj = preLoadGetRequest(currentURL)
-
-        var titleStr ="";
-        var metaDesc ="schizoi.cyou"
-
-        if(requestObj["board"] !== undefined) titleStr = "["+requestObj["board"]+"]"
-        if(requestObj["title"] !== undefined){
-            titleStr += " "+requestObj["title"]
-        } 
-        titleStr += " (schizoi.cyou)";
-
-        setHelmetEle(
-            <Helmet>
-            <meta name="description" content={metaDesc} />
-            </Helmet>
-        )
-    }
-
-*/

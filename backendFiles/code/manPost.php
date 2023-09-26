@@ -262,14 +262,11 @@ function deletePost($messageId){
         if($res->fetch_assoc()["threadSize"] == 0) {
             myQuery("DELETE FROM threadList WHERE firstPostLink=$messageId");
         } else{
-            //find oldest and make that the first
-            $res = myQuery("SELECT messageId FROM messageList 
-                    WHERE threadReference=$threadReference ORDER BY messageId LIMIT 1");
-            if($res->num_rows == 0) return false;
-            $newMessageId = $res->fetch_assoc()["messageId"];
-
             myQuery("UPDATE threadList 
-                    SET firstPostLink=$newMessageId
+                    SET firstPostLink=(
+                        SELECT messageId FROM messageList
+                        WHERE threadReference=$threadReference ORDER BY messageId LIMIT 1
+                    )
                     WHERE firstPostLink=$messageId");
         }
     }

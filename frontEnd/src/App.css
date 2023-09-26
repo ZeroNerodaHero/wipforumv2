@@ -10,12 +10,14 @@
 
   scrollbar-color: var(--scrollColor) var(--scrollBKGcolor);
   scrollbar-width: thin;
+  scrollbar-height: thin;
 
   font-size: 16px;
 }
 :root::-webkit-scrollbar, ::-webkit-scrollbar{
   background-color: var(--scrollBKGcolor);
   width: 7px;
+  height: 7px;
   border: 1px black solid;
 }
 
