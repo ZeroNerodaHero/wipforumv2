@@ -211,7 +211,6 @@ function SiteGuide(props){
                 </div>
             </div>
         ],
-        
         ["Is this site an ip grabber?",
             <div>
                 <div>
@@ -228,6 +227,30 @@ function SiteGuide(props){
                     <li><b>Not an NSFW site: </b>Plz don't post that stuff here</li>
                     <li><b>No harassment/doxxing/degenerate behavior</b></li>
                 </ol>
+            </div>
+        ],
+        ["Formatted Print?",
+            <div>
+                <div>Formatted printing is available with the following [???] where the ??? is replaced with</div>
+                <ol style={{margin:"0px",wordBreak:"break-all"}}>
+                    <li>
+                        <b>code</b> for displaying code.
+                    </li>
+                    <li>
+                        <div><b>bd</b> for bold</div>
+                        <div><b>it</b> for italics</div>
+                        <div><b>strike</b> for strikethrough</div>
+                        <div><b>sm</b> for small font(pre determined ie 12px)</div>
+                        <div><b>bg</b> for large font(pre determined ie 36px)</div>
+                    </li>
+                </ol>
+                <div>BTW, every [???]...[end] will result in a new line bc i can't. literally</div>
+                <div>
+                    <b>See:</b>
+                    <a href='https://schizoi.cyou/?board=m&thread=41&title=i_am_developing_a_new_way_for_stuff_to_be_encoded_and_decoded.'>
+                        Trial and error post
+                    </a>
+                </div>
             </div>
         ],
     ]

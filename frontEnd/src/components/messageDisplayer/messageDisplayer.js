@@ -350,33 +350,31 @@ function convertMessageIntoFormat(message,splitMore=false,callBackFunc=null){
     )
     return newEle
 }
-function blockSpecial(type){
-    return (
-        <div>
-            
-        </div>
-    )
-}
+
+//no longer stack code...we will find the first position with [] and everything up until the [end]
+//basically fills the firstMatchEle up then checks if it null for the end
 function splitTextIntoFormat(text){
     var ret = [];
 
     var lastMatch = 0;
     const regex = /\[[^\]]*\]/g;
     let match;
-    const matchesWithIndex = [];
+    let firstMatchEle = null;
 
     while ((match = regex.exec(text)) !== null) {
-        if(match[0] == "[end]" && matchesWithIndex.length > 0){
-            const top = matchesWithIndex[matchesWithIndex.length-1];
-            const topStringStart = top.index+top.match.length
+        if(match[0] == "[end]" && firstMatchEle !== null){
+            const topStringStart = firstMatchEle.index+firstMatchEle.match.length
             // +5 for the size of [end]
             const endStringEnd = match.index+5
-            ret.push({text: text.substr(topStringStart,match.index-topStringStart),type:text.substr(top.index+1,top.match.length-2)})
-            matchesWithIndex.pop();
+            ret.push({text: text.substr(topStringStart,match.index-topStringStart),type:text.substr(firstMatchEle.index+1,firstMatchEle.match.length-2)})
+
+            firstMatchEle = null
             lastMatch = endStringEnd
-        } else{
+
+        } else if(firstMatchEle === null){
             ret.push({text: text.substr(lastMatch,match.index - lastMatch),type:"null"})
-            matchesWithIndex.push({ match: match[0], index: match.index });
+            //matchesWithIndex.push({ match: match[0], index: match.index });
+            firstMatchEle = { match: match[0], index: match.index }
         }
     }
     ret.push({text:text.substr(lastMatch,text.length-lastMatch),type:"null"})

@@ -5,3 +5,8 @@
     overflow-x: auto;
     margin-bottom: 5px;
 }
+.message_bd{font-weight: bold;}
+.message_it{font-style: italic;}
+.message_strike{text-decoration:line-through;}
+.message_sm{font-size: 12px;}
+.message_bg{font-size: 36px;}
