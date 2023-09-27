@@ -11,6 +11,7 @@
     overflow-x: auto;
     margin-bottom: 5px;
     padding-bottom: 3px;
+    padding-left: 5px;
 }
 .message_bd{font-weight: bold;}
 .message_it{font-style: italic;}

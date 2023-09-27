@@ -295,11 +295,8 @@ function convertMessageIntoFormat(message,splitMore=false,callBackFunc=null){
         var textBlockSplit = []
         for(var str of textNodes.text.split(/\n+/)){
             if(str.length == 0) continue;
-            if(textNodes["type"] === "code"){
-                //str = str.replaceAll("    ","&nbsp;".repeat(4))
-            }
             var merged = []
-            if(splitMore === true){
+            if(textNodes["type"] !== "code" && splitMore === true){
                 const normalText = str.split(/#[0-9]*/);
                 const userReference = str.match(/#[0-9]*/g);
                 if(userReference !== null){
@@ -318,7 +315,6 @@ function convertMessageIntoFormat(message,splitMore=false,callBackFunc=null){
         }
         textNodes["blockTextSplit"] = textBlockSplit;
     }
-    console.log(messageTextList)
     var newEle = (
         <div>
             {messageTextList.map((item,index)=>{
@@ -366,13 +362,13 @@ function splitTextIntoFormat(text){
             const topStringStart = firstMatchEle.index+firstMatchEle.match.length
             // +5 for the size of [end]
             const endStringEnd = match.index+5
-            ret.push({text: text.substr(topStringStart,match.index-topStringStart),type:text.substr(firstMatchEle.index+1,firstMatchEle.match.length-2)})
+            ret.push({text: text.substr(topStringStart,match.index-topStringStart).trim(),type:text.substr(firstMatchEle.index+1,firstMatchEle.match.length-2)})
 
             firstMatchEle = null
             lastMatch = endStringEnd
 
         } else if(firstMatchEle === null){
-            ret.push({text: text.substr(lastMatch,match.index - lastMatch),type:"null"})
+            ret.push({text: text.substr(lastMatch,match.index - lastMatch).trim(),type:"null"})
             //matchesWithIndex.push({ match: match[0], index: match.index });
             firstMatchEle = { match: match[0], index: match.index }
         }
