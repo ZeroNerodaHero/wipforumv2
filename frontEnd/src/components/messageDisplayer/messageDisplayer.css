@@ -1,9 +1,16 @@
+:root{
+    --codeBackgroundColor: black;
+    --codeTextColor: lime;
+}
+
 .message_code{
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--codeBackgroundColor);
+    color: var(--codeTextColor);
     white-space: pre;
     font-size: 0.8rem;
     overflow-x: auto;
     margin-bottom: 5px;
+    padding-bottom: 3px;
 }
 .message_bd{font-weight: bold;}
 .message_it{font-style: italic;}

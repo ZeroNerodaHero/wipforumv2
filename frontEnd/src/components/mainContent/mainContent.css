@@ -79,6 +79,7 @@
     color: #e6e7ea;
     display: grid;
     grid-template-rows: 0 60% auto;
+    grid-template-columns: 99%;
 }
 .threadImgCont{
     width: 100%;
@@ -199,7 +200,7 @@ empty space too
 }
 .activeThreadBody{
     display: grid;
-    grid-template-columns: 20% auto;
+    grid-template-columns: 20% 80%;
 }
 .messageInfo{
     display: flex;
