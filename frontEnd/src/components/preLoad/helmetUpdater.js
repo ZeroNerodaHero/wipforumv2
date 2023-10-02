@@ -5,7 +5,7 @@ import {preLoadGetRequest} from './preLoad'
 
 function HelmetUpdater(props){
     const {helmetUpdate,setElementUpdate} = useContext(HelmetUpdateContext)
-    const [titleStr,setTitleStr] = useState("schizoi.cyou")
+    const [titleStr,setTitleStr] = useState("nodentity.xyz")
     
     useEffect(()=>{
         var currentURL = window.location.href;
@@ -15,21 +15,10 @@ function HelmetUpdater(props){
         if(params["title"] !== undefined){
             temp_titleStr += " "+params["title"]
         } 
-        //temp_titleStr += " (schizoi.cyou)";
-        temp_titleStr += " <SchizoICU>";
+        temp_titleStr += " <nodentity.xyz>";
         setTitleStr(temp_titleStr)
     },[helmetUpdate])
-    /*
-    useEffect(()=>{
-        var temp_titleStr ="";
-        if(props.helmetValues["board"] !== undefined) temp_titleStr = "["+props.helmetValues["board"]+"]"
-        if(props.helmetValues["title"] !== undefined){
-            temp_titleStr += " "+props.helmetValues["title"]
-        } 
-        temp_titleStr += " (schizoi.cyou)";
-        setTitleStr(temp_titleStr)
-    },[props.helmetValues])
-    */
+
     return (
         <HelmetProvider>
             <Helmet>

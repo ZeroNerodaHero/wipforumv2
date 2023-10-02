@@ -14,7 +14,7 @@ function postRequest(body="",authUser=false,hasImg=false){
 }
 
 function apiRequest(params="", body="", method="GET",hasImg=false,authUser=false) {
-    var url = "https://schizoi.cyou/request"
+    var url = "https://nodentity.xyz/request"
     //url = "http://localhost:8070/";
 
     if(authUser === true){

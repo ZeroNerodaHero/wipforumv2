@@ -247,7 +247,7 @@ function SiteGuide(props){
                 <div>BTW, every [???]...[end] will result in a new line bc i can't. literally</div>
                 <div>
                     <b>See:</b>
-                    <a href='https://schizoi.cyou/?board=m&thread=41&title=i_am_developing_a_new_way_for_stuff_to_be_encoded_and_decoded.'>
+                    <a href='https://nodentity.xyz/?board=m&thread=41&title=i_am_developing_a_new_way_for_stuff_to_be_encoded_and_decoded.'>
                         Trial and error post
                     </a>
                 </div>
