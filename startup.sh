@@ -1,15 +1,39 @@
 #!/bin/bash
 containerList=()
+entryContainer=""
 
 bold_text(){
     local text="$1"
-    echo -e "\e[1m$text\e[0m"
+    printf "\e[1m$text\e[0m\n"
+}
+tabPrint(){
+    local tab="$1"
+    local text="$2"
+    local ret=""
+    while [ "$tab" -gt 0 ]; do
+        ret+="\t"
+        tab=$((tab - 1))
+    done
+    ret+="$text"
+    printf "$ret\n"
 }
 getContainers(){
     containerList=()
     while IFS= read -r line; do
         containerList+=("$line")        
+        entryContainer=$(docker ps -q -f "label=service=db")
     done < <(docker compose ps -q)
+}
+printHelp(){
+    bold_text "optcodes "
+    bold_text "1. status"
+    tabPrint 2 "Displays the status of actively running containers"
+    bold_text "2. start"
+    tabPrint 2 "Starts minimum needed containers(db,backend)"
+    bold_text "3. stop"
+    tabPrint 2 "Stops all containers"
+    bold_text "4. update"
+    tabPrint 2 "Executes a git pull"
 }
 
 while true; do
@@ -23,16 +47,28 @@ while true; do
         bold_text "Finished Building. Running in background"
     elif [ "$input" == "status" ]; then
         bold_text "Managing:"
+        container_filter=""
         for id in "${containerList[@]}"; do
-            echo "$id"
+            container_filter+="-f id=$id "
         done
+        docker ps $container_filter --format \
+            'table {{.ID}}\t{{.Image}}\t{{.RunningFor}}\t{{.Size}}\t{{.Label "service"}}'
     elif [ "$input" == "stop" ]; then
         for id in "${containerList[@]}"; do
             echo "stopping $id"
             docker stop $id
             bold_text "stopped $id"
         done
-        
+    elif [ "$input" == "enter" ]; then
+        bold_text "Entering container $entryContainer"
+        docker exec -it $entryContainer "/bin/sh" 
+        bold_text "Exited container $entryContainer"
+    elif [ "$input" == "update" ]; then
+        git pull
+    
+            
+    elif [ "$input" == "help" ]; then
+        printHelp
     elif [ "$input" == "exit" ]; then
         break
     else
