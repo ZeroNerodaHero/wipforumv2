@@ -89,8 +89,8 @@ CREATE TABLE cooldownPostTimer(
 );
 INSERT INTO userList(userId,userName,password,accountPerm,last_hashedLoginIp) 
     VALUES(1,"eve","eve",99,0);
-INSERT INTO boardList(shortHand,longHand,boardPermPost,threadCap,boardPriority,boardDesc)
-    VALUES("h","home",98,3000,99,
+INSERT INTO boardList(shortHand,longHand,threadCap,boardPriority,boardDesc)
+    VALUES("h","home",300,99,
         "This is the home board. There really is no topic.");
 INSERT INTO boardList(shortHand,longHand,boardPriority, boardDesc)
     VALUES("m","meta",98,

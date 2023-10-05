@@ -5,7 +5,7 @@ services:
         ports:
             - "8070:80"
         volumes:
-            - ./imageStorage:/var/www/localhost/htdocs/imgs
+            - ./data_volumes/imageStorage:/var/www/localhost/htdocs/imgs
         labels:
             service: backend
     db:
@@ -15,7 +15,7 @@ services:
             MYSQL_ROOT_PASSWORD: password
             MYSQL_DATABASE: funpills 
         volumes: 
-            - ./mysqlData:/var/lib/mysql
+            - ./data_volumes/mysqlData:/var/lib/mysql
             - ./dbInit:/docker-entrypoint-initdb.d/:ro
         labels:
             service: db

@@ -4,6 +4,7 @@ imageStorage/
 evefrontver/
 SERVERCONFIG.php
 buryTelligence/botScrape
+data_volumes/
 
 # Logs
 logs

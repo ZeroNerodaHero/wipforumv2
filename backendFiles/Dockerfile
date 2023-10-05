@@ -1,4 +1,6 @@
 FROM alpine
+USER root
+
 RUN apk update && \
     apk add --no-cache openrc \
         apache2 \
@@ -28,7 +30,7 @@ RUN mkdir /var/www/localhost/htdocs/code
 COPY code/ /var/www/localhost/htdocs/code/
 
 #RUN mkdir /var/www/localhost/htdocs/imgs
-RUN mkdir -p /var/www/localhost/htdocs/imgs/postImgs
+RUN mkdir -p -v /var/www/localhost/htdocs/imgs/postImgs
 RUN chmod -R 755 /var/www/localhost/htdocs/imgs && chown -R apache imgs/
 
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]

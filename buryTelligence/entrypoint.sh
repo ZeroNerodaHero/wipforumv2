@@ -7,4 +7,5 @@ elif [ "$1" = "run" ]; then
     python3 /root/run.py run
 else
     python3 /root/run.py
+    echo "HALP: \ndebug,test,run"
 fi

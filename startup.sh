@@ -2,10 +2,6 @@
 containerList=()
 entryContainer=""
 
-bold_text(){
-    local text="$1"
-    printf "\e[1m$text\e[0m\n"
-}
 tabPrint(){
     local tab="$1"
     local text="$2"
@@ -17,11 +13,15 @@ tabPrint(){
     ret+="$text"
     printf "$ret\n"
 }
+bold_text(){
+    local text="$1"
+    printf "\e[1m$text\e[0m\n"
+}
 getContainers(){
     containerList=()
     while IFS= read -r line; do
         containerList+=("$line")        
-        entryContainer=$(docker ps -q -f "label=service=db")
+        entryContainer=$(docker ps -q -f "label=service=backend")
     done < <(docker compose ps -q)
 }
 printHelp(){
@@ -45,6 +45,8 @@ while true; do
         bold_text "Starting up containers"
         docker compose up --build db --build backend -d
         bold_text "Finished Building. Running in background"
+    elif [ "$input" == "start bot" ]; then
+        bold_text "Starting bot"
     elif [ "$input" == "status" ]; then
         bold_text "Managing:"
         container_filter=""
@@ -52,16 +54,23 @@ while true; do
             container_filter+="-f id=$id "
         done
         docker ps $container_filter --format \
-            'table {{.ID}}\t{{.Image}}\t{{.RunningFor}}\t{{.Size}}\t{{.Label "service"}}'
+            'table {{.ID}}\t{{.Image}}\t{{.RunningFor}}\t{{.Size}}\t{{.Label "service"}}\t{{.Networks}}'
+    elif [ "$input" == "stats" ]; then
+        bold_text "Stats:"
+        docker stats
     elif [ "$input" == "stop" ]; then
         for id in "${containerList[@]}"; do
-            echo "stopping $id"
+            bold_text "stopping $id"
             docker stop $id
             bold_text "stopped $id"
         done
     elif [ "$input" == "enter" ]; then
         bold_text "Entering container $entryContainer"
         docker exec -it $entryContainer "/bin/sh" 
+        bold_text "Exited container $entryContainer"
+    elif [ "$input" == "enter db" ]; then
+        bold_text "Entering database through $entryContainer"
+        docker exec -it $entryContainer mysql -u root -h db funpills
         bold_text "Exited container $entryContainer"
     elif [ "$input" == "update" ]; then
         git pull
