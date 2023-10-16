@@ -1,7 +1,7 @@
 version: "3"
 services:
     backend:
-        build: backendFiles/.
+        build: ./SERVICES/WEB_BACKEND/backendFiles/.
         ports:
             - "8070:80"
         volumes:
@@ -16,11 +16,11 @@ services:
             MYSQL_DATABASE: funpills 
         volumes: 
             - ./data_volumes/mysqlData:/var/lib/mysql
-            - ./dbInit:/docker-entrypoint-initdb.d/:ro
+            - ./SERVICES/DATABASE/dbInit:/docker-entrypoint-initdb.d/:ro
         labels:
             service: db
     burybot:
-        build: buryTelligence/.
+        build: ./SERVICES/MISC/buryTelligence/.
         tty: true            # Enables pseudo-TTY
         stdin_open: true
         labels:
