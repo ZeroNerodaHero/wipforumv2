@@ -43,7 +43,7 @@ while true; do
     bold_text "==============================================\n"
     if [ "$input" == "start" ]; then
         bold_text "Starting up containers"
-        docker compose up --build db --build backend -d
+        docker compose up --build db --build backend -d --build redis --build express
         bold_text "Finished Building. Running in background"
     elif [ "$input" == "start bot" ]; then
         bold_text "Starting bot"

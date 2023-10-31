@@ -19,6 +19,19 @@ services:
             - ./SERVICES/DATABASE/dbInit:/docker-entrypoint-initdb.d/:ro
         labels:
             service: db
+    redis:
+        image: redis
+        container_name: redis_userCnt
+        ports:
+          - "6379:6379"
+    express:
+        build: playground/express_server
+        labels:
+            service: backend
+        ports:
+            - "90:3001"
+        depends_on:
+            - redis
     burybot:
         build: ./SERVICES/MISC/buryTelligence/.
         tty: true            # Enables pseudo-TTY
