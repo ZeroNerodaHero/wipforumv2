@@ -1,8 +1,11 @@
 import express from 'express';
+import cors from 'cors';
 import Redis from 'ioredis';
 import { createHash, randomInt } from 'crypto';
 import { timeStamp } from 'console';
 const app = express();
+app.use(cors()); /* NEW */
+
 const port = 3001;
 const redis = new Redis({
   host: 'redis',
@@ -41,9 +44,6 @@ async function updateUserList(req){
 
   redis.zadd("activeUserList",newExpireTime,returnObj["remoteAddressHash"])
   redis.hset("activeUserTable",returnObj["remoteAddressHash"],newExpireTime)
-
-  redis.zadd("activeUserList",newExpireTime,newExpireTime)
-  redis.hset("activeUserTable",newExpireTime,newExpireTime)
 }
 
 
@@ -77,10 +77,10 @@ app.get("/activeCount",async (req,res)=>{
     await updateUserList(req);
     let userCount = await redis.zcount("activeUserList","-inf", "+inf")
     //must send string "" usage
-    res.send(""+userCount)
+    res.send(JSON.stringify({code:1,msg:userCount+" Online"}))
   } catch (error){
     console.error(error)
-    res.status(500).send("Offline")
+    res.status(500).send(JSON.stringify({code:0,msg:"Service Offline"}))
   }
 })
 

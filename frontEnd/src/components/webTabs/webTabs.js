@@ -19,6 +19,9 @@ function WebTab(props){
         <div id="boardTab" onClick={(e)=>{e.stopPropagation()}}>
             <div id="boardTabLeft">
                 <div id="boardTabContConstraint">
+                    <div id="boardTabTopCont">
+                        hello
+                    </div>
                     <div id="boardTabCont">
                         <div id="boardTabMiscCont">
                             <div className='boardTabItem' onClick={()=>{setActiveBoard(0)}}>Boards</div>
