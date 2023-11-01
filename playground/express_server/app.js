@@ -46,7 +46,6 @@ async function updateUserList(req){
   redis.hset("activeUserTable",returnObj["remoteAddressHash"],newExpireTime)
 }
 
-
 app.get('/', (req, res) => {
     // Set the value in Redis
     redis.set('myKey', 'Hello, Redis!')
