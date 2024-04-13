@@ -7,7 +7,7 @@ services:
         volumes:
             - ./data_volumes/imageStorage:/var/www/localhost/htdocs/imgs
         labels:
-            service: backend
+            service: backend-entry
     db:
         image: mariadb:10.6
         restart: always

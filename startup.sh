@@ -1,6 +1,6 @@
 #!/bin/bash
 containerList=()
-entryContainer=""
+entryContainer="wipforumv2-backend-1"
 
 tabPrint(){
     local tab="$1"
@@ -21,7 +21,7 @@ getContainers(){
     containerList=()
     while IFS= read -r line; do
         containerList+=("$line")        
-        entryContainer=$(docker ps -q -f "label=service=backend")
+        entryContainer=$(docker ps -q -f "label=service=backend-entry")
     done < <(docker compose ps -q)
 }
 printHelp(){

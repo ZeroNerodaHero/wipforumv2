@@ -43,7 +43,6 @@ function updatePageParams(keyValueObject){
             newURL += key+"="+stringValNormalizer(keyValueObject[key])
         }
     }
-    //console.log(currentURL)
 
     if(currentURL !== newURL) window.history.pushState({}, '', newURL);
 }
